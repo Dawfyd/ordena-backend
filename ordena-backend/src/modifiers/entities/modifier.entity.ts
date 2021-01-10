@@ -1,6 +1,7 @@
 import { ObjectType, Field} from '@nestjs/graphql';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity('modifiers')
 @ObjectType()
 export class Modifier {
   
@@ -25,25 +26,25 @@ export class Modifier {
   state_modifier: string;
 
   /*
-  * Opcion del modificador 
+  * Opcion del modificador, es opcional(true) o excluyente(false)
   */
   @Column()
-  optional_modifier: string;
+  optional_modifier: boolean;
 
   /*
-  * tipo del modificador 
+  * tipo del modificador, A (todos) , C(categoria) , P(producto)
   */
   @Column()
   type_modifier: string;
 
   /*
-  * Codigo del modificador
+  * Codigo del modificador, IDs de la categoria o productos
   */
   @Column()
   code_modifier: string;
 
   /*
-  * Opciones de modificador excluyente 
+  * Opciones del modificador excluyente, si optional_modifier es (false) 
   */
   @Column()
   string_modifier_option: string;

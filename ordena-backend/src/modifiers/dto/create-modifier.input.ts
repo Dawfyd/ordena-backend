@@ -19,22 +19,22 @@ export class CreateModifierInput {
  state_modifier: string;
 
  /*
- * Opcion del modificador 
+ * Opcion del modificador, es opcional(true) o excluyente(false)
  */
- optional_modifier: string;
+ optional_modifier: boolean;
 
  /*
- * tipo del modificador 
+ * tipo del modificador, A (todos) , C(categoria) , P(producto)
  */
  type_modifier: string;
 
  /*
- * Codigo del modificador
+ * Codigo del modificador, IDs de la categoria o productos
  */
  code_modifier: string;
 
  /*
- * Opciones de modificador excluyente 
+ * Opciones del modificador excluyente, si optional_modifier es (false) 
  */
  string_modifier_option: string;
 }

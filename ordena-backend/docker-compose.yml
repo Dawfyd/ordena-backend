@@ -1,12 +1,15 @@
 version: '3.1'
-
 services:
   database:
-    image: postgres
+    image: mysql:5.7
+    volumes:
+      - './.mysql-data/db:/var/lib/mysql'
     restart: always
     ports:
-      - 8080:8080
+      - 3306:3306
     environment:
-      POSTGRES_DB: test
-      POSTGRES_USER: ordena
-      POSTGRES_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+
