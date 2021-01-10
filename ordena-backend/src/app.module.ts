@@ -1,38 +1,38 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CustomersModule } from './customers/customers.module';
-import { BranchOfficesModule } from './branch-offices/branch-offices.module';
-import { MenusModule } from './menus/menus.module';
-import { CategoriesModule } from './categories/categories.module';
-import { ProductsModule } from './products/products.module';
-import { ModifiersModule } from './modifiers/modifiers.module';
-import { PricesModule } from './prices/prices.module';
-import { ProductsOrderedModule } from './products-ordered/products-ordered.module';
-import { OrdersModule } from './orders/orders.module';
-import { SpotsModule } from './spots/spots.module';
-import { RolesModule } from './roles/roles.module';
-import { PersonsModule } from './persons/persons.module';
-import { FavoritesModule } from './favorites/favorites.module';
-import { RolesPersonsModule } from './roles-persons/roles-persons.module';
+import { CustomersModule } from './models/customers/customers.module';
+import { BranchOfficesModule } from './models/branch-offices/branch-offices.module';
+import { MenusModule } from './models/menus/menus.module';
+import { CategoriesModule } from './models/categories/categories.module';
+import { ProductsModule } from './models/products/products.module';
+import { ModifiersModule } from './models/modifiers/modifiers.module';
+import { PricesModule } from './models/prices/prices.module';
+import { ProductsOrderedModule } from './models/products-ordered/products-ordered.module';
+import { OrdersModule } from './models/orders/orders.module';
+import { SpotsModule } from './models/spots/spots.module';
+import { RolesModule } from './models/roles/roles.module';
+import { PersonsModule } from './models/persons/persons.module';
+import { FavoritesModule } from './models/favorites/favorites.module';
+import { RolesPersonsModule } from './models/roles-persons/roles-persons.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
     CustomersModule,
-    BranchOfficesModule, 
-    MenusModule, 
-    CategoriesModule, 
-    ProductsModule, 
-    ModifiersModule, 
-    PricesModule, 
-    ProductsOrderedModule, 
-    OrdersModule, 
-    SpotsModule, 
-    RolesModule, 
-    PersonsModule, 
-    FavoritesModule, 
+    BranchOfficesModule,
+    MenusModule,
+    CategoriesModule,
+    ProductsModule,
+    ModifiersModule,
+    PricesModule,
+    ProductsOrderedModule,
+    OrdersModule,
+    SpotsModule,
+    RolesModule,
+    PersonsModule,
+    FavoritesModule,
     RolesPersonsModule,
 
     GraphQLModule.forRoot({
