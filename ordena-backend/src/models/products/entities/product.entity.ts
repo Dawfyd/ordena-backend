@@ -1,5 +1,10 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Category } from 'src/models/categories/entities/category.entity';
+import { Favorite } from 'src/models/favorites/entities/favorite.entity';
+import { Modifier } from 'src/models/modifiers/entities/modifier.entity';
+import { Price } from 'src/models/prices/entities/price.entity';
+import { ProductsOrdered } from 'src/models/products-ordered/entities/products-ordered.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('products')
 @ObjectType()
@@ -47,4 +52,33 @@ export class Product {
    */
   @Column()
   code_product: string;
+
+  @ManyToOne(
+    () => Category, 
+    (category: Category) => category.products)
+
+  @JoinColumn({name: 'id_category'})
+  category: Category;
+
+  @OneToMany(
+    (type) => Modifier, (modifiers: Modifier) => modifiers.product, {
+    eager: true,
+    cascade: true,
+  })
+    modifiers?: Modifier[];
+
+  @OneToMany(
+    (type) => Price, (prices: Price) => prices.product, {
+    eager: true,
+    cascade: true,
+  })
+    prices?: Price[];
+
+  @OneToMany(
+    (type) => ProductsOrdered, (products_ordered: ProductsOrdered) => products_ordered.product)
+    products_ordered?: ProductsOrdered[];
+
+  @OneToMany(
+    (type) => Favorite, (favorites: Favorite) => favorites.product)
+    favorites?: Favorite[];
 }

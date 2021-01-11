@@ -1,4 +1,5 @@
 import { InputType } from '@nestjs/graphql';
+import { Category } from 'src/models/categories/entities/category.entity';
 
 @InputType()
 export class CreateMenuInput {

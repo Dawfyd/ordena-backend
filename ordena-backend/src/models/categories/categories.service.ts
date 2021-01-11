@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ID } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateCategoryInput } from './dto/create-category.input';
@@ -26,9 +27,6 @@ export class CategoriesService {
     if (!category)
       throw new NotFoundException('No hay una categoria con esa ID');
     return category;
-  }
-  async findByIds(id_menu: number[]) {
-    return await this.CategoryRepository.findByIds(id_menu);
   }
 
   async update(id: number, updateCategoryInput: UpdateCategoryInput) {

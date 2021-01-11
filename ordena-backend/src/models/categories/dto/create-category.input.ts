@@ -1,4 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import { Menu } from 'src/models/menus/entities/menu.entity';
 
 
 @InputType()
@@ -26,5 +27,5 @@ export class CreateCategoryInput {
   /*
    * ID del menu al que pertenece
    */
-
+  
 }

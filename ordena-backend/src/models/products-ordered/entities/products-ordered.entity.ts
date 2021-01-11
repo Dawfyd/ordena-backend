@@ -1,5 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Order } from 'src/models/orders/entities/order.entity';
+import { Product } from 'src/models/products/entities/product.entity';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('products_ordered')
 @ObjectType()
@@ -47,4 +49,18 @@ export class ProductsOrdered {
    */
   @Column()
   state_product_paid: boolean;
+
+  @ManyToOne(
+    () => Product, 
+    (product: Product) => product.products_ordered)
+
+  @JoinColumn({name: 'id_product'})
+    product: Product;
+
+  @ManyToOne(
+    () => Order, 
+    (order: Order) => order.products_ordered)
+
+  @JoinColumn({name: 'id_order'})
+  order: Order;
 }
