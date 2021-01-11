@@ -14,7 +14,7 @@ export class MenusService {
   ) {}
  
   async create(createMenuInput: CreateMenuInput): Promise<Menu> {
-    const newMenu = this.MenuRepository.create();
+    const newMenu = this.MenuRepository.create(createMenuInput);
     return await this.MenuRepository.save(newMenu);
   }
 
