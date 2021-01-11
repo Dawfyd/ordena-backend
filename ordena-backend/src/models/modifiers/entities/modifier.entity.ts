@@ -1,5 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Product } from 'src/models/products/entities/product.entity';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('modifiers')
 @ObjectType()
@@ -47,4 +48,11 @@ export class Modifier {
    */
   @Column()
   string_modifier_option: string;
+
+  @ManyToOne(
+    () => Product, 
+    (product: Product) => product.modifiers)
+
+  @JoinColumn({name: 'id_product'})
+    product: Product;
 }

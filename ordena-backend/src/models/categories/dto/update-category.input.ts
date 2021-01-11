@@ -1,5 +1,6 @@
 import { CreateCategoryInput } from './create-category.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { Menu } from 'src/models/menus/entities/menu.entity';
 
 
 @InputType()
@@ -28,5 +29,5 @@ export class UpdateCategoryInput extends PartialType(CreateCategoryInput) {
   /*
    * ID del menu al que pertenece
    */
-  
+
 }

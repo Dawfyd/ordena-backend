@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CategoriesService } from '../categories/categories.service';
 import { CreateMenuInput } from './dto/create-menu.input';
 import { UpdateMenuInput } from './dto/update-menu.input';
 import { Menu } from './entities/menu.entity';
@@ -11,9 +12,9 @@ export class MenusService {
     @InjectRepository(Menu)
     private readonly MenuRepository: Repository<Menu>,
   ) {}
-
+ 
   async create(createMenuInput: CreateMenuInput): Promise<Menu> {
-    const newMenu = this.MenuRepository.create(createMenuInput);
+    const newMenu = this.MenuRepository.create();
     return await this.MenuRepository.save(newMenu);
   }
 

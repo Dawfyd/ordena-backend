@@ -1,5 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BranchOffice } from 'src/models/branch-offices/entities/branch-office.entity';
+import { RolesPerson } from 'src/models/roles-persons/entities/roles-person.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('roles')
 @ObjectType()
@@ -23,4 +25,17 @@ export class Role {
    */
   @Column()
   state_role: boolean;
+
+  @ManyToOne(
+    () => BranchOffice, 
+    (branch_office: BranchOffice) => branch_office.roles)
+
+  @JoinColumn({name: 'id_branch_office'})
+  branch_office: BranchOffice;
+
+  @OneToMany(
+    (type) => RolesPerson, (roles_person: RolesPerson) => roles_person.role)
+  
+    roles_person?: RolesPerson[];
+
 }

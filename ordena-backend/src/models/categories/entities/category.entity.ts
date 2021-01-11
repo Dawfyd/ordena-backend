@@ -1,11 +1,12 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Menu } from 'src/models/menus/entities/menu.entity';
+import { Product } from 'src/models/products/entities/product.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -38,9 +39,18 @@ export class Category {
   @Column()
   state_category: boolean;
 
-  @ManyToOne(() => Menu, (menu) => menu.categories)
 
-  
-  @JoinColumn()
-  menus: Menu;
+  @ManyToOne(
+    () => Menu, 
+    (menu: Menu) => menu.categories)
+
+  @JoinColumn({name: 'id_menu'})
+  menu: Menu;
+
+  @OneToMany(
+    (type) => Product, (products: Product) => products.category, {
+    eager: true,
+    cascade: true,
+  })
+  products?: Product[];
 }

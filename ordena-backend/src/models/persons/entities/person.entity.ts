@@ -1,5 +1,9 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Favorite } from 'src/models/favorites/entities/favorite.entity';
+import { Order } from 'src/models/orders/entities/order.entity';
+import { RolesPerson } from 'src/models/roles-persons/entities/roles-person.entity';
+import { Spot } from 'src/models/spots/entities/spot.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('persons')
 @ObjectType()
@@ -41,4 +45,33 @@ export class Person {
    */
   @Column()
   photo_person: string;
+
+  @ManyToOne(
+    () => Spot, 
+    (spot: Spot) => spot.persons)
+
+  @JoinColumn({name: 'id_spot'})
+    spot: Spot;
+
+  @OneToMany(
+    (type) => Order, (orders: Order) => orders.person, {
+    eager: true,
+    cascade: true,
+  })
+    orders?: Order[];
+
+  @OneToMany(
+    (type) => Favorite, (favorites: Favorite) => favorites.person, {
+    eager: true,
+    cascade: true,
+  })
+    favorites?: Favorite[];
+
+  @OneToMany(
+    (type) => RolesPerson, (roles_person: RolesPerson) => roles_person.person, {
+    eager: true,
+    cascade: true,
+  })
+    roles_person?: RolesPerson[];
+
 }

@@ -13,11 +13,11 @@ import { Menu } from './entities/menu.entity';
 import { CreateMenuInput } from './dto/create-menu.input';
 import { UpdateMenuInput } from './dto/update-menu.input';
 import { CategoriesService } from 'src/models/categories/categories.service';
+import { Category } from '../categories/entities/category.entity';
 
 @Resolver(() => Menu)
 export class MenusResolver {
   constructor(private readonly menusService: MenusService) {}
-  private readonly categoriesService: CategoriesService;
 
   @Mutation(() => Menu)
   createMenu(@Args('createMenuInput') createMenuInput: CreateMenuInput) {
@@ -44,8 +44,4 @@ export class MenusResolver {
     return this.menusService.remove(id);
   }
 
-  @ResolveField()
-  async categories(@Parent() id_menu: number[]) {
-    return await this.categoriesService.findByIds(id_menu);
-  }
 }
