@@ -3,7 +3,7 @@ import { Category } from 'src/models/categories/entities/category.entity';
 import { Favorite } from 'src/models/favorites/entities/favorite.entity';
 import { Modifier } from 'src/models/modifiers/entities/modifier.entity';
 import { Price } from 'src/models/prices/entities/price.entity';
-import { ProductsOrdered } from 'src/models/products-ordered/entities/products-ordered.entity';
+import { Request } from 'src/models/requests/entities/request.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('products')
@@ -75,8 +75,8 @@ export class Product {
     prices?: Price[];
 
   @OneToMany(
-    (type) => ProductsOrdered, (products_ordered: ProductsOrdered) => products_ordered.product)
-    products_ordered?: ProductsOrdered[];
+    (type) => Request, (requests: Request) => requests.product)
+    requests?: Request[];
 
   @OneToMany(
     (type) => Favorite, (favorites: Favorite) => favorites.product)

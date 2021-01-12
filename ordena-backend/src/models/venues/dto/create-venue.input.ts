@@ -1,29 +1,29 @@
 import { InputType } from '@nestjs/graphql';
 
 @InputType()
-export class CreateBranchOfficeInput {
+export class CreateVenueInput {
   /*
    * ID de la sede o sucursal
    */
-  id_branch_office: number;
+  id_venue: number;
 
   /*
    * Descripcion de la sede o sucursal
    */
-  description_branch_office: string;
+  description_venue: string;
 
   /*
    * Ubicacion de la sede o sucursal
    */
-  location_branch_office: string;
+  location_venue: string;
 
   /*
    * Ciudad de la sede o sucursal
    */
-  city_branch_office: string;
+  city_venue: string;
 
   /*
    * Nombre de la sede o sucursal
    */
-  name_branch_office: string;
+  name_venue: string;
 }

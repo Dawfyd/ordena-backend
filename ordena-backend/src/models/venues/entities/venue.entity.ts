@@ -5,50 +5,50 @@ import { Role } from 'src/models/roles/entities/role.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('branch_offices')
+@Entity('venues')
 @ObjectType()
-export class BranchOffice {
+export class Venue {
   @PrimaryGeneratedColumn()
   @Field()
 
   /*
    * ID de la sede o sucursal
    */
-  id_branch_office: number;
+  id_venue: number;
 
   /*
    * Descripcion de la sede o sucursal
    */
   @Column()
-  description_branch_office: string;
+  description_venue: string;
 
   /*
    * Ubicacion de la sede o sucursal
    */
   @Column()
-  location_branch_office: string;
+  location_venue: string;
 
   /*
    * Ciudad de la sede o sucursal
    */
   @Column()
-  city_branch_office: string;
+  city_venue: string;
 
   /*
    * Nombre de la sede o sucursal
    */
   @Column()
-  name_branch_office: string;
+  name_venue: string;
 
   @ManyToOne(
     () => Customer, 
-    (customer: Customer) => customer.branch_offices)
+    (customer: Customer) => customer.venues)
 
   @JoinColumn({name: 'id_customer'})
     customer: Customer;
 
   @OneToMany(
-    (type) => Menu, (menus: Menu) => menus.branch_office, {
+    (type) => Menu, (menus: Menu) => menus.venue, {
       eager: true,
       cascade: true,
     })
@@ -56,7 +56,7 @@ export class BranchOffice {
     menus?: Menu[];
 
   @OneToMany(
-    (type) => Spot, (spots: Spot) => spots.branch_office, {
+    (type) => Spot, (spots: Spot) => spots.venue, {
       eager: true,
       cascade: true,
     })
@@ -64,7 +64,7 @@ export class BranchOffice {
     spots?: Spot[];
 
   @OneToMany(
-    (type) => Role, (roles: Role) => roles.branch_office, {
+    (type) => Role, (roles: Role) => roles.venue, {
       eager: true,
       cascade: true,
     })

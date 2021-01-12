@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { BranchOffice } from 'src/models/branch-offices/entities/branch-office.entity';
+import { Venue } from 'src/models/venues/entities/venue.entity';
 import { Category } from 'src/models/categories/entities/category.entity';
 import {
   Column,
@@ -33,11 +33,11 @@ export class Menu {
   state_menu: boolean;
 
   @ManyToOne(
-    () => BranchOffice, 
-    (branch_office: BranchOffice) => branch_office.menus)
+    () => Venue, 
+    (venue: Venue) => venue.menus)
 
-  @JoinColumn({name: 'id_branch_office'})
-    branch_office: BranchOffice;
+  @JoinColumn({name: 'id_venue'})
+    venue: Venue;
 
   @OneToMany(
     (type) => Category, (categories: Category) => categories.menu, {

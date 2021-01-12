@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { BranchOffice } from 'src/models/branch-offices/entities/branch-office.entity';
+import { Venue } from 'src/models/venues/entities/venue.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('customers')
@@ -38,10 +38,10 @@ export class Customer {
   telephone_customer: number;
 
   @OneToMany(
-    (type) => BranchOffice, (branch_offices: BranchOffice) => branch_offices.customer, {
+    (type) => Venue, (venues: Venue) => venues.customer, {
       eager: true,
       cascade: true,
     })
   
-    branch_offices?: BranchOffice[];
+    venues?: Venue[];
 }
