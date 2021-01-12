@@ -1,5 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { BranchOffice } from 'src/models/branch-offices/entities/branch-office.entity';
+import { Venue } from 'src/models/venues/entities/venue.entity';
 import { Person } from 'src/models/persons/entities/person.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -33,11 +33,11 @@ export class Spot {
   number_spot: number;
 
   @ManyToOne(
-    () => BranchOffice, 
-    (branch_office: BranchOffice) => branch_office.spots)
+    () => Venue, 
+    (venue: Venue) => venue.spots)
 
-  @JoinColumn({name: 'id_branch_office'})
-    branch_office: BranchOffice;
+  @JoinColumn({name: 'id_venue'})
+    venue: Venue;
 
   @OneToMany(
     (type) => Person, (persons: Person) => persons.spot, {

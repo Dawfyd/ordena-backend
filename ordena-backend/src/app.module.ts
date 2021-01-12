@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CustomersModule } from './models/customers/customers.module';
-import { BranchOfficesModule } from './models/branch-offices/branch-offices.module';
+import { VenuesModule } from './models/venues/venues.module';
 import { MenusModule } from './models/menus/menus.module';
 import { CategoriesModule } from './models/categories/categories.module';
 import { ProductsModule } from './models/products/products.module';
 import { ModifiersModule } from './models/modifiers/modifiers.module';
 import { PricesModule } from './models/prices/prices.module';
-import { ProductsOrderedModule } from './models/products-ordered/products-ordered.module';
+import { RequestsModule } from './models/requests/requests.module';
 import { OrdersModule } from './models/orders/orders.module';
 import { SpotsModule } from './models/spots/spots.module';
 import { RolesModule } from './models/roles/roles.module';
@@ -21,13 +21,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   imports: [
     CustomersModule,
-    BranchOfficesModule,
+    VenuesModule,
     MenusModule,
     CategoriesModule,
     ProductsModule,
     ModifiersModule,
     PricesModule,
-    ProductsOrderedModule,
+    RequestsModule,
     OrdersModule,
     SpotsModule,
     RolesModule,

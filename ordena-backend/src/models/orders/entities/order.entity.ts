@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Person } from 'src/models/persons/entities/person.entity';
-import { ProductsOrdered } from 'src/models/products-ordered/entities/products-ordered.entity';
+import { Request } from 'src/models/requests/entities/request.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('orders')
@@ -34,10 +34,10 @@ export class Order {
     person: Person;
 
   @OneToMany(
-    (type) => ProductsOrdered, (products_ordered: ProductsOrdered) => products_ordered.order, {
+    (type) => Request, (requests: Request) => requests.order, {
     eager: true,
     cascade: true,
   })
-    products_ordered?: ProductsOrdered[];
+    requests?: Request[];
 
 }

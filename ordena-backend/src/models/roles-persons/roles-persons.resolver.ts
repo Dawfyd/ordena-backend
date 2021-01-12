@@ -21,7 +21,7 @@ export class RolesPersonsResolver {
     return this.rolesPersonsService.findAll();
   }
 
-  @Query(() => RolesPerson, { name: 'rolesPerson' })
+  @Query(() => RolesPerson, { name: 'rolePerson' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.rolesPersonsService.findOne(id);
   }

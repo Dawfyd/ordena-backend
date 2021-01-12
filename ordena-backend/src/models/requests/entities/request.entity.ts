@@ -3,63 +3,63 @@ import { Order } from 'src/models/orders/entities/order.entity';
 import { Product } from 'src/models/products/entities/product.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('products_ordered')
+@Entity('requests')
 @ObjectType()
-export class ProductsOrdered {
+export class Request {
   @PrimaryGeneratedColumn()
   @Field()
 
   /*
-   * ID del producto pedido
+   * ID del producto solicitado
    */
-  id_product_ordered: number;
+  id_request: number;
 
   /*
-   * Numero de unidades del pedido
+   * Numero de unidades del solicitado
    */
   @Column()
-  unit_product_ordered: number;
+  unit_request: number;
 
   /*
-   * Comentario del pedido
+   * Comentario del solicitado
    */
   @Column()
-  comentary_product_ordered: string;
+  comentary_request: string;
 
   /*
-   * Estado del pedido - Servido?
+   * Estado del solicitado - Servido?
    */
   @Column()
-  state_served: boolean;
+  state_served_request: boolean;
 
   /*
    * Asociacion con producto si es una adicion
    */
   @Column()
-  addition_product: string;
+  addition_request: string;
 
   /*
-   * Modificadores del pedido
+   * Modificadores del solicitado
    */
   @Column()
-  modifier_product: string;
+  modifier_request: string;
 
   /*
-   *  Estado del pedido - Pagado?
+   *  Estado del solicitado - Pagado?
    */
   @Column()
-  state_product_paid: boolean;
+  state_paid_request: boolean;
 
   @ManyToOne(
     () => Product, 
-    (product: Product) => product.products_ordered)
+    (product: Product) => product.requests)
 
   @JoinColumn({name: 'id_product'})
     product: Product;
 
   @ManyToOne(
     () => Order, 
-    (order: Order) => order.products_ordered)
+    (order: Order) => order.requests)
 
   @JoinColumn({name: 'id_order'})
   order: Order;

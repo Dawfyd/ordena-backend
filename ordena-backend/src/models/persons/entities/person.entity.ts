@@ -46,6 +46,9 @@ export class Person {
   @Column()
   photo_person: string;
 
+   /*
+    * ID de la mesa asociada
+    */
   @ManyToOne(
     () => Spot, 
     (spot: Spot) => spot.persons)
@@ -53,6 +56,9 @@ export class Person {
   @JoinColumn({name: 'id_spot'})
     spot: Spot;
 
+   /*
+    * Ordenes pedidas por la persona
+    */
   @OneToMany(
     (type) => Order, (orders: Order) => orders.person, {
     eager: true,
@@ -60,6 +66,9 @@ export class Person {
   })
     orders?: Order[];
 
+   /*
+    * Productos favoritos seleccionados por la persona
+    */
   @OneToMany(
     (type) => Favorite, (favorites: Favorite) => favorites.person, {
     eager: true,

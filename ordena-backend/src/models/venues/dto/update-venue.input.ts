@@ -1,33 +1,33 @@
-import { CreateBranchOfficeInput } from './create-branch-office.input';
+import { CreateVenueInput } from './create-venue.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateBranchOfficeInput extends PartialType(
-  CreateBranchOfficeInput,
+export class UpdateVenueInput extends PartialType(
+  CreateVenueInput,
 ) {
   @Field(() => Int)
   /*
    * ID de la sede o sucursal
    */
-  id_branch_office: number;
+  id_venue: number;
 
   /*
    * Descripcion de la sede o sucursal
    */
-  description_branch_office: string;
+  description_venue: string;
 
   /*
    * Ubicacion de la sede o sucursal
    */
-  location_branch_office: string;
+  location_venue: string;
 
   /*
    * Ciudad de la sede o sucursal
    */
-  city_branch_office: string;
+  city_venue: string;
 
   /*
    * Nombre de la sede o sucursal
    */
-  name_branch_office: string;
+  name_venue: string;
 }
