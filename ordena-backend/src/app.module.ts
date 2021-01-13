@@ -17,6 +17,7 @@ import { FavoritesModule } from './models/favorites/favorites.module';
 import { RolesPersonsModule } from './models/roles-persons/roles-persons.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [
@@ -51,6 +52,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+
+    ServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
