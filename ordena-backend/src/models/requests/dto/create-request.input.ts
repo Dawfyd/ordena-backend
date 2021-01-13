@@ -5,7 +5,7 @@ export class CreateRequestInput {
   /*
    * ID del producto solicitado
    */
-  id_request: number;
+  id_request?: number;
 
   /*
    * Numero de unidades del solicitado
@@ -15,12 +15,12 @@ export class CreateRequestInput {
   /*
    * Comentario del solicitado
    */
-  comentary_request: string;
+  comentary_request?: string;
 
   /*
-   * Estado del solicitado - Servido?
+   * Estado del pedido - 1: solicitado - 2: registrado - 3: servido - 4:pagado 
    */
-  state_served_request: boolean;
+  state_request: number = 1;
 
   /*
    * Asociacion con producto si es una adicion
@@ -32,8 +32,4 @@ export class CreateRequestInput {
    */
   modifier_request: string;
 
-  /*
-   *  Estado del solicitado - Pagado?
-   */
-  state_paid_request: boolean;
 }

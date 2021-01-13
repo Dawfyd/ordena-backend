@@ -15,8 +15,11 @@ import { RolesModule } from './models/roles/roles.module';
 import { PersonsModule } from './models/persons/persons.module';
 import { FavoritesModule } from './models/favorites/favorites.module';
 import { RolesPersonsModule } from './models/roles-persons/roles-persons.module';
+import { ServicesModule } from './models/services/services.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+
 
 @Module({
   imports: [
@@ -34,6 +37,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     PersonsModule,
     FavoritesModule,
     RolesPersonsModule,
+    ServicesModule,
 
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -51,6 +55,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+
+
   ],
   controllers: [AppController],
   providers: [AppService],

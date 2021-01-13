@@ -2,6 +2,9 @@ import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Venue } from 'src/models/venues/entities/venue.entity';
 import { Person } from 'src/models/persons/entities/person.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Order } from 'src/models/orders/entities/order.entity';
+import { Request } from 'src/models/requests/entities/request.entity';
+import { Service } from 'src/models/services/entities/service.entity';
 
 @Entity('spots')
 @ObjectType()
@@ -33,7 +36,22 @@ export class Spot {
   number_spot: number;
 
   @ManyToOne(
-    () => Venue, 
+    () => Service,
+    (service: Service) => service.spots)
+
+  @JoinColumn({name: 'id_service'})
+  service: Service;
+
+  @OneToMany(
+    (type) => Order, (orders: Order) => orders.spot)
+    orders?: Order[];
+
+  @OneToMany(
+    (type) => Request, (requests: Request) => requests.spot)
+    requests?: Request[];
+
+  @ManyToOne(
+    () => Venue,
     (venue: Venue) => venue.spots)
 
   @JoinColumn({name: 'id_venue'})
@@ -45,4 +63,5 @@ export class Spot {
     cascade: true,
   })
     persons?: Person[];
+
 }

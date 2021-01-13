@@ -2,6 +2,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { Customer } from 'src/models/customers/entities/customer.entity';
 import { Menu } from 'src/models/menus/entities/menu.entity';
 import { Role } from 'src/models/roles/entities/role.entity';
+import { Service } from 'src/models/services/entities/service.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -41,7 +42,7 @@ export class Venue {
   name_venue: string;
 
   @ManyToOne(
-    () => Customer, 
+    () => Customer,
     (customer: Customer) => customer.venues)
 
   @JoinColumn({name: 'id_customer'})
@@ -52,7 +53,7 @@ export class Venue {
       eager: true,
       cascade: true,
     })
-  
+
     menus?: Menu[];
 
   @OneToMany(
@@ -60,7 +61,7 @@ export class Venue {
       eager: true,
       cascade: true,
     })
-  
+
     spots?: Spot[];
 
   @OneToMany(
@@ -68,8 +69,16 @@ export class Venue {
       eager: true,
       cascade: true,
     })
-  
+
     roles?: Role[];
-  
-    
+
+  @OneToMany(
+    (type) => Service, (service: Service) => service.venue, {
+      eager: true,
+      cascade: true,
+    })
+
+    services?: Service[];
+
+
 }

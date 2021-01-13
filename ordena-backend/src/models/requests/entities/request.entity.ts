@@ -1,6 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Order } from 'src/models/orders/entities/order.entity';
 import { Product } from 'src/models/products/entities/product.entity';
+import { Spot } from 'src/models/spots/entities/spot.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('requests')
@@ -27,10 +28,10 @@ export class Request {
   comentary_request: string;
 
   /*
-   * Estado del solicitado - Servido?
+   * Estado del pedido - 1: solicitado - 2: registrado - 3: servido - 4:pagado 
    */
   @Column()
-  state_served_request: boolean;
+  state_request: number;
 
   /*
    * Asociacion con producto si es una adicion
@@ -44,11 +45,6 @@ export class Request {
   @Column()
   modifier_request: string;
 
-  /*
-   *  Estado del solicitado - Pagado?
-   */
-  @Column()
-  state_paid_request: boolean;
 
   @ManyToOne(
     () => Product, 
@@ -63,4 +59,11 @@ export class Request {
 
   @JoinColumn({name: 'id_order'})
   order: Order;
+
+  @ManyToOne(
+    () => Spot, 
+    (spot: Spot) => spot.requests)
+
+  @JoinColumn({name: 'id_spot'})
+  spot: Spot;
 }

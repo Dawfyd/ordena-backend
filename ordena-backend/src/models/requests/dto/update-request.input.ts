@@ -15,12 +15,12 @@ export class UpdateRequestInput extends PartialType(
   /*
    * Numero de unidades del solicitado
    */
-  unit_request: number;
+  unit_request?: number;
 
   /*
    * Comentario del solicitado
    */
-  comentary_request: string;
+  comentary_request?: string;
 
   /*
    * Estado del solicitado - Servido?
@@ -30,15 +30,12 @@ export class UpdateRequestInput extends PartialType(
   /*
    * Asociacion con producto si es una adicion
    */
-  addition_request: string;
+  addition_request?: string;
 
   /*
    * Modificadores del solicitado
    */
-  modifier_request: string;
+  modifier_request?: string;
 
-  /*
-   *  Estado del solicitado - Pagado?
-   */
-  state_paid_request: boolean;
+
 }
