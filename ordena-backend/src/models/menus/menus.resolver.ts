@@ -5,19 +5,19 @@ import {
   Args,
   Int,
   ResolveField,
-  Parent,
-  ResolveProperty,
+  Parent
 } from '@nestjs/graphql';
 import { MenusService } from './menus.service';
 import { Menu } from './entities/menu.entity';
 import { CreateMenuInput } from './dto/create-menu.input';
 import { UpdateMenuInput } from './dto/update-menu.input';
-import { CategoriesService } from 'src/models/categories/categories.service';
-import { Category } from '../categories/entities/category.entity';
+import { Venue } from '../venues/entities/venue.entity';
+import { VenuesService } from '../venues/venues.service';
 
 @Resolver(() => Menu)
 export class MenusResolver {
-  constructor(private readonly menusService: MenusService) {}
+  constructor(private readonly menusService: MenusService,
+    private readonly venuesService: VenuesService) {}
 
   @Mutation(() => Menu)
   createMenu(@Args('createMenuInput') createMenuInput: CreateMenuInput) {
@@ -44,4 +44,9 @@ export class MenusResolver {
     return this.menusService.remove(id);
   }
 
+  @ResolveField()
+  async venue(@Parent() venue: Venue) {
+    const { id_venue } = venue;
+    return this.venuesService.findOne(id_venue);
+  }
 }
