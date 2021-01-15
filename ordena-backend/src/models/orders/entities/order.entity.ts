@@ -2,7 +2,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { Person } from 'src/models/persons/entities/person.entity';
 import { Request } from 'src/models/requests/entities/request.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('orders')
 @ObjectType()
@@ -26,6 +26,18 @@ export class Order {
    */
   @Column()
   state_order: boolean;
+
+  /*
+  *fecha cuando se realizo el registro
+  */
+  @CreateDateColumn()
+  created_at: Date;
+
+  /*
+  *fecha cuando se actualiza el registro
+  */
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @ManyToOne(
     () => Spot, 

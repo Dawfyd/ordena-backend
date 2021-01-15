@@ -3,11 +3,13 @@ import { Menu } from 'src/models/menus/entities/menu.entity';
 import { Product } from 'src/models/products/entities/product.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('categories')
@@ -39,6 +41,17 @@ export class Category {
   @Column()
   state_category: boolean;
 
+  /*
+  *fecha cuando se realizo el registro
+  */
+  @CreateDateColumn()
+  created_at: Date;
+
+  /*
+  *fecha cuando se actualiza el registro
+  */
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @ManyToOne(
     () => Menu, 

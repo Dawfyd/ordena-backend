@@ -4,7 +4,7 @@ import { Menu } from 'src/models/menus/entities/menu.entity';
 import { Role } from 'src/models/roles/entities/role.entity';
 import { Service } from 'src/models/services/entities/service.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('venues')
 @ObjectType()
@@ -40,6 +40,18 @@ export class Venue {
    */
   @Column()
   name_venue: string;
+
+  /*
+  *fecha cuando se realizo el registro
+  */
+  @CreateDateColumn()
+  created_at: Date;
+
+  /*
+  *fecha cuando se actualiza el registro
+  */
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @ManyToOne(
     () => Customer,
