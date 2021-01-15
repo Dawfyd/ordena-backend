@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ID } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { MenusService } from '../menus/menus.service';
 import { CreateCategoryInput } from './dto/create-category.input';
 import { UpdateCategoryInput } from './dto/update-category.input';
 import { Category } from './entities/category.entity';
@@ -11,10 +11,19 @@ export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private readonly CategoryRepository: Repository<Category>,
+    private readonly menusService: MenusService
   ) {}
 
   async create(createCategoryInput: CreateCategoryInput): Promise<Category> {
-    const newCategory = this.CategoryRepository.create(createCategoryInput);
+    const { id_menu } = createCategoryInput;
+
+    const menu = await this.menusService.findOne(id_menu);
+    delete createCategoryInput.id_menu;
+    const newCategory = this.CategoryRepository.create({
+      ...createCategoryInput,
+      menu
+    });
+
     return await this.CategoryRepository.save(newCategory);
   }
 
@@ -29,19 +38,26 @@ export class CategoriesService {
     return category;
   }
 
-  async update(id: number, updateCategoryInput: UpdateCategoryInput) {
-    const category = await this.CategoryRepository.findOne(id);
-    if (!category)
-      throw new NotFoundException('No hay una categoria con esa ID');
+  async update(id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category> {
 
-    const editedCategory = Object.assign(category, updateCategoryInput);
+    const category = await this.findOne(id);
+
+    const { id_menu } = updateCategoryInput;
+
+    const menu = await this.menusService.findOne(id_menu);
+
+    delete updateCategoryInput.id_menu;
+
+    const editedCategory = this.CategoryRepository.merge(category, {
+      ...updateCategoryInput,
+      menu
+    });
+
     return await this.CategoryRepository.save(editedCategory);
   }
 
-  async remove(id: number) {
-    const category = await this.CategoryRepository.findOne(id);
-    if (!category)
-      throw new NotFoundException('No hay una categoria con esa ID');
+  async remove(id: number) : Promise<Category> {
+    const category = await this.findOne(id);
     return await this.CategoryRepository.remove(category);
   }
 }

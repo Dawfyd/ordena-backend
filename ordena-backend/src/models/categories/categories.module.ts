@@ -3,9 +3,11 @@ import { CategoriesService } from './categories.service';
 import { CategoriesResolver } from './categories.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
+import { MenusModule } from '../menus/menus.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Category])],
+  imports: [TypeOrmModule.forFeature([Category]),
+  MenusModule],
   providers: [CategoriesResolver, CategoriesService],
   exports: [CategoriesService],
 })

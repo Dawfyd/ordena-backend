@@ -1,12 +1,15 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { VenuesService } from './venues.service';
 import { Venue } from './entities/venue.entity';
 import { CreateVenueInput } from './dto/create-venue.input';
 import { UpdateVenueInput } from './dto/update-venue.input';
+import { Customer } from '../customers/entities/customer.entity';
+import { CustomersService } from '../customers/customers.service';
 
 @Resolver(() => Venue)
 export class VenuesResolver {
-  constructor(private readonly VenuesService: VenuesService) {}
+  constructor(private readonly VenuesService: VenuesService,
+    private readonly customersService: CustomersService) {}
 
   @Mutation(() => Venue)
   createVenue(
@@ -22,7 +25,7 @@ export class VenuesResolver {
   }
 
   @Query(() => Venue, { name: 'venue' })
-  findOne(@Args('id_venue', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => Int }) id: number) {
     return this.VenuesService.findOne(id);
   }
 
@@ -40,5 +43,11 @@ export class VenuesResolver {
   @Mutation(() => Venue)
   removeVenue(@Args('id', { type: () => Int }) id: number) {
     return this.VenuesService.remove(id);
+  }
+
+  @ResolveField()
+  async customer(@Parent() customer: Customer) {
+    const { id_customer } = customer;
+    return this.customersService.findOne(id_customer);
   }
 }

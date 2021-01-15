@@ -3,11 +3,6 @@ import { InputType } from '@nestjs/graphql';
 @InputType()
 export class CreateVenueInput {
   /*
-   * ID de la sede o sucursal
-   */
-  id_venue: number;
-
-  /*
    * Descripcion de la sede o sucursal
    */
   description_venue: string;
@@ -26,4 +21,9 @@ export class CreateVenueInput {
    * Nombre de la sede o sucursal
    */
   name_venue: string;
+
+  /*
+   * ID del cliente
+   */
+  id_customer: number;
 }
