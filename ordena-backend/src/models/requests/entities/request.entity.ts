@@ -2,7 +2,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { Order } from 'src/models/orders/entities/order.entity';
 import { Product } from 'src/models/products/entities/product.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('requests')
 @ObjectType()
@@ -44,6 +44,18 @@ export class Request {
    */
   @Column()
   modifier_request: string;
+
+  /*
+  *fecha cuando se realizo el registro
+  */
+  @CreateDateColumn()
+  created_at: Date;
+
+  /*
+  *fecha cuando se actualiza el registro
+  */
+  @UpdateDateColumn()
+  updated_at: Date;
 
 
   @ManyToOne(

@@ -3,7 +3,7 @@ import { Favorite } from 'src/models/favorites/entities/favorite.entity';
 import { Order } from 'src/models/orders/entities/order.entity';
 import { RolesPerson } from 'src/models/roles-persons/entities/roles-person.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('persons')
 @ObjectType()
@@ -45,6 +45,18 @@ export class Person {
    */
   @Column()
   photo_person: string;
+
+  /*
+  *fecha cuando se realizo el registro
+  */
+  @CreateDateColumn()
+  created_at: Date;
+
+  /*
+  *fecha cuando se actualiza el registro
+  */
+  @UpdateDateColumn()
+  updated_at: Date;
 
    /*
     * ID de la mesa asociada

@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Person } from 'src/models/persons/entities/person.entity';
 import { Role } from 'src/models/roles/entities/role.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('roles_persons')
 @ObjectType()
@@ -18,6 +18,18 @@ export class RolesPerson {
    */
   @Column()
   state_role_person: boolean;
+
+  /*
+  *fecha cuando se realizo el registro
+  */
+  @CreateDateColumn()
+  created_at: Date;
+
+  /*
+  *fecha cuando se actualiza el registro
+  */
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @ManyToOne(
     () => Person, 

@@ -4,7 +4,7 @@ import { Favorite } from 'src/models/favorites/entities/favorite.entity';
 import { Modifier } from 'src/models/modifiers/entities/modifier.entity';
 import { Price } from 'src/models/prices/entities/price.entity';
 import { Request } from 'src/models/requests/entities/request.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('products')
 @ObjectType()
@@ -52,6 +52,18 @@ export class Product {
    */
   @Column()
   code_product: string;
+
+  /*
+  *fecha cuando se realizo el registro
+  */
+  @CreateDateColumn()
+  created_at: Date;
+
+  /*
+  *fecha cuando se actualiza el registro
+  */
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @ManyToOne(
     () => Category, 

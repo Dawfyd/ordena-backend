@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Venue } from 'src/models/venues/entities/venue.entity';
 import { Person } from 'src/models/persons/entities/person.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Order } from 'src/models/orders/entities/order.entity';
 import { Request } from 'src/models/requests/entities/request.entity';
 import { Service } from 'src/models/services/entities/service.entity';
@@ -34,6 +34,18 @@ export class Spot {
    */
   @Column()
   number_spot: number;
+
+  /*
+  *fecha cuando se realizo el registro
+  */
+  @CreateDateColumn()
+  created_at: Date;
+
+  /*
+  *fecha cuando se actualiza el registro
+  */
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @ManyToOne(
     () => Service,
