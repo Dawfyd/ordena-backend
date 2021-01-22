@@ -47,16 +47,13 @@ export class Menu {
   updated_at: Date;
 
   @ManyToOne(
-    () => Venue, 
+    () => Venue,
     (venue: Venue) => venue.menus)
 
   @JoinColumn({name: 'id_venue'})
     venue: Venue;
 
   @OneToMany(
-    (type) => Category, (categories: Category) => categories.menu, {
-    eager: true,
-    cascade: true,
-  })
+    (type) => Category, (categories: Category) => categories.menu)
     categories?: Category[];
 }

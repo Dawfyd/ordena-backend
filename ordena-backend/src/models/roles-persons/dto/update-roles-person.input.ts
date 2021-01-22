@@ -10,9 +10,4 @@ export class UpdateRolesPersonInput extends PartialType(
    * ID de la relacion de rol y persona
    */
   id_role_person: number;
-
-  /*
-   * Estado de la relacion de rol y persona
-   */
-  state_role_person: boolean;
 }

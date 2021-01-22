@@ -21,7 +21,7 @@ export class Category {
   /*
    * ID de la categoria
    */
-  id_category?: number;
+  id_category: number;
 
   /*
    * Descripcion de la sede o sucursal
@@ -55,7 +55,10 @@ export class Category {
 
   @ManyToOne(
     () => Menu, 
-    (menu: Menu) => menu.categories)
+    (menu: Menu) => menu.categories, {
+      eager: true,
+      cascade: true,
+    })
 
   @JoinColumn({name: 'id_menu'})
   menu: Menu;

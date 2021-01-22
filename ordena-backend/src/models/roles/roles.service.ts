@@ -27,17 +27,14 @@ export class RolesService {
     return role;
   }
 
-  async update(id: number, updateRoleInput: UpdateRoleInput) {
-    const role = await this.RoleRepository.findOne(id);
-    if (!role) throw new NotFoundException('No hay un rol con esa ID');
-
-    const editedRole = Object.assign(role, updateRoleInput);
+  async update(id: number, updateRoleInput: UpdateRoleInput): Promise<Role> {
+    const role = await this.findOne(id);
+    const editedRole = this.RoleRepository.merge(role, updateRoleInput);
     return await this.RoleRepository.save(editedRole);
   }
 
-  async remove(id: number) {
-    const role = await this.RoleRepository.findOne(id);
-    if (!role) throw new NotFoundException('No hay un rol con esa ID');
+  async remove(id: number): Promise<Role> {
+    const role = await this.findOne(id);
     return await this.RoleRepository.remove(role);
   }
 }

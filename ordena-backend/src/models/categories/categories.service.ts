@@ -38,6 +38,14 @@ export class CategoriesService {
     return category;
   }
 
+  async findCategories(menu: number): Promise<Category[]> {
+    return await this.CategoryRepository.find({
+      where: {
+        menu
+      }
+    });
+  }
+
   async update(id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category> {
 
     const category = await this.findOne(id);
