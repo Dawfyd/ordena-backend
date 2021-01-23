@@ -20,19 +20,19 @@ export class Menu {
   /*
    * ID del menu
    */
-  id_menu: number;
+  id: number;
 
   /*
    * Nombre del cliente
    */
   @Column()
-  name_menu: string;
+  name: string;
 
   /*
    *  Estado del menu
    */
   @Column()
-  state_menu: boolean;
+  state: boolean;
 
   /*
   *fecha cuando se realizo el registro
@@ -48,9 +48,12 @@ export class Menu {
 
   @ManyToOne(
     () => Venue,
-    (venue: Venue) => venue.menus)
+    (venue: Venue) => venue.menus, {
+      eager: true,
+      cascade: true,
+    })
 
-  @JoinColumn({name: 'id_venue'})
+  @JoinColumn({name: 'venue_id'})
     venue: Venue;
 
   @OneToMany(

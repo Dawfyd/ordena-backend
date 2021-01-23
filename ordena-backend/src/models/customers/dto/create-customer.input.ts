@@ -5,20 +5,20 @@ export class CreateCustomerInput {
   /*
    * Nombre del cliente
    */
-  name_customer: string;
+  name: string;
 
   /*
    *  Email del cliente
    */
-  email_customer: string;
+  email: string;
 
   /*
    * Nit del cliente
    */
-  nit_customer: number;
+  nit: number;
 
   /*
    * Telefono del cliente
    */
-  telephone_customer: number;
+  telephone: number;
 }

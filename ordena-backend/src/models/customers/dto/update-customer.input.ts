@@ -7,5 +7,5 @@ export class UpdateCustomerInput extends PartialType(CreateCustomerInput) {
   /*
    * ID del cliente
    */
-  id_customer: number;
+  id: number;
 }

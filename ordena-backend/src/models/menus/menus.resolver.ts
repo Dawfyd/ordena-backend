@@ -38,7 +38,7 @@ export class MenusResolver {
 
   @Mutation(() => Menu)
   updateMenu(@Args('updateMenuInput') updateMenuInput: UpdateMenuInput) {
-    return this.menusService.update(updateMenuInput.id_menu, updateMenuInput);
+    return this.menusService.update(updateMenuInput.id, updateMenuInput);
   }
 
   @Mutation(() => Menu)
@@ -47,14 +47,8 @@ export class MenusResolver {
   }
 
   @ResolveField()
-  async venue(@Parent() venue: Venue) {
-    const { id_venue } = venue;
-    return this.venuesService.findOne(id_venue);
-  }
-
-  @ResolveField()
   async categories(@Parent() menu: Menu) {
-    const { id_menu } = menu;
-    return this.categoriesService.findCategories(id_menu);
+    const { id } = menu;
+    return this.categoriesService.findCategories(id);
   }
 }

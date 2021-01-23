@@ -5,20 +5,20 @@ export class CreateCategoryInput {
   /*
    * Descripcion de la sede o sucursal
    */
-  name_category: string;
+  name: string;
 
   /*
    *  Ubicacion de la sede o sucursal
    */
-  description_category: string;
+  description: string;
 
   /*
    * Ciudad de la sede o sucursal
    */
-  state_category: boolean;
+  state: boolean;
 
   /*
    * ID del menu al que pertenece
    */
-  id_menu: number
+  menu_id: number
 }

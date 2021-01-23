@@ -8,7 +8,7 @@ import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Menu]),
-  VenuesModule, forwardRef(() => CategoriesModule)],
+  forwardRef(() =>VenuesModule), forwardRef(() => CategoriesModule)],
   providers: [MenusResolver, MenusService],
   exports: [MenusService]
 })

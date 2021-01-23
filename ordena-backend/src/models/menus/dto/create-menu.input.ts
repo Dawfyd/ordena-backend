@@ -5,15 +5,15 @@ export class CreateMenuInput {
   /*
    * Nombre del cliente
    */
-  name_menu: string;
+  name: string;
 
   /*
    *  Estado del menu
    */
-  state_menu: boolean;
+  state: boolean;
 
   /*
    * ID de la sede o sucursal
    */
-  id_venue: number;
+  venue_id: number;
 }

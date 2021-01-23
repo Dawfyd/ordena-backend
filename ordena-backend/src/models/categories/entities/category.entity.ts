@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { AssignedCategory } from 'src/models/assigned-categories/entities/assigned-category.entity';
 import { Menu } from 'src/models/menus/entities/menu.entity';
-import { Product } from 'src/models/products/entities/product.entity';
 import {
   Column,
   CreateDateColumn,
@@ -21,25 +21,25 @@ export class Category {
   /*
    * ID de la categoria
    */
-  id_category: number;
+  id: number;
 
   /*
    * Descripcion de la sede o sucursal
    */
   @Column()
-  name_category: string;
+  name: string;
 
   /*
    *  Ubicacion de la sede o sucursal
    */
   @Column()
-  description_category: string;
+  description: string;
 
   /*
    * Ciudad de la sede o sucursal
    */
   @Column()
-  state_category: boolean;
+  state: boolean;
 
   /*
   *fecha cuando se realizo el registro
@@ -54,19 +54,16 @@ export class Category {
   updated_at: Date;
 
   @ManyToOne(
-    () => Menu, 
+    () => Menu,
     (menu: Menu) => menu.categories, {
       eager: true,
       cascade: true,
     })
 
-  @JoinColumn({name: 'id_menu'})
+  @JoinColumn({name: 'menu_id'})
   menu: Menu;
 
   @OneToMany(
-    (type) => Product, (products: Product) => products.category, {
-    eager: true,
-    cascade: true,
-  })
-  products?: Product[];
+    (type) => AssignedCategory, (assignedCategory: AssignedCategory) => assignedCategory.category)
+    assignedCategories?: AssignedCategory[];
 }

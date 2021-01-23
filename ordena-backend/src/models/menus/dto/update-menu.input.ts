@@ -7,5 +7,5 @@ export class UpdateMenuInput extends PartialType(CreateMenuInput) {
   /*
    * ID del menu
    */
-  id_menu: number;
+  id: number;
 }

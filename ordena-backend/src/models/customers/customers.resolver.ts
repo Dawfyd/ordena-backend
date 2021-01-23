@@ -1,12 +1,14 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { CustomersService } from './customers.service';
 import { Customer } from './entities/customer.entity';
 import { CreateCustomerInput } from './dto/create-customer.input';
 import { UpdateCustomerInput } from './dto/update-customer.input';
+import { VenuesService } from '../venues/venues.service';
 
 @Resolver(() => Customer)
 export class CustomersResolver {
-  constructor(private readonly customersService: CustomersService) {}
+  constructor(private readonly customersService: CustomersService,
+              private readonly venuesService: VenuesService) {}
 
   @Mutation(() => Customer)
   createCustomer(
@@ -30,7 +32,7 @@ export class CustomersResolver {
     @Args('updateCustomerInput') updateCustomerInput: UpdateCustomerInput,
   ) {
     return this.customersService.update(
-      updateCustomerInput.id_customer,
+      updateCustomerInput.id,
       updateCustomerInput,
     );
   }
@@ -38,5 +40,11 @@ export class CustomersResolver {
   @Mutation(() => Customer)
   removeCustomer(@Args('id', { type: () => Int }) id: number) {
     return this.customersService.remove(id);
+  }
+
+  @ResolveField()
+  async venues(@Parent() customer: Customer) {
+    const { id } = customer;
+    return this.venuesService.findVenues(id);
   }
 }
