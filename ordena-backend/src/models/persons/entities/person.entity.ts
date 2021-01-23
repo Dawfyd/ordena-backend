@@ -10,11 +10,10 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 export class Person {
   @PrimaryGeneratedColumn()
   @Field()
-
   /*
    * ID de la persona
    */
-  id_person: number;
+  id: number;
 
   /*
    * Nombre de usuario de la persona
@@ -23,28 +22,22 @@ export class Person {
   username: string;
 
   /*
-   * Contraseña de la persona
-   */
-  @Column()
-  password: string;
-
-  /*
    * Numero de celular de la persona
    */
   @Column()
-  phone_person: number;
+  phone: number;
 
   /*
    * Correo electronico de la persona
    */
   @Column()
-  email_person: string;
+  email: string;
 
   /*
    * URL de la foto de perfil de la persona
    */
   @Column()
-  photo_person: string;
+  photo: string;
 
   /*
   *fecha cuando se realizo el registro
@@ -58,17 +51,17 @@ export class Person {
   @UpdateDateColumn()
   updated_at: Date;
 
-   /*
+  /*
     * ID de la mesa asociada
     */
   @ManyToOne(
-    () => Spot, 
+    () => Spot,
     (spot: Spot) => spot.persons)
 
-  @JoinColumn({name: 'id_spot'})
+  @JoinColumn({name: 'spot_id'})
     spot: Spot;
 
-   /*
+  /*
     * Ordenes pedidas por la persona
     */
   @OneToMany(
@@ -76,23 +69,14 @@ export class Person {
     eager: true,
     cascade: true,
   })
-    orders?: Order[];
 
-   /*
+  orders?: Order[];
+
+  /*
     * Productos favoritos seleccionados por la persona
     */
   @OneToMany(
-    (type) => Favorite, (favorites: Favorite) => favorites.person, {
-    eager: true,
-    cascade: true,
-  })
-    favorites?: Favorite[];
+    (type) => Favorite, (favorites: Favorite) => favorites.person)
 
-  @OneToMany(
-    (type) => RolesPerson, (roles_person: RolesPerson) => roles_person.person, {
-    eager: true,
-    cascade: true,
-  })
-    roles_person?: RolesPerson[];
-
+  favorites?: Favorite[];
 }

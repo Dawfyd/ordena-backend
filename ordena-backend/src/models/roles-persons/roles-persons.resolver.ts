@@ -6,13 +6,11 @@ import { UpdateRolesPersonInput } from './dto/update-roles-person.input';
 import { Role } from '../roles/entities/role.entity';
 import { RolesService } from '../roles/roles.service';
 import { Person } from '../persons/entities/person.entity';
-import { PersonsService } from '../persons/persons.service';
 
 @Resolver(() => RolesPerson)
 export class RolesPersonsResolver {
   constructor(private readonly rolesPersonsService: RolesPersonsService,
-    private readonly rolesService: RolesService,
-    private readonly personsService: PersonsService) {}
+    private readonly rolesService: RolesService) {}
 
   @Mutation(() => RolesPerson)
   createRolesPerson(
@@ -52,11 +50,5 @@ export class RolesPersonsResolver {
   async role(@Parent() role: Role) {
     const { id_role } = role;
     return this.rolesService.findOne(id_role);
-  }
-
-  @ResolveField()
-  async person(@Parent() person: Person) {
-    const { id_person } = person;
-    return this.personsService.findOne(id_person);
   }
 }

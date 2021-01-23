@@ -1,39 +1,34 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateProductInput {
   /*
-   * ID de el producto
+   * Nombre del producto
    */
-  id_product: number;
-
-  /*
-   * Nombre de el producto
-   */
-  name_product: string;
+  name: string;
 
   /*
    * Descripcion del producto
    */
-  description_product: string;
+  description: string;
 
   /*
    * URL de la imagen del producto
    */
-  image_product: string;
+  image: string;
 
   /*
    * Estado del producto
    */
-  state_product: boolean;
+  state: boolean;
 
   /*
    * Tipo: producto o adicion
    */
-  type_product: string;
+  type: string;
 
   /*
-   *  Codigo: producto o adicion
-   */
-  code_product: string;
+  * Tipo de producto
+  */
+  product_type_id: number;
 }

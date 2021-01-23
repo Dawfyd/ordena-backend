@@ -1,14 +1,19 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateFavoriteInput {
   /*
-   * ID del producto favorito
-   */
-  id_favorites: number;
-
-  /*
    * Estado del producto favorito
    */
-  state_favorite: boolean;
+  state: boolean;
+
+  /*
+  * ID del producto al que pertenece
+  */
+  product_id: number;
+
+  /*
+  * ID de la perosna al que pertenece
+  */
+  person_id: number;
 }

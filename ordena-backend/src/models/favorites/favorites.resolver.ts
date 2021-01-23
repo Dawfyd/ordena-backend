@@ -30,7 +30,7 @@ export class FavoritesResolver {
     @Args('updateFavoriteInput') updateFavoriteInput: UpdateFavoriteInput,
   ) {
     return this.favoritesService.update(
-      updateFavoriteInput.id_favorites,
+      updateFavoriteInput.id,
       updateFavoriteInput,
     );
   }

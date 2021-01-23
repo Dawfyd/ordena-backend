@@ -1,10 +1,11 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Category } from 'src/models/categories/entities/category.entity';
+import { AssignedCategory } from 'src/models/assigned-categories/entities/assigned-category.entity';
 import { Favorite } from 'src/models/favorites/entities/favorite.entity';
 import { Modifier } from 'src/models/modifiers/entities/modifier.entity';
 import { Price } from 'src/models/prices/entities/price.entity';
+import { ProductType } from 'src/models/product-types/entities/product-type.entity';
 import { Request } from 'src/models/requests/entities/request.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('products')
 @ObjectType()
@@ -15,43 +16,37 @@ export class Product {
   /*
    * ID de el producto
    */
-  id_product: number;
+  id: number;
 
   /*
    * Nombre de el producto
    */
   @Column()
-  name_product: string;
+  name: string;
 
   /*
    * Descripcion del producto
    */
   @Column()
-  description_product: string;
+  description: string;
 
   /*
    * URL de la imagen del producto
    */
   @Column()
-  image_product: string;
+  image: string;
 
   /*
    * Estado del producto
    */
   @Column()
-  state_product: boolean;
+  state: boolean;
 
   /*
    * Tipo: producto o adicion
    */
   @Column()
-  type_product: string;
-
-  /*
-   *  Codigo: producto o adicion
-   */
-  @Column()
-  code_product: string;
+  type: string;
 
   /*
   *fecha cuando se realizo el registro
@@ -65,32 +60,39 @@ export class Product {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(
-    () => Category, 
-    (category: Category) => category.products)
+  @OneToMany(
+    (type) => AssignedCategory, (assignedCategory: AssignedCategory) => assignedCategory.product)
+  assignedCategories?: AssignedCategory[];
 
-  @JoinColumn({name: 'id_category'})
-  category: Category;
+  @ManyToOne(
+    () => ProductType,
+    (productType: ProductType) => productType.Products,  {
+      eager: true,
+      cascade: true,
+    })
+
+  @JoinColumn({name: 'product_type_id'})
+  productType: ProductType;
 
   @OneToMany(
     (type) => Modifier, (modifiers: Modifier) => modifiers.product, {
     eager: true,
     cascade: true,
   })
-    modifiers?: Modifier[];
+  modifiers?: Modifier[];
 
   @OneToMany(
     (type) => Price, (prices: Price) => prices.product, {
     eager: true,
     cascade: true,
   })
-    prices?: Price[];
+  prices?: Price[];
 
   @OneToMany(
     (type) => Request, (requests: Request) => requests.product)
-    requests?: Request[];
+  requests?: Request[];
 
   @OneToMany(
     (type) => Favorite, (favorites: Favorite) => favorites.product)
-    favorites?: Favorite[];
+  favorites?: Favorite[];
 }

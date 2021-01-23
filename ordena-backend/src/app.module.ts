@@ -21,6 +21,8 @@ import { PersonsModule } from './models/persons/persons.module';
 import { FavoritesModule } from './models/favorites/favorites.module';
 import { RolesPersonsModule } from './models/roles-persons/roles-persons.module';
 import { ServicesModule } from './models/services/services.module';
+import { AssignedCategoriesModule } from './models/assigned-categories/assigned-categories.module';
+import { ProductTypesModule } from './models/product-types/product-types.module';
 
 import appConfig from './config/app.config';
 import appConfigSchema from './config/app.config.schema';
@@ -50,6 +52,8 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
     FavoritesModule,
     RolesPersonsModule,
     ServicesModule,
+    AssignedCategoriesModule,
+    ProductTypesModule,
 
     GraphQLModule.forRoot({
       autoSchemaFile: true,

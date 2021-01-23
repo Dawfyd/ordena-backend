@@ -7,10 +7,5 @@ export class UpdateFavoriteInput extends PartialType(CreateFavoriteInput) {
   /*
    * ID del producto favorito
    */
-  id_favorites: number;
-
-  /*
-   * Estado del producto favorito
-   */
-  state_favorite: boolean;
+  id: number;
 }

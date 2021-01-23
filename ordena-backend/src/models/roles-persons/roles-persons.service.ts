@@ -41,8 +41,8 @@ export class RolesPersonsService {
 
     const newRolesPerson = this.RolesPersonRepository.create({
       ...createRolesPersonInput,
-      person,
-      role
+      //person,
+      //role
     });
 
     return await this.RolesPersonRepository.save(newRolesPerson);
@@ -86,8 +86,8 @@ export class RolesPersonsService {
 
     const editedRolesPerson = this.RolesPersonRepository.merge(role_person, {
       ...updateRolesPersonInput,
-      person,
-      role
+      //person,
+      //role
     });
 
     return await this.RolesPersonRepository.save(editedRolesPerson);
