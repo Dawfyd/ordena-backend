@@ -1,12 +1,7 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateRoleInput {
-  /*
-   * ID del rol
-   */
-  id_role: number;
-
   /*
    * Nombre del rol
    */

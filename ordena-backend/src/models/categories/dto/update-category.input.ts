@@ -8,5 +8,5 @@ export class UpdateCategoryInput extends PartialType(CreateCategoryInput) {
   /*
    * ID de la categoria
    */
-  id_category: number;
+  id: number;
 }

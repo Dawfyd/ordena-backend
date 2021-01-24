@@ -13,11 +13,13 @@ import { CreateMenuInput } from './dto/create-menu.input';
 import { UpdateMenuInput } from './dto/update-menu.input';
 import { Venue } from '../venues/entities/venue.entity';
 import { VenuesService } from '../venues/venues.service';
+import { CategoriesService } from '../categories/categories.service';
 
 @Resolver(() => Menu)
 export class MenusResolver {
   constructor(private readonly menusService: MenusService,
-    private readonly venuesService: VenuesService) {}
+    private readonly venuesService: VenuesService,
+    private readonly categoriesService: CategoriesService) {}
 
   @Mutation(() => Menu)
   createMenu(@Args('createMenuInput') createMenuInput: CreateMenuInput) {
@@ -36,7 +38,7 @@ export class MenusResolver {
 
   @Mutation(() => Menu)
   updateMenu(@Args('updateMenuInput') updateMenuInput: UpdateMenuInput) {
-    return this.menusService.update(updateMenuInput.id_menu, updateMenuInput);
+    return this.menusService.update(updateMenuInput.id, updateMenuInput);
   }
 
   @Mutation(() => Menu)
@@ -45,8 +47,8 @@ export class MenusResolver {
   }
 
   @ResolveField()
-  async venue(@Parent() venue: Venue) {
-    const { id_venue } = venue;
-    return this.venuesService.findOne(id_venue);
+  async categories(@Parent() menu: Menu) {
+    const { id } = menu;
+    return this.categoriesService.findCategories(id);
   }
 }

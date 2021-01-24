@@ -15,10 +15,10 @@ export class MenusService {
   ) {}
 
   async create(createMenuInput: CreateMenuInput): Promise<Menu> {
-    const { id_venue } = createMenuInput;
+    const { venue_id } = createMenuInput;
 
-    const venue = await this.venuesService.findOne(id_venue);
-    delete createMenuInput.id_venue;
+    const venue = await this.venuesService.findOne(venue_id);
+    delete createMenuInput.venue_id;
     const newMenu = this.MenuRepository.create({
       ...createMenuInput,
       venue
@@ -31,6 +31,14 @@ export class MenusService {
     return await this.MenuRepository.find();
   }
 
+  async findMenus(venue: number): Promise<Menu[]> {
+    return await this.MenuRepository.find({
+      where: {
+        venue
+      }
+    });
+  }
+
   async findOne(id: number): Promise<Menu> {
     const menu = await this.MenuRepository.findOne(id);
     if (!menu) throw new NotFoundException('No hay un menu con esa ID');
@@ -40,10 +48,10 @@ export class MenusService {
   async update(id: number, updateMenuInput: UpdateMenuInput): Promise<Menu> {
     const menu = await this.findOne(id);
 
-    const { id_venue } = updateMenuInput;
+    const { venue_id } = updateMenuInput;
 
-    const venue = await this.venuesService.findOne(id_venue);
-    delete updateMenuInput.id_venue;
+    const venue = await this.venuesService.findOne(venue_id);
+    delete updateMenuInput.venue_id;
     const editedMenu = this.MenuRepository.merge(menu, {
       ...updateMenuInput,
       venue

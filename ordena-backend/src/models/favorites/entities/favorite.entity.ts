@@ -12,13 +12,13 @@ export class Favorite {
   /*
    * ID del producto favorito
    */
-  id_favorites: number;
+  id: number;
 
   /*
    * Estado del producto favorito
    */
   @Column()
-  state_favorite: boolean;
+  state: boolean;
 
   /*
   *fecha cuando se realizo el registro
@@ -33,16 +33,22 @@ export class Favorite {
   updated_at: Date;
 
   @ManyToOne(
-    () => Product, 
-    (product: Product) => product.favorites)
+    () => Product,
+    (product: Product) => product.favorites,  {
+      eager: true,
+      cascade: true,
+    })
 
-  @JoinColumn({name: 'id_product'})
-    product: Product;
+  @JoinColumn({name: 'product_id'})
+  product: Product;
 
   @ManyToOne(
-    () => Person, 
-    (person: Person) => person.favorites)
+    () => Person,
+    (person: Person) => person.favorites, {
+      eager: true,
+      cascade: true,
+    })
 
-  @JoinColumn({name: 'id_person'})
+  @JoinColumn({name: 'person_id'})
     person: Person;
 }

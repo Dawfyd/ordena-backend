@@ -1,12 +1,16 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { RolesPersonsService } from './roles-persons.service';
 import { RolesPerson } from './entities/roles-person.entity';
 import { CreateRolesPersonInput } from './dto/create-roles-person.input';
 import { UpdateRolesPersonInput } from './dto/update-roles-person.input';
+import { Role } from '../roles/entities/role.entity';
+import { RolesService } from '../roles/roles.service';
+import { Person } from '../persons/entities/person.entity';
 
 @Resolver(() => RolesPerson)
 export class RolesPersonsResolver {
-  constructor(private readonly rolesPersonsService: RolesPersonsService) {}
+  constructor(private readonly rolesPersonsService: RolesPersonsService,
+    private readonly rolesService: RolesService) {}
 
   @Mutation(() => RolesPerson)
   createRolesPerson(
@@ -40,5 +44,11 @@ export class RolesPersonsResolver {
   @Mutation(() => RolesPerson)
   removeRolesPerson(@Args('id', { type: () => Int }) id: number) {
     return this.rolesPersonsService.remove(id);
+  }
+
+  @ResolveField()
+  async role(@Parent() role: Role) {
+    const { id_role } = role;
+    return this.rolesService.findOne(id_role);
   }
 }

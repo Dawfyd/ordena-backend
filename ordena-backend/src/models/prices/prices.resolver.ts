@@ -26,7 +26,7 @@ export class PricesResolver {
   @Mutation(() => Price)
   updatePrice(@Args('updatePriceInput') updatePriceInput: UpdatePriceInput) {
     return this.pricesService.update(
-      updatePriceInput.id_price,
+      updatePriceInput.id,
       updatePriceInput,
     );
   }

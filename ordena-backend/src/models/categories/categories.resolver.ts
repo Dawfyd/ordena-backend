@@ -3,13 +3,12 @@ import { CategoriesService } from './categories.service';
 import { Category } from './entities/category.entity';
 import { CreateCategoryInput } from './dto/create-category.input';
 import { UpdateCategoryInput } from './dto/update-category.input';
-import { Menu } from '../menus/entities/menu.entity';
-import { MenusService } from '../menus/menus.service';
+import { AssignedCategoriesService } from '../assigned-categories/assigned-categories.service';
 
 @Resolver(() => Category)
 export class CategoriesResolver {
   constructor(private readonly categoriesService: CategoriesService,
-    private readonly menusService: MenusService) {}
+    private readonly assignedCategoriesService: AssignedCategoriesService) {}
 
   @Mutation(() => Category)
   createCategory(
@@ -33,7 +32,7 @@ export class CategoriesResolver {
     @Args('updateCategoryInput') updateCategoryInput: UpdateCategoryInput,
   ) {
     return this.categoriesService.update(
-      updateCategoryInput.id_category,
+      updateCategoryInput.id,
       updateCategoryInput,
     );
   }
@@ -44,8 +43,8 @@ export class CategoriesResolver {
   }
 
   @ResolveField()
-  async menu(@Parent() menu: Menu) {
-    const { id_menu } = menu;
-    return this.menusService.findOne(id_menu);
+  async assignedCategories(@Parent() category: Category) {
+    const { id } = category;
+    return this.assignedCategoriesService.findProductsCategory(id);
   }
 }

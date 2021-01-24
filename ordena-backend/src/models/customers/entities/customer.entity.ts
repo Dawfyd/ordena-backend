@@ -11,31 +11,31 @@ export class Customer {
   /*
    * ID del cliente
    */
-  id_customer: number;
+  id: number;
 
   /*
    * Nombre del cliente
    */
   @Column()
-  name_customer: string;
+  name: string;
 
   /*
    *  Email del cliente
    */
   @Column()
-  email_customer: string;
+  email: string;
 
   /*
    * Nit del cliente
    */
   @Column()
-  nit_customer: number;
+  nit: number;
 
   /*
-   * Telefono del cliente
+   * Numero de celular del cliente
    */
   @Column()
-  telephone_customer: number;
+  phone: number;
 
   /*
   *fecha cuando se realizo el registro
@@ -50,10 +50,6 @@ export class Customer {
   updated_at: Date;
 
   @OneToMany(
-    (type) => Venue, (venues: Venue) => venues.customer, {
-      eager: true,
-      cascade: true,
-    })
-
+    (type) => Venue, (venues: Venue) => venues.customer)
     venues?: Venue[];
 }

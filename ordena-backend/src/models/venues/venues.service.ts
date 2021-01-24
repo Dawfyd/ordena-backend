@@ -18,11 +18,11 @@ export class VenuesService {
   async create(
     createVenueInput: CreateVenueInput,
   ): Promise<Venue> {
-    const { id_customer } = createVenueInput
+    const { customer_id } = createVenueInput
 
-    const customer = await this.customersService.findOne(id_customer);
+    const customer = await this.customersService.findOne(customer_id);
 
-    delete createVenueInput.id_customer;
+    delete createVenueInput.customer_id;
 
     const newVenue = this.VenueRepository.create({
       ...createVenueInput,
@@ -43,13 +43,21 @@ export class VenuesService {
     return venue;
   }
 
+  async findVenues(customer: number): Promise<Venue[]> {
+    return await this.VenueRepository.find({
+      where: {
+        customer
+      }
+    });
+  }
+
   async update(id: number, updateVenueInput: UpdateVenueInput): Promise<Venue> {
     const venue = await this.findOne(id);
 
-    const { id_customer } = updateVenueInput;
+    const { customer_id } = updateVenueInput;
 
-    const customer = await this.customersService.findOne(id_customer);
-    delete updateVenueInput.id_customer;
+    const customer = await this.customersService.findOne(customer_id);
+    delete updateVenueInput.customer_id;
     const editedVenue = this.VenueRepository.merge(venue,{
       ...updateVenueInput,
       customer

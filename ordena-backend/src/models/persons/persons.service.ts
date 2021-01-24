@@ -28,16 +28,13 @@ export class PersonsService {
   }
 
   async update(id: number, updatePersonInput: UpdatePersonInput) {
-    const person = await this.PersonRepository.findOne(id);
-    if (!person) throw new NotFoundException('No hay una persona con esa ID');
-
-    const editedPerson = Object.assign(person, updatePersonInput);
+    const person = await this.findOne(id);
+    const editedPerson = this.PersonRepository.merge(person, updatePersonInput);
     return await this.PersonRepository.save(editedPerson);
   }
 
   async remove(id: number) {
-    const person = await this.PersonRepository.findOne(id);
-    if (!person) throw new NotFoundException('No hay una persona con esa ID');
+    const person = await this.findOne(id);
     return await this.PersonRepository.remove(person);
   }
 }

@@ -3,27 +3,22 @@ import { InputType } from '@nestjs/graphql';
 @InputType()
 export class CreateCustomerInput {
   /*
-   * ID del cliente
-   */
-  id_customer: number;
-
-  /*
    * Nombre del cliente
    */
-  name_customer: string;
+  name: string;
 
   /*
    *  Email del cliente
    */
-  email_customer: string;
+  email: string;
 
   /*
    * Nit del cliente
    */
-  nit_customer: number;
+  nit: number;
 
   /*
-   * Telefono del cliente
+   * Numero de celular  del cliente
    */
-  telephone_customer: number;
+  phone: number;
 }

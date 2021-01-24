@@ -27,17 +27,15 @@ export class CustomersService {
     return customer;
   }
 
-  async update(id: number, updateCustomerInput: UpdateCustomerInput) {
-    const customer = await this.CustomerRepository.findOne(id);
-    if (!customer) throw new NotFoundException('No hay un cliente con esa ID');
+  async update(id: number, updateCustomerInput: UpdateCustomerInput): Promise<Customer> {
+    const customer = await this.findOne(id);
 
-    const editedCustomer = Object.assign(customer, updateCustomerInput);
+    const editedCustomer = this.CustomerRepository.merge(customer, updateCustomerInput);
     return await this.CustomerRepository.save(editedCustomer);
   }
 
-  async remove(id: number) {
-    const customer = await this.CustomerRepository.findOne(id);
-    if (!customer) throw new NotFoundException('No hay un cliente con esa ID');
+  async remove(id: number): Promise<Customer> {
+    const customer = await this.findOne(id);
     return await this.CustomerRepository.remove(customer);
   }
 }

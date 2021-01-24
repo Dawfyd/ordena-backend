@@ -3,13 +3,12 @@ import { VenuesService } from './venues.service';
 import { Venue } from './entities/venue.entity';
 import { CreateVenueInput } from './dto/create-venue.input';
 import { UpdateVenueInput } from './dto/update-venue.input';
-import { Customer } from '../customers/entities/customer.entity';
-import { CustomersService } from '../customers/customers.service';
+import { MenusService } from '../menus/menus.service';
 
 @Resolver(() => Venue)
 export class VenuesResolver {
   constructor(private readonly VenuesService: VenuesService,
-    private readonly customersService: CustomersService) {}
+              private readonly menusServices: MenusService) {}
 
   @Mutation(() => Venue)
   createVenue(
@@ -35,7 +34,7 @@ export class VenuesResolver {
     updateVenueInput: UpdateVenueInput,
   ) {
     return this.VenuesService.update(
-      updateVenueInput.id_venue,
+      updateVenueInput.id,
       updateVenueInput,
     );
   }
@@ -46,8 +45,8 @@ export class VenuesResolver {
   }
 
   @ResolveField()
-  async customer(@Parent() customer: Customer) {
-    const { id_customer } = customer;
-    return this.customersService.findOne(id_customer);
+  async menus(@Parent() venue: Venue) {
+    const { id } = venue;
+    return this.menusServices.findMenus(id);
   }
 }

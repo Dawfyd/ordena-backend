@@ -15,10 +15,9 @@ export class CategoriesService {
   ) {}
 
   async create(createCategoryInput: CreateCategoryInput): Promise<Category> {
-    const { id_menu } = createCategoryInput;
+    const { menu_id } = createCategoryInput;
 
-    const menu = await this.menusService.findOne(id_menu);
-    delete createCategoryInput.id_menu;
+    const menu = await this.menusService.findOne(menu_id);
     const newCategory = this.CategoryRepository.create({
       ...createCategoryInput,
       menu
@@ -38,16 +37,21 @@ export class CategoriesService {
     return category;
   }
 
+  async findCategories(menu: number): Promise<Category[]> {
+    return await this.CategoryRepository.find({
+      where: {
+        menu
+      }
+    });
+  }
+
   async update(id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category> {
 
     const category = await this.findOne(id);
 
-    const { id_menu } = updateCategoryInput;
+    const { menu_id } = updateCategoryInput;
 
-    const menu = await this.menusService.findOne(id_menu);
-
-    delete updateCategoryInput.id_menu;
-
+    const menu = await this.menusService.findOne(menu_id);
     const editedCategory = this.CategoryRepository.merge(category, {
       ...updateCategoryInput,
       menu

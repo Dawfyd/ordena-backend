@@ -15,31 +15,31 @@ export class Venue {
   /*
    * ID de la sede o sucursal
    */
-  id_venue: number;
-
-  /*
-   * Descripcion de la sede o sucursal
-   */
-  @Column()
-  description_venue: string;
-
-  /*
-   * Ubicacion de la sede o sucursal
-   */
-  @Column()
-  location_venue: string;
-
-  /*
-   * Ciudad de la sede o sucursal
-   */
-  @Column()
-  city_venue: string;
+  id: number;
 
   /*
    * Nombre de la sede o sucursal
    */
   @Column()
-  name_venue: string;
+  name: string;
+
+  /*
+   * Descripcion de la sede o sucursal
+   */
+  @Column()
+  description: string;
+
+  /*
+   * Ubicacion de la sede o sucursal
+   */
+  @Column()
+  location: string;
+
+  /*
+   * Ciudad de la sede o sucursal
+   */
+  @Column()
+  city: string;
 
   /*
   *fecha cuando se realizo el registro
@@ -55,16 +55,16 @@ export class Venue {
 
   @ManyToOne(
     () => Customer,
-    (customer: Customer) => customer.venues)
-
-  @JoinColumn({name: 'id_customer'})
-    customer: Customer;
-
-  @OneToMany(
-    (type) => Menu, (menus: Menu) => menus.venue, {
+    (customer: Customer) => customer.venues, {
       eager: true,
       cascade: true,
     })
+
+  @JoinColumn({name: 'customer_id'})
+    customer: Customer;
+
+  @OneToMany(
+    (type) => Menu, (menus: Menu) => menus.venue)
 
     menus?: Menu[];
 

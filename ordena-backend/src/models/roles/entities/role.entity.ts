@@ -42,15 +42,16 @@ export class Role {
    * ID de la sede
    */
   @ManyToOne(
-    () => Venue, 
+    () => Venue,
     (venue: Venue) => venue.roles)
 
   @JoinColumn({name: 'id_venue'})
   venue: Venue;
 
   @OneToMany(
-    (type) => RolesPerson, (roles_person: RolesPerson) => roles_person.role)
-  
+    (type) => RolesPerson, (roles_person: RolesPerson) => roles_person.role, {
+      eager: true,
+      cascade: true,
+    })
     roles_person?: RolesPerson[];
-
 }

@@ -11,13 +11,13 @@ export class Price {
   /*
    * ID del precio
    */
-  id_price: number;
+  id: number;
 
   /*
    * Valor o precio
    */
   @Column()
-  value_price: number;
+  value: number;
 
   /*
    * Moneda del precio
@@ -29,7 +29,7 @@ export class Price {
    * Numero de opcion del precio
    */
   @Column()
-  option_price: number;
+  option: number;
 
   /*
   *fecha cuando se realizo el registro
@@ -45,8 +45,11 @@ export class Price {
 
   @ManyToOne(
     () => Product, 
-    (product: Product) => product.prices)
+    (product: Product) => product.prices,{
+      eager: true,
+      cascade: true
+    })
 
-  @JoinColumn({name: 'id_product'})
+  @JoinColumn({name: 'product_id'})
     product: Product;
 }

@@ -9,5 +9,5 @@ export class UpdateVenueInput extends PartialType(
   /*
    * ID de la sede o sucursal
    */
-  id_venue: number;
+  id: number;
 }

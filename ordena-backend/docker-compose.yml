@@ -1,15 +1,17 @@
-version: '3.1'
 services:
-  database:
-    image: mysql:5.7
-    volumes:
-      - './.mysql-data/db:/var/lib/mysql'
-    restart: always
+  db:
+    image: postgres
+    restart: 'no'
     ports:
-      - 3306:3306
+      - '5432:5432'
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: test
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-
+      POSTGRES_PASSWORD: toor
+      POSTGRES_DB: ordena
+  test-db:
+    image: postgres
+    restart: 'no'
+    ports:
+      - '5433:5432' # Note the 5433 port (since we are using 5432 for our regular db)
+    environment:
+      POSTGRES_PASSWORD: toor
+      POSTGRES_DB: ordena
