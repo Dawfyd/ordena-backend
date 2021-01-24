@@ -32,10 +32,10 @@ export class Customer {
   nit: number;
 
   /*
-   * Telefono del cliente
+   * Numero de celular del cliente
    */
   @Column()
-  telephone: number;
+  phone: number;
 
   /*
   *fecha cuando se realizo el registro

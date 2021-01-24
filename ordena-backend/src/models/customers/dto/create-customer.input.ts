@@ -18,7 +18,7 @@ export class CreateCustomerInput {
   nit: number;
 
   /*
-   * Telefono del cliente
+   * Numero de celular  del cliente
    */
-  telephone: number;
+  phone: number;
 }
