@@ -6,12 +6,16 @@ import { Product } from './entities/product.entity';
 import { FavoritesModule } from '../favorites/favorites.module';
 import { AssignedCategoriesModule } from '../assigned-categories/assigned-categories.module';
 import { ProductTypesModule } from '../product-types/product-types.module';
+import { PricesModule } from '../prices/prices.module';
+import { ModifiersModule } from '../modifiers/modifiers.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product]),
   forwardRef(() => FavoritesModule),
   forwardRef(() => AssignedCategoriesModule),
-  forwardRef(() => ProductTypesModule)],
+  forwardRef(() => ProductTypesModule),
+  forwardRef(() => PricesModule),
+  forwardRef(() => ModifiersModule)],
   providers: [ProductsResolver, ProductsService],
   exports: [ProductsService]
 })

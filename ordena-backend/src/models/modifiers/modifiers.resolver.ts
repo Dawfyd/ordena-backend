@@ -30,7 +30,7 @@ export class ModifiersResolver {
     @Args('updateModifierInput') updateModifierInput: UpdateModifierInput,
   ) {
     return this.modifiersService.update(
-      updateModifierInput.id_modifier,
+      updateModifierInput.id,
       updateModifierInput,
     );
   }

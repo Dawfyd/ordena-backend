@@ -11,43 +11,43 @@ export class Modifier {
   /*
    * ID del modificador
    */
-  id_modifier: number;
+  id: number;
 
   /*
    * Nombre del modificador
    */
   @Column()
-  name_modifier: string;
+  name: string;
 
   /*
    *  Estado del modificador
    */
   @Column()
-  state_modifier: string;
+  state: string;
 
   /*
    * Opcion del modificador, es opcional(true) o excluyente(false)
    */
   @Column()
-  optional_modifier: boolean;
+  optional: boolean;
 
   /*
    * tipo del modificador, A (todos) , C(categoria) , P(producto)
    */
   @Column()
-  type_modifier: string;
+  type: string;
 
   /*
    * Codigo del modificador, IDs de la categoria o productos
    */
   @Column()
-  code_modifier: string;
+  code: string;
 
   /*
    * Opciones del modificador excluyente, si optional_modifier es (false)
    */
   @Column()
-  string_modifier_option: string;
+  option: number;
 
   /*
   *fecha cuando se realizo el registro
@@ -62,9 +62,12 @@ export class Modifier {
   updated_at: Date;
 
   @ManyToOne(
-    () => Product, 
-    (product: Product) => product.modifiers)
+    () => Product,
+    (product: Product) => product.modifiers,{
+      eager: true,
+      cascade: true
+    })
 
-  @JoinColumn({name: 'id_product'})
+  @JoinColumn({name: 'product_id'})
     product: Product;
 }

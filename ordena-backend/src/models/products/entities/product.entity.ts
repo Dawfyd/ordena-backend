@@ -75,17 +75,11 @@ export class Product {
   productType: ProductType;
 
   @OneToMany(
-    (type) => Modifier, (modifiers: Modifier) => modifiers.product, {
-    eager: true,
-    cascade: true,
-  })
+    (type) => Modifier, (modifiers: Modifier) => modifiers.product)
   modifiers?: Modifier[];
 
   @OneToMany(
-    (type) => Price, (prices: Price) => prices.product, {
-    eager: true,
-    cascade: true,
-  })
+    (type) => Price, (prices: Price) => prices.product)
   prices?: Price[];
 
   @OneToMany(

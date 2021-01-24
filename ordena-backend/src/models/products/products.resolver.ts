@@ -5,12 +5,16 @@ import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 import { FavoritesService } from '../favorites/favorites.service';
 import { AssignedCategoriesService } from '../assigned-categories/assigned-categories.service';
+import { PricesService } from '../prices/prices.service';
+import { ModifiersService } from '../modifiers/modifiers.service';
 
 @Resolver(() => Product)
 export class ProductsResolver {
   constructor(private readonly productsService: ProductsService,
     private readonly favoritesService: FavoritesService,
-    private readonly assignedCategoriesService: AssignedCategoriesService) {}
+    private readonly assignedCategoriesService: AssignedCategoriesService,
+    private readonly pricesService: PricesService,
+    private readonly modifiersService: ModifiersService) {}
 
   @Mutation(() => Product)
   createProduct(
@@ -55,4 +59,17 @@ export class ProductsResolver {
     const { id } = product;
     return this.assignedCategoriesService.findCategoriesProduct(id);
   }
+
+  @ResolveField()
+  async prices(@Parent() product: Product) {
+    const { id } = product;
+    return this.pricesService.findPriceProduct(id)
+  }
+
+  @ResolveField()
+  async modifiers(@Parent() product: Product) {
+    const { id } = product;
+    return this.modifiersService.findModifierProduct(id)
+  }
+
 }
