@@ -23,6 +23,7 @@ import { RolesPersonsModule } from './models/roles-persons/roles-persons.module'
 import { ServicesModule } from './models/services/services.module';
 import { AssignedCategoriesModule } from './models/assigned-categories/assigned-categories.module';
 import { ProductTypesModule } from './models/product-types/product-types.module';
+import { AssignedProductsModule } from './models/assigned-products/assigned-products.module';
 
 import appConfig from './config/app.config';
 import appConfigSchema from './config/app.config.schema';
@@ -37,23 +38,6 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
       load: [appConfig],
       validationSchema: appConfigSchema
     }),
-    CustomersModule,
-    VenuesModule,
-    MenusModule,
-    CategoriesModule,
-    ProductsModule,
-    ModifiersModule,
-    PricesModule,
-    RequestsModule,
-    OrdersModule,
-    SpotsModule,
-    RolesModule,
-    PersonsModule,
-    FavoritesModule,
-    RolesPersonsModule,
-    ServicesModule,
-    AssignedCategoriesModule,
-    ProductTypesModule,
 
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -72,7 +56,26 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
         autoLoadEntities: true,
         synchronize: process.env.NODE_ENV !== 'production'
       })
-    })
+    }),
+
+    CustomersModule,
+    VenuesModule,
+    MenusModule,
+    CategoriesModule,
+    ProductsModule,
+    ModifiersModule,
+    PricesModule,
+    RequestsModule,
+    OrdersModule,
+    SpotsModule,
+    RolesModule,
+    PersonsModule,
+    FavoritesModule,
+    RolesPersonsModule,
+    ServicesModule,
+    AssignedCategoriesModule,
+    ProductTypesModule,
+    AssignedProductsModule
   ],
   controllers: [AppController],
   providers: [AppService],

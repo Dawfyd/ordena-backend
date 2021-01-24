@@ -7,6 +7,7 @@ import { FavoritesService } from '../favorites/favorites.service';
 import { AssignedCategoriesService } from '../assigned-categories/assigned-categories.service';
 import { PricesService } from '../prices/prices.service';
 import { ModifiersService } from '../modifiers/modifiers.service';
+import { AssignedProductsService } from '../assigned-products/assigned-products.service';
 
 @Resolver(() => Product)
 export class ProductsResolver {
@@ -14,7 +15,8 @@ export class ProductsResolver {
     private readonly favoritesService: FavoritesService,
     private readonly assignedCategoriesService: AssignedCategoriesService,
     private readonly pricesService: PricesService,
-    private readonly modifiersService: ModifiersService) {}
+    private readonly modifiersService: ModifiersService,
+    private readonly assignedProductsService: AssignedProductsService) {}
 
   @Mutation(() => Product)
   createProduct(
@@ -72,4 +74,14 @@ export class ProductsResolver {
     return this.modifiersService.findModifierProduct(id)
   }
 
+  async parentProducts(@Parent() product: Product) {
+    const { id } = product;
+    return this.assignedProductsService.findProductsParent(id);
+  }
+
+  @ResolveField()
+  async assignedProducts(@Parent() product: Product) {
+    const { id } = product;
+    return this.assignedProductsService.findProductsAssigned(id);
+  }
 }

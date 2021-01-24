@@ -8,6 +8,7 @@ import { AssignedCategoriesModule } from '../assigned-categories/assigned-catego
 import { ProductTypesModule } from '../product-types/product-types.module';
 import { PricesModule } from '../prices/prices.module';
 import { ModifiersModule } from '../modifiers/modifiers.module';
+import { AssignedProductsModule } from '../assigned-products/assigned-products.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product]),
@@ -15,7 +16,8 @@ import { ModifiersModule } from '../modifiers/modifiers.module';
   forwardRef(() => AssignedCategoriesModule),
   forwardRef(() => ProductTypesModule),
   forwardRef(() => PricesModule),
-  forwardRef(() => ModifiersModule)],
+  forwardRef(() => ModifiersModule),
+  forwardRef(() => AssignedProductsModule)],
   providers: [ProductsResolver, ProductsService],
   exports: [ProductsService]
 })
