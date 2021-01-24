@@ -7,5 +7,8 @@ export default Joi.object({
         DATABASE_PORT: Joi.number().default(5432),
         DATABASE_USER: Joi.required(),
         DATABASE_PASSWORD: Joi.required(),
-        DATABASE_NAME: Joi.required()
+        DATABASE_NAME: Joi.required(),
+
+    /* PORT APP */
+        PORT: Joi.required()
     });
