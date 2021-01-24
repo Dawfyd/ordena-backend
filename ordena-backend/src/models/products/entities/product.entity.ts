@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { AssignedCategory } from 'src/models/assigned-categories/entities/assigned-category.entity';
+import { AssignedProduct } from 'src/models/assigned-products/entities/assigned-product.entity';
 import { Favorite } from 'src/models/favorites/entities/favorite.entity';
 import { Modifier } from 'src/models/modifiers/entities/modifier.entity';
 import { Price } from 'src/models/prices/entities/price.entity';
@@ -63,6 +64,14 @@ export class Product {
   @OneToMany(
     (type) => AssignedCategory, (assignedCategory: AssignedCategory) => assignedCategory.product)
   assignedCategories?: AssignedCategory[];
+
+  @OneToMany(
+    (type) => AssignedProduct, (assignedProduct: AssignedProduct) => assignedProduct.parent)
+    parentProducts?: AssignedProduct[];
+
+  @OneToMany(
+    (type) => AssignedProduct, (assignedProduct: AssignedProduct) => assignedProduct.assigned)
+    assignedProducts?: AssignedProduct[];
 
   @ManyToOne(
     () => ProductType,
