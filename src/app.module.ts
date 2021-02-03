@@ -1,8 +1,9 @@
 import * as path from 'path';
 import { ConfigModule } from '@nestjs/config';
-import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLModule, GraphQLSchemaHost } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
+import { applyMiddleware } from 'graphql-middleware';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -24,6 +25,7 @@ import { ServicesModule } from './models/services/services.module';
 import { AssignedCategoriesModule } from './models/assigned-categories/assigned-categories.module';
 import { ProductTypesModule } from './models/product-types/product-types.module';
 import { AssignedProductsModule } from './models/assigned-products/assigned-products.module';
+import {permission} from './permissions/permissions';
 
 import appConfig from './config/app.config';
 import appConfigSchema from './config/app.config.schema';
@@ -43,6 +45,10 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
       autoSchemaFile: true,
       playground: true,
       introspection: true,
+      transformSchema: (schema: GraphQLSchemaHost["schema"]) => {
+      schema = applyMiddleware(schema, permission.permissions);
+      return schema;
+  }
     }),
 
     TypeOrmModule.forRootAsync({
