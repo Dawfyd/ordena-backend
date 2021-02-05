@@ -10,7 +10,7 @@ export class CreatePersonInput {
   /*
    * Numero de celular de la persona
    */
-  phone: number;
+  phone: string;
 
   /*
    * Correo electronico de la persona
@@ -21,4 +21,9 @@ export class CreatePersonInput {
    * URL de la foto de perfil de la persona
    */
   photo: string;
+
+  /*
+   * Contraseña de la persona
+   */
+  password: string;
 }

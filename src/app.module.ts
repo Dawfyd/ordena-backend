@@ -16,14 +16,14 @@ import { PricesModule } from './models/prices/prices.module';
 import { RequestsModule } from './models/requests/requests.module';
 import { OrdersModule } from './models/orders/orders.module';
 import { SpotsModule } from './models/spots/spots.module';
-import { RolesModule } from './models/roles/roles.module';
 import { PersonsModule } from './models/persons/persons.module';
 import { FavoritesModule } from './models/favorites/favorites.module';
-import { RolesPersonsModule } from './models/roles-persons/roles-persons.module';
 import { ServicesModule } from './models/services/services.module';
 import { AssignedCategoriesModule } from './models/assigned-categories/assigned-categories.module';
 import { ProductTypesModule } from './models/product-types/product-types.module';
 import { AssignedProductsModule } from './models/assigned-products/assigned-products.module';
+import { BasicAclModule } from './common/integrations/basic-acl/basic-acl.module';
+import { ParametersModule } from './models/parameters/parameters.module';
 
 import appConfig from './config/app.config';
 import appConfigSchema from './config/app.config.schema';
@@ -68,14 +68,14 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
     RequestsModule,
     OrdersModule,
     SpotsModule,
-    RolesModule,
     PersonsModule,
     FavoritesModule,
-    RolesPersonsModule,
     ServicesModule,
     AssignedCategoriesModule,
     ProductTypesModule,
-    AssignedProductsModule
+    AssignedProductsModule,
+    BasicAclModule,
+    ParametersModule
   ],
   controllers: [AppController],
   providers: [AppService],
