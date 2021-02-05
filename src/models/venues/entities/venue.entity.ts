@@ -1,7 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Customer } from 'src/models/customers/entities/customer.entity';
 import { Menu } from 'src/models/menus/entities/menu.entity';
-import { Role } from 'src/models/roles/entities/role.entity';
 import { Service } from 'src/models/services/entities/service.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
@@ -75,14 +74,6 @@ export class Venue {
     })
 
     spots?: Spot[];
-
-  @OneToMany(
-    (type) => Role, (roles: Role) => roles.venue, {
-      eager: true,
-      cascade: true,
-    })
-
-    roles?: Role[];
 
   @OneToMany(
     (type) => Service, (service: Service) => service.venue, {
