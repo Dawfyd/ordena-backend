@@ -1,7 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Favorite } from 'src/models/favorites/entities/favorite.entity';
 import { Order } from 'src/models/orders/entities/order.entity';
-import { RolesPerson } from 'src/models/roles-persons/entities/roles-person.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
@@ -24,13 +23,13 @@ export class Person {
   /*
    * Numero de celular de la persona
    */
-  @Column()
-  phone: number;
+  @Column({ unique: true })
+  phone: string;
 
   /*
    * Correo electronico de la persona
    */
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   /*
@@ -38,6 +37,12 @@ export class Person {
    */
   @Column()
   photo: string;
+
+  /*
+   * Identificador unico de la persona asociado con el ACL
+   */
+  @Column()
+  authUid: string
 
   /*
   *fecha cuando se realizo el registro

@@ -4,6 +4,8 @@ import { Person } from './entities/person.entity';
 import { CreatePersonInput } from './dto/create-person.input';
 import { UpdatePersonInput } from './dto/update-person.input';
 import { FavoritesService } from '../favorites/favorites.service';
+import { SendForgottenPasswordEmailInput } from './dto/send-forgotten-password-email-input';
+import { ChangePasswordInput } from './dto/change-password-input';
 
 @Resolver(() => Person)
 export class PersonsResolver {
@@ -11,10 +13,24 @@ export class PersonsResolver {
     private readonly favoritesService: FavoritesService) {}
 
   @Mutation(() => Person)
-  createPerson(
+  createAdminPerson(
     @Args('createPersonInput') createPersonInput: CreatePersonInput,
   ) {
-    return this.personsService.create(createPersonInput);
+    return this.personsService.createAdmin(createPersonInput);
+  }
+
+  @Mutation(() => Person)
+  createWaiterPerson(
+    @Args('createPersonInput') createPersonInput: CreatePersonInput,
+  ) {
+    return this.personsService.createWaiter(createPersonInput);
+  }
+
+  @Mutation(() => Person)
+  createCustomerPerson(
+    @Args('createPersonInput') createPersonInput: CreatePersonInput,
+  ) {
+    return this.personsService.createCustomer(createPersonInput);
   }
 
   @Query(() => [Person], { name: 'persons' })
@@ -40,6 +56,20 @@ export class PersonsResolver {
   @Mutation(() => Person)
   removePerson(@Args('id', { type: () => Int }) id: number) {
     return this.personsService.remove(id);
+  }
+
+  @Mutation(() => Person)
+  sendForgottenPasswordEmail(
+    @Args('sendForgottenPasswordEmailInput') sendForgottenPasswordEmailInput: SendForgottenPasswordEmailInput,
+  ) {
+    return this.personsService.sendForgottenPasswordEmail(sendForgottenPasswordEmailInput);
+  }
+
+  @Mutation(() => Person)
+  changePassword(
+    @Args('changePasswordInput') changePasswordInput: ChangePasswordInput,
+  ) {
+    return this.personsService.changePassword(changePasswordInput);
   }
 
   @ResolveField()

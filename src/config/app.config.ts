@@ -15,5 +15,12 @@ export default registerAs('config', () => ({
         user: process.env.DATABASE_USER,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME
+    },
+    acl: {
+        baseUrl: process.env.BASIC_ACL_BASE_URL,
+        companyUuid: process.env.BASIC_ACL_COMPANY_UUID,
+        email: process.env.BASIC_ACL_ADMIN_EMAIL,
+        password: process.env.BASIC_ACL_ADMIN_PASSWORD,
+        projectCode: process.env.BASIC_ACL_PROJECT_CODE
     }
 }));

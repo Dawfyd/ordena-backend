@@ -10,5 +10,12 @@ export default Joi.object({
         DATABASE_NAME: Joi.required(),
 
     /* PORT APP */
-        PORT: Joi.required()
+        PORT: Joi.required(),
+
+    /* BASIC ACL */
+        BASIC_ACL_BASE_URL: Joi.required(),
+        BASIC_ACL_COMPANY_UUID: Joi.required(),
+        BASIC_ACL_ADMIN_EMAIL: Joi.required(),
+        BASIC_ACL_ADMIN_PASSWORD: Joi.required(),
+        BASIC_ACL_PROJECT_CODE: Joi.required()
     });
