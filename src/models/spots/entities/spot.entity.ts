@@ -71,9 +71,9 @@ export class Spot {
 
   @OneToMany(
     (type) => Person, (persons: Person) => persons.spot, {
-    eager: true,
-    cascade: true,
-  })
+      eager: true,
+      cascade: true
+    })
     persons?: Person[];
 
 }

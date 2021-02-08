@@ -45,10 +45,10 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
       autoSchemaFile: true,
       playground: true,
       introspection: true,
-      transformSchema: (schema: GraphQLSchemaHost["schema"]) => {
-      schema = applyMiddleware(schema, permission.permissions);
-      return schema;
-  }
+      transformSchema: (schema: GraphQLSchemaHost['schema']) => {
+        schema = applyMiddleware(schema, permission.permissions);
+        return schema;
+      }
     }),
 
     TypeOrmModule.forRootAsync({
@@ -84,6 +84,6 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
     ParametersModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}

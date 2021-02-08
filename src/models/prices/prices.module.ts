@@ -7,7 +7,7 @@ import { ProductsModule } from '../products/products.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Price]),
-  forwardRef(() => ProductsModule)],
+    forwardRef(() => ProductsModule)],
   providers: [PricesResolver, PricesService],
   exports: [PricesService]
 })

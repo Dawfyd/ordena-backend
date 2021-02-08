@@ -50,7 +50,7 @@ export class Menu {
     () => Venue,
     (venue: Venue) => venue.menus, {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'venue_id'})

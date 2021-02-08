@@ -9,8 +9,8 @@ import { ParametersModule } from '../parameters/parameters.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Person]),
-  forwardRef(() => FavoritesModule),
-  BasicAclModule, ParametersModule],
+    forwardRef(() => FavoritesModule),
+    BasicAclModule, ParametersModule],
   providers: [PersonsResolver, PersonsService],
   exports: [PersonsService]
 })

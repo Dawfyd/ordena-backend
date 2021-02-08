@@ -71,9 +71,9 @@ export class Person {
     */
   @OneToMany(
     (type) => Order, (orders: Order) => orders.person, {
-    eager: true,
-    cascade: true,
-  })
+      eager: true,
+      cascade: true
+    })
 
   orders?: Order[];
 

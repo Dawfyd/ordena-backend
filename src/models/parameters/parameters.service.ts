@@ -15,15 +15,15 @@ export class ParametersService {
 
   async create(createParameterInput: CreateParameterInput): Promise<Parameter> {
     const name = createParameterInput.name
-                .trim()
-                .toUpperCase()
-                .split(' ')
-                .join('_');
+      .trim()
+      .toUpperCase()
+      .split(' ')
+      .join('_');
 
     const parameter = await this.findOneName(name);
 
     if(parameter) {
-      throw new HttpException("El parametro ingresado ya existe en el sistema", HttpStatus.PRECONDITION_FAILED);
+      throw new HttpException('El parametro ingresado ya existe en el sistema', HttpStatus.PRECONDITION_FAILED);
     }
 
     const newParameter = this.ParameterRepository.create({
@@ -44,7 +44,7 @@ export class ParametersService {
     return parameter;
   }
 
-  async findOneName(name: String): Promise<Parameter> {
+  async findOneName(name: string): Promise<Parameter> {
     const parameter = await this.ParameterRepository.findOne({
       where: {
         name
@@ -61,15 +61,15 @@ export class ParametersService {
 
     if(name) {
       name = name
-            .trim()
-            .toUpperCase()
-            .split(' ')
-            .join('_');
+        .trim()
+        .toUpperCase()
+        .split(' ')
+        .join('_');
 
       const result = await this.findOneName(name);
 
       if(result) {
-        throw new HttpException("El parametro ingresado ya existe en el sistema", HttpStatus.PRECONDITION_FAILED);
+        throw new HttpException('El parametro ingresado ya existe en el sistema', HttpStatus.PRECONDITION_FAILED);
       }
     }
 

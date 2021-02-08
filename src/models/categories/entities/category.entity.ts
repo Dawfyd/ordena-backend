@@ -9,7 +9,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
 
 @Entity('categories')
@@ -57,7 +57,7 @@ export class Category {
     () => Menu,
     (menu: Menu) => menu.categories, {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'menu_id'})

@@ -20,7 +20,7 @@ export class CreateRequestInput {
   /*
    * Estado del pedido - 1: solicitado - 2: registrado - 3: servido - 4:pagado 
    */
-  state_request: number = 1;
+  state_request = 1;
 
   /*
    * Asociacion con producto si es una adicion
