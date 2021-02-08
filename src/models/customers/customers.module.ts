@@ -7,7 +7,7 @@ import { VenuesModule } from '../venues/venues.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Customer]),
-  forwardRef(() => VenuesModule)],
+    forwardRef(() => VenuesModule)],
   providers: [CustomersResolver, CustomersService],
   exports: [CustomersService]
 })

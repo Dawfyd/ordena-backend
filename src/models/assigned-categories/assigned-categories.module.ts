@@ -8,8 +8,8 @@ import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AssignedCategory]),
-  forwardRef(() => ProductsModule),
-  forwardRef(() => CategoriesModule)],
+    forwardRef(() => ProductsModule),
+    forwardRef(() => CategoriesModule)],
   providers: [AssignedCategoriesResolver, AssignedCategoriesService],
   exports: [AssignedCategoriesService]
 })

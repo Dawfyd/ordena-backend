@@ -12,12 +12,12 @@ import { AssignedProductsModule } from '../assigned-products/assigned-products.m
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product]),
-  forwardRef(() => FavoritesModule),
-  forwardRef(() => AssignedCategoriesModule),
-  forwardRef(() => ProductTypesModule),
-  forwardRef(() => PricesModule),
-  forwardRef(() => ModifiersModule),
-  forwardRef(() => AssignedProductsModule)],
+    forwardRef(() => FavoritesModule),
+    forwardRef(() => AssignedCategoriesModule),
+    forwardRef(() => ProductTypesModule),
+    forwardRef(() => PricesModule),
+    forwardRef(() => ModifiersModule),
+    forwardRef(() => AssignedProductsModule)],
   providers: [ProductsResolver, ProductsService],
   exports: [ProductsService]
 })

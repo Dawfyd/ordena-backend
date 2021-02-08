@@ -8,9 +8,9 @@ import { AssignedCategoriesModule } from '../assigned-categories/assigned-catego
 
 @Module({
   imports: [TypeOrmModule.forFeature([Category]),
-  forwardRef(() =>MenusModule),
-  forwardRef(() => AssignedCategoriesModule)],
+    forwardRef(() =>MenusModule),
+    forwardRef(() => AssignedCategoriesModule)],
   providers: [CategoriesResolver, CategoriesService],
-  exports: [CategoriesService],
+  exports: [CategoriesService]
 })
 export class CategoriesModule {}

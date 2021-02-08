@@ -57,9 +57,9 @@ export class Order {
 
   @OneToMany(
     (type) => Request, (requests: Request) => requests.order, {
-    eager: true,
-    cascade: true,
-  })
+      eager: true,
+      cascade: true
+    })
     requests?: Request[];
 
 }

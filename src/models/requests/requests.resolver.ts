@@ -13,7 +13,7 @@ export class RequestsResolver {
   @Mutation(() => Request)
   createRequest(
     @Args('createRequestInput')
-    createRequestInput: CreateRequestInput,
+      createRequestInput: CreateRequestInput,
   ) {
     return this.RequestsService.create(createRequestInput);
   }
@@ -31,7 +31,7 @@ export class RequestsResolver {
   @Mutation(() => Request)
   updateRequest(
     @Args('updateRequestInput')
-    updateRequestInput: UpdateRequestInput,
+      updateRequestInput: UpdateRequestInput,
   ) {
     return this.RequestsService.update(
       updateRequestInput.id_request,

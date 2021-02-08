@@ -7,7 +7,7 @@ describe('FavoritesResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FavoritesResolver, FavoritesService],
+      providers: [FavoritesResolver, FavoritesService]
     }).compile();
 
     resolver = module.get<FavoritesResolver>(FavoritesResolver);

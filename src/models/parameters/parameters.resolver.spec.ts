@@ -7,7 +7,7 @@ describe('ParametersResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ParametersResolver, ParametersService],
+      providers: [ParametersResolver, ParametersService]
     }).compile();
 
     resolver = module.get<ParametersResolver>(ParametersResolver);

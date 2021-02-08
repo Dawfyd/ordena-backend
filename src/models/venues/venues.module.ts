@@ -8,8 +8,8 @@ import { MenusModule } from '../menus/menus.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Venue]),
-  forwardRef(() => CustomersModule),
-  forwardRef(() => MenusModule)],
+    forwardRef(() => CustomersModule),
+    forwardRef(() => MenusModule)],
   providers: [VenuesResolver, VenuesService],
   exports: [VenuesService]
 })
