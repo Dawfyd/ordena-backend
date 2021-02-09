@@ -27,6 +27,17 @@ export class ProductTypesService {
     return productType;
   }
 
+  async findOneCode(code: string): Promise<ProductType> {
+    const productType = await this.ProductTypeRepository.findOne({
+      where: {
+        code
+      }
+    });
+
+    if (!productType) throw new NotFoundException('No hay un tipo de producto con ese código');
+    return productType;
+  }
+
   async update(id: number, updateProductTypeInput: UpdateProductTypeInput): Promise<ProductType> {
     const productType = await this.findOne(id);
 

@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
+import { ParametersService } from '../parameters/parameters.service';
 import { ProductsService } from '../products/products.service';
+import { CreateAssignedCategoryMenuInput } from './dto/create-assigned-category-menu.input';
 import { CreateAssignedCategoryInput } from './dto/create-assigned-category.input';
 import { UpdateAssignedCategoryInput } from './dto/update-assigned-category.input';
 import { AssignedCategory } from './entities/assigned-category.entity';
@@ -14,12 +16,24 @@ export class AssignedCategoriesService {
     private readonly AssignedCategoryRepository: Repository<AssignedCategory>,
     private readonly productsService: ProductsService,
     private readonly categoriesService: CategoriesService,
+    private readonly parametersService: ParametersService
   ) {}
 
-  async create(createAssignedCategoryInput: CreateAssignedCategoryInput): Promise<AssignedCategory> {
+  async assingCategoryToCategoryProduct(createAssignedCategoryInput: CreateAssignedCategoryInput): Promise<AssignedCategory> {
+    const productTypeCategory = await this.parametersService.findOneName("PRODUCT_TYPE_ASSIGNED_CATEGORIES");
+
+    if(!productTypeCategory){
+      throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_CATEGORIES".');
+    }
+
     const { product_id, category_id } = createAssignedCategoryInput;
 
     const product = await this.productsService.findOne(product_id);
+
+    if(productTypeCategory.value !== product.productType.code){
+      throw new PreconditionFailedException(`Solo se pueden asignar productos de tipo ${productTypeCategory.value}`);
+    }
+
     const category = await this.categoriesService.findOne(category_id);
 
     const newAssignedCategory = this.AssignedCategoryRepository.create({
@@ -28,6 +42,34 @@ export class AssignedCategoriesService {
     });
 
     return await this.AssignedCategoryRepository.save(newAssignedCategory);
+  }
+
+  async assingCategoriesToMenuProduct(createAssignedCategoryMenuInput: CreateAssignedCategoryMenuInput): Promise<String> {
+    const productTypeMenu = await this.parametersService.findOneName("PRODUCT_TYPE_MENUS");
+
+    if(!productTypeMenu){
+      throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_MENUS".');
+    }
+
+    const { product_id } = createAssignedCategoryMenuInput;
+
+    const product = await this.productsService.findOne(product_id);
+
+    if(productTypeMenu.value !== product.productType.code ){
+      throw new PreconditionFailedException(`Solo se pueden asignar productos de tipo ${productTypeMenu.value}`);
+    }
+
+    const categories = await this.categoriesService.findAll();
+
+    const data =  categories.map(category => ({category, product}));
+
+    await this.AssignedCategoryRepository.createQueryBuilder()
+    .insert()
+    .into(AssignedCategory)
+    .values(data)
+    .execute();
+
+    return "OK";
   }
 
   async findAll(): Promise<AssignedCategory[]> {
