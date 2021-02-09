@@ -13,7 +13,7 @@ export class AssignedProduct {
    */
   id: number;
 
-    /*
+  /*
     *fecha cuando se realizo el registro
     */
   @CreateDateColumn()
@@ -29,7 +29,7 @@ export class AssignedProduct {
     () => Product,
     (product: Product) => product.assignedProducts,  {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'parent_id'})
@@ -39,7 +39,7 @@ export class AssignedProduct {
     () => Product,
     (product: Product) => product.assignedProducts,  {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'assigned_id'})

@@ -36,7 +36,7 @@ export class Favorite {
     () => Product,
     (product: Product) => product.favorites,  {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'product_id'})
@@ -46,7 +46,7 @@ export class Favorite {
     () => Person,
     (person: Person) => person.favorites, {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'person_id'})

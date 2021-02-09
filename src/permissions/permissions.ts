@@ -1,6 +1,6 @@
 import { rule, shield } from 'graphql-shield';
 class Permission {
-    // Permissions
+  // Permissions
   isAllowed = rule() (async (parent, args, ctx, info) => {
     return true;
   });
@@ -96,11 +96,11 @@ class Permission {
       removeSpot: this.isAllowed,
       createService: this.isAllowed,
       updateService: this.isAllowed,
-      removeService: this.isAllowed,
+      removeService: this.isAllowed
     }
   },
   {
-    allowExternalErrors: true,
+    allowExternalErrors: true
   });
 }
 

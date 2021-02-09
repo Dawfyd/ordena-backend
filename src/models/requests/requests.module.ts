@@ -6,6 +6,6 @@ import { Request } from './entities/request.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Request])],
-  providers: [RequestsResolver, RequestsService],
+  providers: [RequestsResolver, RequestsService]
 })
 export class RequestsModule {}

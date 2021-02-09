@@ -20,17 +20,17 @@ export class PersonsService {
 
   async createAdmin(createPersonInput: CreatePersonInput): Promise<Person> {
 
-    const admin = await this.parametersService.findOneName("ADMIN_ROLE");
+    const admin = await this.parametersService.findOneName('ADMIN_ROLE');
 
     if(!admin){
       throw new PreconditionFailedException('El parametro para identificar el código del rol (admin) debe estar configurado.');
     }
 
     const user = await this.basicAclService.createUser(
-        createPersonInput.email,
-        createPersonInput.password,
-        createPersonInput.phone,
-        admin.value
+      createPersonInput.email,
+      createPersonInput.password,
+      createPersonInput.phone,
+      admin.value
     );
 
     try {
@@ -48,17 +48,17 @@ export class PersonsService {
 
   async createWaiter(createPersonInput: CreatePersonInput): Promise<Person> {
 
-    const admin = await this.parametersService.findOneName("WAITER_ROLE");
+    const admin = await this.parametersService.findOneName('WAITER_ROLE');
 
     if(!admin){
       throw new PreconditionFailedException('El parametro para identificar el código del rol (waiter) debe estar configurado.');
     }
 
     const user = await this.basicAclService.createUser(
-        createPersonInput.email,
-        createPersonInput.password,
-        createPersonInput.phone,
-        admin.value
+      createPersonInput.email,
+      createPersonInput.password,
+      createPersonInput.phone,
+      admin.value
     );
 
     try {
@@ -76,17 +76,17 @@ export class PersonsService {
 
   async createCustomer(createPersonInput: CreatePersonInput): Promise<Person> {
 
-    const admin = await this.parametersService.findOneName("CUSTOMER_ROLE");
+    const admin = await this.parametersService.findOneName('CUSTOMER_ROLE');
 
     if(!admin){
       throw new PreconditionFailedException('El parametro para identificar el código del rol (customer) debe estar configurado.');
     }
 
     const user = await this.basicAclService.createUser(
-        createPersonInput.email,
-        createPersonInput.password,
-        createPersonInput.phone,
-        admin.value
+      createPersonInput.email,
+      createPersonInput.password,
+      createPersonInput.phone,
+      admin.value
     );
 
     try {

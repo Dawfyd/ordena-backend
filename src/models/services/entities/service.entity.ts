@@ -34,9 +34,9 @@ export class Service {
 
   @OneToMany(
     (type) => Spot, (spots: Spot) => spots.service, {
-    eager: true,
-    cascade: true,
-  })
+      eager: true,
+      cascade: true
+    })
   spots?: Spot[];
 
   @ManyToOne(

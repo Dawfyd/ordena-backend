@@ -6,6 +6,6 @@ import { Spot } from './entities/spot.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Spot])],
-  providers: [SpotsResolver, SpotsService],
+  providers: [SpotsResolver, SpotsService]
 })
 export class SpotsModule {}

@@ -37,7 +37,7 @@ export class PricesService {
       where: {
         product
       }
-    })
+    });
   }
 
   async update(id: number, updatePriceInput: UpdatePriceInput) {
@@ -45,7 +45,7 @@ export class PricesService {
 
     const { product_id } = updatePriceInput;
 
-    const product = await this.productsService.findOne(product_id)
+    const product = await this.productsService.findOne(product_id);
     const editedPrice = this.PriceRepository.merge(price, {...updatePriceInput, product});
     return await this.PriceRepository.save(editedPrice);
   }

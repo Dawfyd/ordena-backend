@@ -30,7 +30,7 @@ export class AssignedCategory {
     () => Category,
     (category: Category) => category.assignedCategories,  {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'category_id'})
@@ -40,7 +40,7 @@ export class AssignedCategory {
     () => Product,
     (product: Product) => product.assignedCategories,  {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'product_id'})

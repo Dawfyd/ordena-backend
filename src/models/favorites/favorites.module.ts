@@ -8,8 +8,8 @@ import { ProductsModule } from '../products/products.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Favorite]),
-  forwardRef(() => PersonsModule),
-  forwardRef(() => ProductsModule)],
+    forwardRef(() => PersonsModule),
+    forwardRef(() => ProductsModule)],
   providers: [FavoritesResolver, FavoritesService],
   exports: [FavoritesService]
 })

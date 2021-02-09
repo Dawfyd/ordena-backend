@@ -86,13 +86,13 @@ export class ProductsResolver {
   @ResolveField()
   async prices(@Parent() product: Product) {
     const { id } = product;
-    return this.pricesService.findPriceProduct(id)
+    return this.pricesService.findPriceProduct(id);
   }
 
   @ResolveField()
   async modifiers(@Parent() product: Product) {
     const { id } = product;
-    return this.modifiersService.findModifierProduct(id)
+    return this.modifiersService.findModifierProduct(id);
   }
 
   @ResolveField()

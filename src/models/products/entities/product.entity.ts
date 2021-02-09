@@ -77,7 +77,7 @@ export class Product {
     () => ProductType,
     (productType: ProductType) => productType.Products,  {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'product_type_id'})

@@ -7,7 +7,7 @@ describe('MenusResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MenusResolver, MenusService],
+      providers: [MenusResolver, MenusService]
     }).compile();
 
     resolver = module.get<MenusResolver>(MenusResolver);

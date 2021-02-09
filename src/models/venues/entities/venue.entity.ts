@@ -56,7 +56,7 @@ export class Venue {
     () => Customer,
     (customer: Customer) => customer.venues, {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'customer_id'})
@@ -70,7 +70,7 @@ export class Venue {
   @OneToMany(
     (type) => Spot, (spots: Spot) => spots.venue, {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
     spots?: Spot[];
@@ -78,7 +78,7 @@ export class Venue {
   @OneToMany(
     (type) => Service, (service: Service) => service.venue, {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
     services?: Service[];
