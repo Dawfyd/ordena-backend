@@ -4,7 +4,7 @@ import { Product } from 'src/models/products/entities/product.entity';
 import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 
 @Entity('assigned_categories')
-@Unique("uk_assigned_categories", ["category", "product"])
+@Unique('uk_assigned_categories', ['category', 'product'])
 @ObjectType()
 export class AssignedCategory {
   @PrimaryGeneratedColumn()

@@ -17,13 +17,13 @@ export class AssignedProductsService {
   ) {}
 
   async assingProductToProduct(createAssignedProductInput: CreateAssignedProductInput): Promise<AssignedProduct> {
-    const productTypeProduct = await this.parametersService.findOneName("PRODUCT_TYPE_ASSIGNED_PRODUCTS");
+    const productTypeProduct = await this.parametersService.findOneName('PRODUCT_TYPE_ASSIGNED_PRODUCTS');
 
     if(!productTypeProduct){
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_PRODUCTS".');
     }
 
-    const productTypePure = await this.parametersService.findOneName("PRODUCT_TYPE_PURE");
+    const productTypePure = await this.parametersService.findOneName('PRODUCT_TYPE_PURE');
 
     if(!productTypePure){
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_PURE".');

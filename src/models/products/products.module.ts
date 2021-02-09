@@ -13,13 +13,13 @@ import { ParametersModule } from '../parameters/parameters.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product]),
-  forwardRef(() => FavoritesModule),
-  forwardRef(() => AssignedCategoriesModule),
-  forwardRef(() => ProductTypesModule),
-  forwardRef(() => PricesModule),
-  forwardRef(() => ModifiersModule),
-  forwardRef(() => AssignedProductsModule),
-  ParametersModule],
+    forwardRef(() => FavoritesModule),
+    forwardRef(() => AssignedCategoriesModule),
+    forwardRef(() => ProductTypesModule),
+    forwardRef(() => PricesModule),
+    forwardRef(() => ModifiersModule),
+    forwardRef(() => AssignedProductsModule),
+    ParametersModule],
   providers: [ProductsResolver, ProductsService],
   exports: [ProductsService]
 })

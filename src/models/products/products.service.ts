@@ -17,7 +17,7 @@ export class ProductsService {
   ) {}
 
   async createMenuProduct(createProductInput: CreateProductInput): Promise<Product> {
-    const productTypeMenu = await this.parametersService.findOneName("PRODUCT_TYPE_MENUS");
+    const productTypeMenu = await this.parametersService.findOneName('PRODUCT_TYPE_MENUS');
 
     if(!productTypeMenu){
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_MENUS".');
@@ -34,7 +34,7 @@ export class ProductsService {
   }
 
   async createCategoryProduct(createProductInput: CreateProductInput): Promise<Product> {
-    const productTypeCategory = await this.parametersService.findOneName("PRODUCT_TYPE_ASSIGNED_CATEGORIES");
+    const productTypeCategory = await this.parametersService.findOneName('PRODUCT_TYPE_ASSIGNED_CATEGORIES');
 
     if(!productTypeCategory){
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_CATEGORIES".');
@@ -51,7 +51,7 @@ export class ProductsService {
   }
 
   async createPureProduct(createProductInput: CreateProductInput): Promise<Product> {
-    const productTypePure= await this.parametersService.findOneName("PRODUCT_TYPE_PURE");
+    const productTypePure= await this.parametersService.findOneName('PRODUCT_TYPE_PURE');
 
     if(!productTypePure){
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_PURE".');
@@ -68,7 +68,7 @@ export class ProductsService {
   }
 
   async createProductAssignedProduct(createProductInput: CreateProductInput): Promise<Product> {
-    const productTypeProduct = await this.parametersService.findOneName("PRODUCT_TYPE_ASSIGNED_PRODUCTS");
+    const productTypeProduct = await this.parametersService.findOneName('PRODUCT_TYPE_ASSIGNED_PRODUCTS');
 
     if(!productTypeProduct){
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_PRODUCTS".');

@@ -10,9 +10,9 @@ import { ProductTypesModule } from '../product-types/product-types.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AssignedCategory]),
-  ProductsModule,
-  forwardRef(() => CategoriesModule),
-  ParametersModule],
+    ProductsModule,
+    forwardRef(() => CategoriesModule),
+    ParametersModule],
   providers: [AssignedCategoriesResolver, AssignedCategoriesService],
   exports: [AssignedCategoriesService]
 })

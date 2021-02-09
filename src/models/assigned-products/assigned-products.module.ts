@@ -8,8 +8,8 @@ import { ParametersModule } from '../parameters/parameters.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AssignedProduct]),
-  forwardRef(() => ProductsModule),
-  ParametersModule],
+    forwardRef(() => ProductsModule),
+    ParametersModule],
   providers: [AssignedProductsResolver, AssignedProductsService],
   exports: [AssignedProductsService]
 })

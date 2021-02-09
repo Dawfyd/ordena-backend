@@ -20,7 +20,7 @@ export class AssignedCategoriesService {
   ) {}
 
   async assingCategoryToCategoryProduct(createAssignedCategoryInput: CreateAssignedCategoryInput): Promise<AssignedCategory> {
-    const productTypeCategory = await this.parametersService.findOneName("PRODUCT_TYPE_ASSIGNED_CATEGORIES");
+    const productTypeCategory = await this.parametersService.findOneName('PRODUCT_TYPE_ASSIGNED_CATEGORIES');
 
     if(!productTypeCategory){
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_CATEGORIES".');
@@ -44,8 +44,8 @@ export class AssignedCategoriesService {
     return await this.AssignedCategoryRepository.save(newAssignedCategory);
   }
 
-  async assingCategoriesToMenuProduct(createAssignedCategoryMenuInput: CreateAssignedCategoryMenuInput): Promise<String> {
-    const productTypeMenu = await this.parametersService.findOneName("PRODUCT_TYPE_MENUS");
+  async assingCategoriesToMenuProduct(createAssignedCategoryMenuInput: CreateAssignedCategoryMenuInput): Promise<string> {
+    const productTypeMenu = await this.parametersService.findOneName('PRODUCT_TYPE_MENUS');
 
     if(!productTypeMenu){
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_MENUS".');
@@ -64,12 +64,12 @@ export class AssignedCategoriesService {
     const data =  categories.map(category => ({category, product}));
 
     await this.AssignedCategoryRepository.createQueryBuilder()
-    .insert()
-    .into(AssignedCategory)
-    .values(data)
-    .execute();
+      .insert()
+      .into(AssignedCategory)
+      .values(data)
+      .execute();
 
-    return "OK";
+    return 'OK';
   }
 
   async findAll(): Promise<AssignedCategory[]> {
