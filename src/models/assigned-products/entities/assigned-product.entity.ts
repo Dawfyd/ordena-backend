@@ -1,8 +1,9 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Product } from 'src/models/products/entities/product.entity';
-import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 
 @Entity('assigned_products')
+@Unique('uk_assigned_products', ['parent', 'assigned'])
 @ObjectType()
 export class AssignedProduct {
   @PrimaryGeneratedColumn()

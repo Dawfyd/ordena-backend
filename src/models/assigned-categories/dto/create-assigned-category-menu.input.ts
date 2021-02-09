@@ -1,12 +1,7 @@
 import { InputType } from '@nestjs/graphql';
 
 @InputType()
-export class CreateAssignedCategoryInput {
-  /*
-   * ID de la categoria al que pertenece
-   */
-  category_id: number;
-
+export class CreateAssignedCategoryMenuInput {
   /*
    * ID del producto al que pertenece
    */
