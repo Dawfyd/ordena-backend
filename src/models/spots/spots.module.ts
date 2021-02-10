@@ -10,10 +10,10 @@ import { RequestsModule } from '../requests/requests.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Spot]),
-  forwardRef(() => VenuesModule ),
-  forwardRef(()=> CustomerAssignedSpotsModule),
-  forwardRef(() => OrdersModule),
-  forwardRef(() => RequestsModule)],
+    forwardRef(() => VenuesModule ),
+    forwardRef(()=> CustomerAssignedSpotsModule),
+    forwardRef(() => OrdersModule),
+    forwardRef(() => RequestsModule)],
   providers: [SpotsResolver, SpotsService],
   exports: [SpotsService]
 })

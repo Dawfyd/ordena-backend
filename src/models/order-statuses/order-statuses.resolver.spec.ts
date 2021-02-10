@@ -7,7 +7,7 @@ describe('OrderStatusesResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OrderStatusesResolver, OrderStatusesService],
+      providers: [OrderStatusesResolver, OrderStatusesService]
     }).compile();
 
     resolver = module.get<OrderStatusesResolver>(OrderStatusesResolver);

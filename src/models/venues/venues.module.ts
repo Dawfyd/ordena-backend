@@ -11,11 +11,11 @@ import { AssignedVenuesModule } from '../assigned-venues/assigned-venues.module'
 
 @Module({
   imports: [TypeOrmModule.forFeature([Venue]),
-  forwardRef(() => CompaniesModule),
-  forwardRef(() => MenusModule),
-  forwardRef(() => SpotsModule),
-  forwardRef(() => AssignedVenuesModule)
-],
+    forwardRef(() => CompaniesModule),
+    forwardRef(() => MenusModule),
+    forwardRef(() => SpotsModule),
+    forwardRef(() => AssignedVenuesModule)
+  ],
   providers: [VenuesResolver, VenuesService],
   exports: [VenuesService]
 })

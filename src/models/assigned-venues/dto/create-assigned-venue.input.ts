@@ -2,7 +2,7 @@ import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateAssignedVenueInput {
- /*
+  /*
  * ID de la sede al que pertenece
  */
   venue_id: number;

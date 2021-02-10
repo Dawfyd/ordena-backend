@@ -13,7 +13,7 @@ export class VenuesResolver {
               private readonly menusServices: MenusService,
               private readonly spotsService: SpotsService,
               private readonly assignedVenuesService: AssignedVenuesService
-              ) {}
+  ) {}
 
   @Mutation(() => Venue)
   createVenue(

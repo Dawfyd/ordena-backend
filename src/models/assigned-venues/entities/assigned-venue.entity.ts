@@ -3,7 +3,7 @@ import { Person } from 'src/models/persons/entities/person.entity';
 import { Venue } from 'src/models/venues/entities/venue.entity';
 import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity("assigned_Venue")
+@Entity('assigned_Venue')
 @ObjectType()
 export class AssignedVenue {
   @PrimaryGeneratedColumn()

@@ -52,7 +52,7 @@ export class OrdersService {
       where: {
         orderStatus
       }
-    })
+    });
   }
 
   async findSpotOrder(spot: number): Promise<Order[]> {
@@ -60,7 +60,7 @@ export class OrdersService {
       where: {
         spot
       }
-    })
+    });
   }
 
   async update(id: number, updateOrderInput: UpdateOrderInput) {

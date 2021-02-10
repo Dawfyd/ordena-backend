@@ -32,7 +32,7 @@ export class ModifiersPerRequestService {
 
   async findOne(id: number) {
     const modifiersPerRequest = await this.ModifiersPerRequestRepository.findOne(id);
-    if(!modifiersPerRequest) throw new NotFoundException('no hay solicitud por modificador con este id')
+    if(!modifiersPerRequest) throw new NotFoundException('no hay solicitud por modificador con este id');
     return modifiersPerRequest;
   }
 
@@ -41,7 +41,7 @@ export class ModifiersPerRequestService {
       where: {
         modifier
       }
-    })
+    });
   }
 
   async findRequestModifiersPerRequest(request: number): Promise<ModifiersPerRequest[]> {
@@ -49,7 +49,7 @@ export class ModifiersPerRequestService {
       where: {
         request
       }
-    })
+    });
   }
 
   async update(id: number, updateModifiersPerRequestInput: UpdateModifiersPerRequestInput) {

@@ -18,7 +18,7 @@ export class VenuesService {
   async create(
     createVenueInput: CreateVenueInput,
   ): Promise<Venue> {
-    const { company_id } = createVenueInput
+    const { company_id } = createVenueInput;
 
     const company = await this.companiesService.findOne(company_id);
 

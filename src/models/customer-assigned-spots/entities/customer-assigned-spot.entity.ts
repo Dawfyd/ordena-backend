@@ -20,7 +20,7 @@ export class CustomerAssignedSpot {
   @Column()
   start: Date;
 
- /*
+  /*
  * fecha y hora cuando la mesa es desocupada
  */
   @Column()
@@ -39,21 +39,21 @@ export class CustomerAssignedSpot {
  updated_at: Date;
 
  @ManyToOne(
-  () => Person,
-  (person: Person) => person.customerAssignedSpot,  {
-    eager: true,
-    cascade: true,
-  })
+   () => Person,
+   (person: Person) => person.customerAssignedSpot,  {
+     eager: true,
+     cascade: true
+   })
 
   @JoinColumn({name: 'person_id'})
   person: Person;
 
   @ManyToOne(
-  () => Spot,
-  (spot: Spot) => spot.customerAssignedSpot,  {
-    eager: true,
-    cascade: true,
-  })
+    () => Spot,
+    (spot: Spot) => spot.customerAssignedSpot,  {
+      eager: true,
+      cascade: true
+    })
 
   @JoinColumn({name: 'spot_id'})
   spot: Spot;

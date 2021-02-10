@@ -8,8 +8,8 @@ import { RequestsModule } from '../requests/requests.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AdditionalsPerRequest]),
-  forwardRef(() => ProductsModule),
-  forwardRef(() => RequestsModule)],
+    forwardRef(() => ProductsModule),
+    forwardRef(() => RequestsModule)],
   providers: [AdditionalsPerRequestsResolver, AdditionalsPerRequestsService]
 })
 export class AdditionalsPerRequestsModule {}

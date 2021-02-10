@@ -53,16 +53,16 @@ export class Order {
 
   @OneToMany(
     (type) => Spot, (spot: Spot) => spot.orders, {
-    eager: true,
-    cascade: true,
-  })
+      eager: true,
+      cascade: true
+    })
   @JoinColumn({name: 'spot_id'})
   spot: Spot;
 
     @OneToMany(
       (type) => OrderStatus, (orderStatus: OrderStatus) => orderStatus.orders, {
-      eager: true,
-      cascade: true
+        eager: true,
+        cascade: true
       })
 
   @JoinColumn({name: 'orderStatus_id'})

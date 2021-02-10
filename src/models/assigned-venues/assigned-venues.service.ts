@@ -21,7 +21,7 @@ export class AssignedVenuesService {
     const venue = await this.venuesService.findOne(venue_id);
     const person = await this.personsService.findOne(worker_id);
 
-    const newAssignedVenue = this.AssignedVenueRepository.create({person, venue})
+    const newAssignedVenue = this.AssignedVenueRepository.create({person, venue});
     return await this.AssignedVenueRepository.save(newAssignedVenue);
   }
 
@@ -31,7 +31,7 @@ export class AssignedVenuesService {
 
   async findOne(id: number): Promise<AssignedVenue> {
     const assignedVenue = await this.AssignedVenueRepository.findOne(id);
-    if(!assignedVenue) throw new NotFoundException('no hay sede asignada con este id')
+    if(!assignedVenue) throw new NotFoundException('no hay sede asignada con este id');
     return assignedVenue;
   }
 
@@ -40,7 +40,7 @@ export class AssignedVenuesService {
       where: {
         person
       }
-    })
+    });
   }
 
   async findVenueAssignedVenue(venue: number): Promise<AssignedVenue[]> {
@@ -48,7 +48,7 @@ export class AssignedVenuesService {
       where: {
         venue
       }
-    })
+    });
   }
 
   async update(id: number, updateAssignedVenueInput: UpdateAssignedVenueInput): Promise<AssignedVenue> {

@@ -11,11 +11,11 @@ import { ModifiersPerRequestModule } from '../modifiers-per-request/modifiers-pe
 
 @Module({
   imports: [TypeOrmModule.forFeature([Request]),
-  forwardRef(() => ProductsModule),
-  forwardRef(() => OrdersModule),
-  forwardRef(() => SpotsModule),
-  forwardRef(() => RequestStatusesModule),
-  forwardRef(() => ModifiersPerRequestModule)],
+    forwardRef(() => ProductsModule),
+    forwardRef(() => OrdersModule),
+    forwardRef(() => SpotsModule),
+    forwardRef(() => RequestStatusesModule),
+    forwardRef(() => ModifiersPerRequestModule)],
   providers: [RequestsResolver, RequestsService],
   exports: [RequestsService]
 })

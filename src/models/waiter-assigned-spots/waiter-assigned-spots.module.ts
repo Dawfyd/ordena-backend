@@ -8,8 +8,8 @@ import { SpotsModule } from '../spots/spots.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([WaiterAssignedSpot]),
-  forwardRef(() => PersonsModule),
-  forwardRef(() => SpotsModule)],
+    forwardRef(() => PersonsModule),
+    forwardRef(() => SpotsModule)],
   providers: [WaiterAssignedSpotsResolver, WaiterAssignedSpotsService],
   exports: [WaiterAssignedSpotsService]
 })

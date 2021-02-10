@@ -7,7 +7,7 @@ import { OrdersModule } from '../orders/orders.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OrderStatus]),
-  forwardRef(() => OrdersModule)],
+    forwardRef(() => OrdersModule)],
   providers: [OrderStatusesResolver, OrderStatusesService],
   exports: [OrderStatusesService]
 })

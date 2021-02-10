@@ -7,7 +7,7 @@ import { RequestsModule } from '../requests/requests.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([RequestStatus]),
-  forwardRef(() => RequestsModule)],
+    forwardRef(() => RequestsModule)],
   providers: [RequestStatusesResolver, RequestStatusesService],
   exports: [RequestStatusesService]
 })

@@ -37,7 +37,7 @@ export class SpotsService {
       where: {
         venue
       }
-    })
+    });
   }
 
   async update(id: number, updateSpotInput: UpdateSpotInput) {

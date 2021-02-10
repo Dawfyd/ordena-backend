@@ -19,7 +19,7 @@ export class PersonsResolver {
     private readonly assignedVenuesService: AssignedVenuesService,
     private readonly waiterAssignedSpotsService: WaiterAssignedSpotsService,
     private readonly ordersService: OrdersService
-    ) {}
+  ) {}
 
   @Mutation(() => Person)
   createAdminPerson(

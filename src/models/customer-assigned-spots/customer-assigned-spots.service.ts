@@ -31,7 +31,7 @@ export class CustomerAssignedSpotsService {
 
   async findOne(id: number): Promise<CustomerAssignedSpot> {
     const customerAssignedSpot = await this.CustomerAssignedSpotRepository.findOne(id);
-    if(!customerAssignedSpot) throw new  NotFoundException('no hay ninguna registro con este id')
+    if(!customerAssignedSpot) throw new  NotFoundException('no hay ninguna registro con este id');
     return customerAssignedSpot;
   }
 
@@ -40,7 +40,7 @@ export class CustomerAssignedSpotsService {
       where:{
         person
       }
-    })
+    });
   }
 
   async findSpotCustomerAssignedPost(spot: number): Promise<CustomerAssignedSpot[]> {
@@ -48,7 +48,7 @@ export class CustomerAssignedSpotsService {
       where:{
         spot
       }
-    })
+    });
   }
 
   async update(id: number, updateCustomerAssignedSpotInput: UpdateCustomerAssignedSpotInput): Promise<CustomerAssignedSpot> {

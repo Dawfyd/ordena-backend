@@ -42,7 +42,7 @@ export class WaiterAssignedSpotsService {
       where: {
         person
       }
-    })
+    });
   }
 
   async update(id: number, updateWaiterAssignedSpotInput: UpdateWaiterAssignedSpotInput): Promise<WaiterAssignedSpot> {
@@ -52,7 +52,7 @@ export class WaiterAssignedSpotsService {
     const person = await this.personsService.findOne(person_id);
     const spot = await this.spotsService.findOne(spot_id);
 
-    const editedWaiterAssignedSpot= this.WaiterAssignedSpotRepository.merge(waiterAssignedSpot,{person,spot, ...updateWaiterAssignedSpotInput})
+    const editedWaiterAssignedSpot= this.WaiterAssignedSpotRepository.merge(waiterAssignedSpot,{person,spot, ...updateWaiterAssignedSpotInput});
     return await this.WaiterAssignedSpotRepository.save(editedWaiterAssignedSpot);
   }
 

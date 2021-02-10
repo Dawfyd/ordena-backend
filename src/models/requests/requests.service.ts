@@ -58,7 +58,7 @@ export class RequestsService {
       where: {
         order
       }
-    })
+    });
   }
 
   async findSpotRequest(spot: number): Promise<Request[]> {
@@ -66,7 +66,7 @@ export class RequestsService {
       where: {
         spot
       }
-    })
+    });
   }
 
   async findRequestStatusRequest(requestStatus: number): Promise<Request[]> {
@@ -74,7 +74,7 @@ export class RequestsService {
       where: {
         requestStatus
       }
-    })
+    });
   }
 
   async update(id: number, updateRequestInput: UpdateRequestInput) {
