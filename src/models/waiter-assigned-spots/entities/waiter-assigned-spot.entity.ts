@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Person } from 'src/models/persons/entities/person.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
-import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('waiter_Assigned_Spots')
 @ObjectType()
@@ -16,12 +16,14 @@ export class WaiterAssignedSpot {
  /*
  *fecha y hora cuando la mesa es asignada
  */
- start: Date;
+  @Column()
+  start: Date;
 
  /*
  * fecha y hora cuando la mesa es desocupada
  */
- end: Date
+  @Column()
+  end: Date
 
  /*
   *fecha cuando se realizo el registro
