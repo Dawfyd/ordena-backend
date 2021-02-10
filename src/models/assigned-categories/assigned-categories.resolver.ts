@@ -3,14 +3,20 @@ import { AssignedCategoriesService } from './assigned-categories.service';
 import { AssignedCategory } from './entities/assigned-category.entity';
 import { CreateAssignedCategoryInput } from './dto/create-assigned-category.input';
 import { UpdateAssignedCategoryInput } from './dto/update-assigned-category.input';
+import { CreateAssignedCategoryMenuInput } from './dto/create-assigned-category-menu.input';
 
 @Resolver(() => AssignedCategory)
 export class AssignedCategoriesResolver {
   constructor(private readonly assignedCategoriesService: AssignedCategoriesService) {}
 
   @Mutation(() => AssignedCategory)
-  createAssignedCategory(@Args('createAssignedCategoryInput') createAssignedCategoryInput: CreateAssignedCategoryInput) {
-    return this.assignedCategoriesService.create(createAssignedCategoryInput);
+  assingCategoryToCategoryProduct(@Args('createAssignedCategoryInput') createAssignedCategoryInput: CreateAssignedCategoryInput) {
+    return this.assignedCategoriesService.assingCategoryToCategoryProduct(createAssignedCategoryInput);
+  }
+
+  @Mutation(() => String)
+  assingCategoriesToMenuProduct(@Args('createAssignedCategoryMenuInput') createAssignedCategoryMenuInput: CreateAssignedCategoryMenuInput) {
+    return this.assignedCategoriesService.assingCategoriesToMenuProduct(createAssignedCategoryMenuInput);
   }
 
   @Query(() => [AssignedCategory], { name: 'assignedCategories' })

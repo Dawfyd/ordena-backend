@@ -1,11 +1,11 @@
 import { rule, shield } from 'graphql-shield';
 class Permission {
-    // Permissions
-   isAllowed = rule() (async (parent, args, ctx, info) => {
+  // Permissions
+  isAllowed = rule() (async (parent, args, ctx, info) => {
     return true;
   });
 
-   permissions = shield({
+  permissions = shield({
     Query: {
       companies: this.isAllowed,
       company: this.isAllowed,
@@ -37,10 +37,6 @@ class Permission {
       order: this.isAllowed,
       spots: this.isAllowed,
       spot: this.isAllowed,
-      roles: this.isAllowed,
-      role: this.isAllowed,
-      rolesPersons: this.isAllowed,
-      rolePerson: this.isAllowed,
       services: this.isAllowed,
       service: this.isAllowed,
       customerAssignedSpots: this.isAllowed,
@@ -71,16 +67,24 @@ class Permission {
       createCategory: this.isAllowed,
       updateCategory: this.isAllowed,
       removeCategory: this.isAllowed,
-      createAssignedCategory: this.isAllowed,
+      assingCategoryToCategoryProduct: this.isAllowed,
+      assingCategoriesToMenuProduct: this.isAllowed,
       updateAssignedCategory: this.isAllowed,
       removeAssignedCategory: this.isAllowed,
-      createProduct: this.isAllowed,
+      createMenuProduct: this.isAllowed,
+      createCategoryProduct: this.isAllowed,
+      createPureProduct: this.isAllowed,
+      createProductAssignedProduct: this.isAllowed,
       updateProduct: this.isAllowed,
       removeProduct: this.isAllowed,
       createFavorite: this.isAllowed,
       updateFavorite: this.isAllowed,
       removeFavorite: this.isAllowed,
-      createPerson: this.isAllowed,
+      createAdminPerson: this.isAllowed,
+      createWaiterPerson: this.isAllowed,
+      createCustomerPerson: this.isAllowed,
+      sendForgottenPasswordEmail: this.isAllowed,
+      changePassword: this.isAllowed,
       updatePerson: this.isAllowed,
       removePerson: this.isAllowed,
       createProductType: this.isAllowed,
@@ -92,7 +96,7 @@ class Permission {
       createModifier: this.isAllowed,
       updateModifier: this.isAllowed,
       removeModifier: this.isAllowed,
-      createAssignedProduct: this.isAllowed,
+      assingProductToProduct: this.isAllowed,
       updateAssignedProduct: this.isAllowed,
       removeAssignedProduct: this.isAllowed,
       createRequest: this.isAllowed,
@@ -104,12 +108,6 @@ class Permission {
       createSpot: this.isAllowed,
       updateSpot: this.isAllowed,
       removeSpot: this.isAllowed,
-      createRole: this.isAllowed,
-      updateRole: this.isAllowed,
-      removeRole: this.isAllowed,
-      createRolesPerson: this.isAllowed,
-      updateRolesPerson: this.isAllowed,
-      removeRolesPerson: this.isAllowed,
       createService: this.isAllowed,
       updateService: this.isAllowed,
       removeService: this.isAllowed,
@@ -135,6 +133,9 @@ class Permission {
       updateRequestStatus: this.isAllowed,
       removeRequestStatus: this.isAllowed,
     }
+  },
+  {
+    allowExternalErrors: true
   });
 }
 

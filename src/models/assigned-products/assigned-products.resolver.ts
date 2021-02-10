@@ -9,8 +9,8 @@ export class AssignedProductsResolver {
   constructor(private readonly assignedProductsService: AssignedProductsService) {}
 
   @Mutation(() => AssignedProduct)
-  createAssignedProduct(@Args('createAssignedProductInput') createAssignedProductInput: CreateAssignedProductInput) {
-    return this.assignedProductsService.create(createAssignedProductInput);
+  assingProductToProduct(@Args('createAssignedProductInput') createAssignedProductInput: CreateAssignedProductInput) {
+    return this.assignedProductsService.assingProductToProduct(createAssignedProductInput);
   }
 
   @Query(() => [AssignedProduct], { name: 'assignedProducts' })

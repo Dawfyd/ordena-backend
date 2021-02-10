@@ -9,6 +9,7 @@ import { ProductTypesModule } from '../product-types/product-types.module';
 import { PricesModule } from '../prices/prices.module';
 import { ModifiersModule } from '../modifiers/modifiers.module';
 import { AssignedProductsModule } from '../assigned-products/assigned-products.module';
+import { ParametersModule } from '../parameters/parameters.module';
 import { RequestsModule } from '../requests/requests.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { RequestsModule } from '../requests/requests.module';
   forwardRef(() => ModifiersModule),
   forwardRef(() => AssignedProductsModule),
   forwardRef(() => RequestsModule)],
+    ParametersModule],
   providers: [ProductsResolver, ProductsService],
   exports: [ProductsService]
 })

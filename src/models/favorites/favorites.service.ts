@@ -12,14 +12,14 @@ export class FavoritesService {
   constructor(
     @InjectRepository(Favorite)
     private readonly FavoriteRepository: Repository<Favorite>,
-    private readonly perosonsService: PersonsService,
+    private readonly personsService: PersonsService,
     private readonly productsService: ProductsService
   ) {}
 
   async create(createFavoriteInput: CreateFavoriteInput): Promise<Favorite> {
     const { product_id, person_id } = createFavoriteInput;
 
-    const person = await this.perosonsService.findOne(person_id);
+    const person = await this.personsService.findOne(person_id);
     const product = await this.productsService.findOne(product_id);
 
     const newFavorite = this.FavoriteRepository.create({
@@ -62,7 +62,7 @@ export class FavoritesService {
 
     const { product_id, person_id } = updateFavoriteInput;
 
-    const person = await this.perosonsService.findOne(person_id);
+    const person = await this.personsService.findOne(person_id);
     const product = await this.productsService.findOne(product_id);
 
     const editedFavorite = this.FavoriteRepository.merge(favorite, {

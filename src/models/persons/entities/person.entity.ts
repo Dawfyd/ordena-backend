@@ -25,13 +25,13 @@ export class Person {
   /*
    * Numero de celular de la persona
    */
-  @Column()
-  phone: number;
+  @Column({ unique: true })
+  phone: string;
 
   /*
    * Correo electronico de la persona
    */
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   /*
@@ -39,6 +39,12 @@ export class Person {
    */
   @Column()
   photo: string;
+
+  /*
+   * Identificador unico de la persona asociado con el ACL
+   */
+  @Column()
+  authUid: string
 
   /*
   *fecha cuando se realizo el registro

@@ -1,9 +1,10 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { Category } from 'src/models/categories/entities/category.entity';
 import { Product } from 'src/models/products/entities/product.entity';
-import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 
-@Entity('assigned_Categories')
+@Entity('assigned_categories')
+@Unique('uk_assigned_categories', ['category', 'product'])
 @ObjectType()
 export class AssignedCategory {
   @PrimaryGeneratedColumn()
@@ -29,7 +30,7 @@ export class AssignedCategory {
     () => Category,
     (category: Category) => category.assignedCategories,  {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'category_id'})
@@ -39,7 +40,7 @@ export class AssignedCategory {
     () => Product,
     (product: Product) => product.assignedCategories,  {
       eager: true,
-      cascade: true,
+      cascade: true
     })
 
   @JoinColumn({name: 'product_id'})

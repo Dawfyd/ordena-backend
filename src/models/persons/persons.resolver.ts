@@ -4,6 +4,8 @@ import { Person } from './entities/person.entity';
 import { CreatePersonInput } from './dto/create-person.input';
 import { UpdatePersonInput } from './dto/update-person.input';
 import { FavoritesService } from '../favorites/favorites.service';
+import { SendForgottenPasswordEmailInput } from './dto/send-forgotten-password-email-input';
+import { ChangePasswordInput } from './dto/change-password-input';
 import { CustomerAssignedSpotsService } from '../customer-assigned-spots/customer-assigned-spots.service';
 import { AssignedVenuesService } from '../assigned-venues/assigned-venues.service';
 import { WaiterAssignedSpotsService } from '../waiter-assigned-spots/waiter-assigned-spots.service';
@@ -20,10 +22,24 @@ export class PersonsResolver {
     ) {}
 
   @Mutation(() => Person)
-  createPerson(
+  createAdminPerson(
     @Args('createPersonInput') createPersonInput: CreatePersonInput,
   ) {
-    return this.personsService.create(createPersonInput);
+    return this.personsService.createAdmin(createPersonInput);
+  }
+
+  @Mutation(() => Person)
+  createWaiterPerson(
+    @Args('createPersonInput') createPersonInput: CreatePersonInput,
+  ) {
+    return this.personsService.createWaiter(createPersonInput);
+  }
+
+  @Mutation(() => Person)
+  createCustomerPerson(
+    @Args('createPersonInput') createPersonInput: CreatePersonInput,
+  ) {
+    return this.personsService.createCustomer(createPersonInput);
   }
 
   @Query(() => [Person], { name: 'persons' })
@@ -49,6 +65,20 @@ export class PersonsResolver {
   @Mutation(() => Person)
   removePerson(@Args('id', { type: () => Int }) id: number) {
     return this.personsService.remove(id);
+  }
+
+  @Mutation(() => Person)
+  sendForgottenPasswordEmail(
+    @Args('sendForgottenPasswordEmailInput') sendForgottenPasswordEmailInput: SendForgottenPasswordEmailInput,
+  ) {
+    return this.personsService.sendForgottenPasswordEmail(sendForgottenPasswordEmailInput);
+  }
+
+  @Mutation(() => Person)
+  changePassword(
+    @Args('changePasswordInput') changePasswordInput: ChangePasswordInput,
+  ) {
+    return this.personsService.changePassword(changePasswordInput);
   }
 
   @ResolveField()

@@ -8,8 +8,8 @@ import { ModifiersPerRequestModule } from '../modifiers-per-request/modifiers-pe
 
 @Module({
   imports: [TypeOrmModule.forFeature([Modifier]),
-  forwardRef(() => ProductsModule),
   forwardRef(() => ModifiersPerRequestModule)],
+  forwardRef(() => ProductsModule),
   providers: [ModifiersResolver, ModifiersService],
   exports: [ModifiersService]
 })

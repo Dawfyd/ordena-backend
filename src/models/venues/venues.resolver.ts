@@ -18,7 +18,7 @@ export class VenuesResolver {
   @Mutation(() => Venue)
   createVenue(
     @Args('createVenueInput')
-    createVenueInput: CreateVenueInput,
+      createVenueInput: CreateVenueInput,
   ) {
     return this.VenuesService.create(createVenueInput);
   }
@@ -36,7 +36,7 @@ export class VenuesResolver {
   @Mutation(() => Venue)
   updateVenue(
     @Args('updateVenueInput')
-    updateVenueInput: UpdateVenueInput,
+      updateVenueInput: UpdateVenueInput,
   ) {
     return this.VenuesService.update(
       updateVenueInput.id,

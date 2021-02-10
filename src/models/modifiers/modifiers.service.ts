@@ -39,7 +39,7 @@ export class ModifiersService {
       where: {
         product
       }
-    })
+    });
   }
 
   async update(id: number, updateModifierInput: UpdateModifierInput) {
@@ -47,7 +47,7 @@ export class ModifiersService {
 
     const { product_id } = updateModifierInput;
 
-    const product = await this.productsSerice.findOne(product_id)
+    const product = await this.productsSerice.findOne(product_id);
 
     const editedModifier = this.ModifierRepository.merge(modifier, {...updateModifierInput, product});
     return await this.ModifierRepository.save(editedModifier);

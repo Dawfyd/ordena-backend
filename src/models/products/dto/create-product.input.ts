@@ -26,9 +26,4 @@ export class CreateProductInput {
    * Tipo: producto o adicion
    */
   type: string;
-
-  /*
-  * Tipo de producto
-  */
-  product_type_id: number;
 }

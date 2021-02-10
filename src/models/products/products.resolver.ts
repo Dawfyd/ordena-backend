@@ -21,10 +21,31 @@ export class ProductsResolver {
     private readonly requestsService: RequestsService) {}
 
   @Mutation(() => Product)
-  createProduct(
+  createMenuProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
   ) {
-    return this.productsService.create(createProductInput);
+    return this.productsService.createMenuProduct(createProductInput);
+  }
+
+  @Mutation(() => Product)
+  createCategoryProduct(
+    @Args('createProductInput') createProductInput: CreateProductInput,
+  ) {
+    return this.productsService.createCategoryProduct(createProductInput);
+  }
+
+  @Mutation(() => Product)
+  createPureProduct(
+    @Args('createProductInput') createProductInput: CreateProductInput,
+  ) {
+    return this.productsService.createPureProduct(createProductInput);
+  }
+
+  @Mutation(() => Product)
+  createProductAssignedProduct(
+    @Args('createProductInput') createProductInput: CreateProductInput,
+  ) {
+    return this.productsService.createProductAssignedProduct(createProductInput);
   }
 
   @Query(() => [Product], { name: 'products' })
@@ -67,15 +88,16 @@ export class ProductsResolver {
   @ResolveField()
   async prices(@Parent() product: Product) {
     const { id } = product;
-    return this.pricesService.findPriceProduct(id)
+    return this.pricesService.findPriceProduct(id);
   }
 
   @ResolveField()
   async modifiers(@Parent() product: Product) {
     const { id } = product;
-    return this.modifiersService.findModifierProduct(id)
+    return this.modifiersService.findModifierProduct(id);
   }
 
+  @ResolveField()
   async parentProducts(@Parent() product: Product) {
     const { id } = product;
     return this.assignedProductsService.findProductsParent(id);
