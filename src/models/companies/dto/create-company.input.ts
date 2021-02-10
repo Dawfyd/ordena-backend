@@ -1,7 +1,7 @@
 import { InputType } from '@nestjs/graphql';
 
 @InputType()
-export class CreateCustomerInput {
+export class CreateCompanyInput {
   /*
    * Nombre del cliente
    */

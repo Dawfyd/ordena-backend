@@ -4,11 +4,16 @@ import { Venue } from './entities/venue.entity';
 import { CreateVenueInput } from './dto/create-venue.input';
 import { UpdateVenueInput } from './dto/update-venue.input';
 import { MenusService } from '../menus/menus.service';
+import { SpotsService } from '../spots/spots.service';
+import { AssignedVenuesService } from '../assigned-venues/assigned-venues.service';
 
 @Resolver(() => Venue)
 export class VenuesResolver {
   constructor(private readonly VenuesService: VenuesService,
-              private readonly menusServices: MenusService) {}
+              private readonly menusServices: MenusService,
+              private readonly spotsService: SpotsService,
+              private readonly assignedVenuesService: AssignedVenuesService
+              ) {}
 
   @Mutation(() => Venue)
   createVenue(
@@ -48,5 +53,17 @@ export class VenuesResolver {
   async menus(@Parent() venue: Venue) {
     const { id } = venue;
     return this.menusServices.findMenus(id);
+  }
+
+  @ResolveField()
+  async spots(@Parent() venue: Venue) {
+    const { id } = venue;
+    return this.spotsService.findSpost(id);
+  }
+
+  @ResolveField()
+  async assignedVenues(@Parent() venue: Venue) {
+    const { id } = venue;
+    return this.assignedVenuesService.findVenueAssignedVenue(id);
   }
 }

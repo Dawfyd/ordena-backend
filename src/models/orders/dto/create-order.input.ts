@@ -5,15 +5,32 @@ export class CreateOrderInput {
   /*
    * ID de la orden
    */
-  id_order: number;
+  id: number;
 
   /*
    * Valor de la orden
    */
-  price_order: number;
+  price: number;
 
   /*
    *  Estado de la orden
    */
-  state_order: boolean;
+  state: boolean;
+
+  /*
+   *  ID de la persona
+   */
+
+   person_id: number;
+
+   /*
+   *ID de la mesa
+   */
+    spot_id: number;
+
+    /*
+    *ID del estado del pedido
+    */
+    order_status_id: number;
+
 }

@@ -1,6 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { ModifiersPerRequest } from 'src/models/modifiers-per-request/entities/modifiers-per-request.entity';
 import { Product } from 'src/models/products/entities/product.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
 @Entity('modifiers')
 @ObjectType()
@@ -70,4 +71,8 @@ export class Modifier {
 
   @JoinColumn({name: 'product_id'})
     product: Product;
+
+  @OneToMany(
+    (type) => ModifiersPerRequest, (modifiersPerRequests: ModifiersPerRequest) => modifiersPerRequests.modifier)
+    modifiersPerRequests?: ModifiersPerRequest[];
 }

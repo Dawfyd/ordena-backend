@@ -1,5 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Customer } from 'src/models/customers/entities/customer.entity';
+import { type } from 'os';
+import { AssignedVenue } from 'src/models/assigned-venues/entities/assigned-venue.entity';
+import { Company } from 'src/models/companies/entities/company.entity';
 import { Menu } from 'src/models/menus/entities/menu.entity';
 import { Role } from 'src/models/roles/entities/role.entity';
 import { Service } from 'src/models/services/entities/service.entity';
@@ -54,14 +56,14 @@ export class Venue {
   updated_at: Date;
 
   @ManyToOne(
-    () => Customer,
-    (customer: Customer) => customer.venues, {
+    () => Company,
+    (company: Company) => company.venues, {
       eager: true,
       cascade: true,
     })
 
-  @JoinColumn({name: 'customer_id'})
-    customer: Customer;
+  @JoinColumn({name: 'company_id'})
+    company: Company;
 
   @OneToMany(
     (type) => Menu, (menus: Menu) => menus.venue)
@@ -69,28 +71,13 @@ export class Venue {
     menus?: Menu[];
 
   @OneToMany(
-    (type) => Spot, (spots: Spot) => spots.venue, {
-      eager: true,
-      cascade: true,
-    })
+    (type) => Spot, (spots: Spot) => spots.venue)
 
     spots?: Spot[];
 
   @OneToMany(
-    (type) => Role, (roles: Role) => roles.venue, {
-      eager: true,
-      cascade: true,
-    })
+    (type) => AssignedVenue, (assignedVenues: AssignedVenue) => assignedVenues.venue)
 
-    roles?: Role[];
-
-  @OneToMany(
-    (type) => Service, (service: Service) => service.venue, {
-      eager: true,
-      cascade: true,
-    })
-
-    services?: Service[];
-
+    assignedVenues?: AssignedVenue[];
 
 }

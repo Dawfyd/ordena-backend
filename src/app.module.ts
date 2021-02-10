@@ -7,7 +7,7 @@ import { applyMiddleware } from 'graphql-middleware';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CustomersModule } from './models/customers/customers.module';
+import { CompaniesModule } from './models/companies/companies.module';
 import { VenuesModule } from './models/venues/venues.module';
 import { MenusModule } from './models/menus/menus.module';
 import { CategoriesModule } from './models/categories/categories.module';
@@ -26,6 +26,13 @@ import { AssignedCategoriesModule } from './models/assigned-categories/assigned-
 import { ProductTypesModule } from './models/product-types/product-types.module';
 import { AssignedProductsModule } from './models/assigned-products/assigned-products.module';
 import {permission} from './permissions/permissions';
+import { CustomerAssignedSpotsModule } from './models/customer-assigned-spots/customer-assigned-spots.module';
+import { AssignedVenuesModule } from './models/assigned-venues/assigned-venues.module';
+import { WaiterAssignedSpotsModule } from './models/waiter-assigned-spots/waiter-assigned-spots.module';
+import { OrderStatusesModule } from './models/order-statuses/order-statuses.module';
+import { RequestStatusesModule } from './models/request-statuses/request-statuses.module';
+import { AdditionalsPerRequestsModule } from './models/additionals-per-requests/additionals-per-requests.module';
+import { ModifiersPerRequestModule } from './models/modifiers-per-request/modifiers-per-request.module';
 
 import appConfig from './config/app.config';
 import appConfigSchema from './config/app.config.schema';
@@ -64,7 +71,7 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
       })
     }),
 
-    CustomersModule,
+    CompaniesModule,
     VenuesModule,
     MenusModule,
     CategoriesModule,
@@ -81,7 +88,14 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
     ServicesModule,
     AssignedCategoriesModule,
     ProductTypesModule,
-    AssignedProductsModule
+    AssignedProductsModule,
+    CustomerAssignedSpotsModule,
+    AssignedVenuesModule,
+    WaiterAssignedSpotsModule,
+    OrderStatusesModule,
+    RequestStatusesModule,
+    AdditionalsPerRequestsModule,
+    ModifiersPerRequestModule
   ],
   controllers: [AppController],
   providers: [AppService],

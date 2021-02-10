@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { AdditionalsPerRequest } from 'src/models/additionals-per-requests/entities/additionals-per-request.entity';
 import { AssignedCategory } from 'src/models/assigned-categories/entities/assigned-category.entity';
 import { AssignedProduct } from 'src/models/assigned-products/entities/assigned-product.entity';
 import { Favorite } from 'src/models/favorites/entities/favorite.entity';
@@ -98,4 +99,8 @@ export class Product {
   @OneToMany(
     (type) => Favorite, (favorites: Favorite) => favorites.product)
   favorites?: Favorite[];
+
+  @OneToMany(
+    (type)  => AdditionalsPerRequest, (additionalsPerRequests: AdditionalsPerRequest) => additionalsPerRequests.product)
+    additionalsPerRequests?: AdditionalsPerRequest
 }

@@ -1,4 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { OrderStatus } from 'src/models/order-statuses/entities/order-status.entity';
 import { Person } from 'src/models/persons/entities/person.entity';
 import { Request } from 'src/models/requests/entities/request.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
@@ -13,19 +14,19 @@ export class Order {
   /*
    * ID de la orden
    */
-  id_order: number;
+  id: number;
 
   /*
    * Valor de la orden
    */
   @Column()
-  price_order: number;
+  price: number;
 
   /*
    *  Estado de la orden
    */
   @Column()
-  state_order: boolean;
+  state: boolean;
 
   /*
   *fecha cuando se realizo el registro
@@ -40,26 +41,34 @@ export class Order {
   updated_at: Date;
 
   @ManyToOne(
-    () => Spot, 
-    (spot: Spot) => spot.orders)
+    () => Person,
+    (person: Person) => person.orders,{
+      eager: true,
+      cascade: true
+    })
 
-  @JoinColumn({name: 'id_spot'})
-  spot: Spot;
-
-  
-  @ManyToOne(
-    () => Person, 
-    (person: Person) => person.orders)
-
-  @JoinColumn({name: 'id_person'})
+  @JoinColumn({name: 'person_id'})
     person: Person;
 
 
   @OneToMany(
-    (type) => Request, (requests: Request) => requests.order, {
+    (type) => Spot, (spot: Spot) => spot.orders, {
     eager: true,
     cascade: true,
   })
-    requests?: Request[];
+  @JoinColumn({name: 'spot_id'})
+  spot: Spot;
 
+    @OneToMany(
+      (type) => OrderStatus, (orderStatus: OrderStatus) => orderStatus.orders, {
+      eager: true,
+      cascade: true
+      })
+
+  @JoinColumn({name: 'orderStatus_id'})
+  orderStatus: OrderStatus;
+
+  @OneToMany(
+    (type) => Request, (requests: Request) => requests.order)
+    requests?: Request[];
 }

@@ -2,9 +2,9 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { Venue } from 'src/models/venues/entities/venue.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('customers')
+@Entity('companies')
 @ObjectType()
-export class Customer {
+export class Company {
   @PrimaryGeneratedColumn()
   @Field()
 
@@ -50,6 +50,6 @@ export class Customer {
   updated_at: Date;
 
   @OneToMany(
-    (type) => Venue, (venues: Venue) => venues.customer)
+    (type) => Venue, (venues: Venue) => venues.company)
     venues?: Venue[];
 }

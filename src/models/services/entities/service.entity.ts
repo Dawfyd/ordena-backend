@@ -32,17 +32,4 @@ export class Service {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToMany(
-    (type) => Spot, (spots: Spot) => spots.service, {
-    eager: true,
-    cascade: true,
-  })
-  spots?: Spot[];
-
-  @ManyToOne(
-    () => Venue,
-    (venue: Venue) => venue.services)
-
-  @JoinColumn({name: 'id_venue'})
-    venue: Venue;
 }

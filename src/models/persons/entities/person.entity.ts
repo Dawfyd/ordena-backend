@@ -1,9 +1,10 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { AssignedVenue } from 'src/models/assigned-venues/entities/assigned-venue.entity';
+import { CustomerAssignedSpot } from 'src/models/customer-assigned-spots/entities/customer-assigned-spot.entity';
 import { Favorite } from 'src/models/favorites/entities/favorite.entity';
 import { Order } from 'src/models/orders/entities/order.entity';
-import { RolesPerson } from 'src/models/roles-persons/entities/roles-person.entity';
-import { Spot } from 'src/models/spots/entities/spot.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { WaiterAssignedSpot } from 'src/models/waiter-assigned-spots/entities/waiter-assigned-spot.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('persons')
 @ObjectType()
@@ -51,25 +52,8 @@ export class Person {
   @UpdateDateColumn()
   updated_at: Date;
 
-  /*
-    * ID de la mesa asociada
-    */
-  @ManyToOne(
-    () => Spot,
-    (spot: Spot) => spot.persons)
-
-  @JoinColumn({name: 'spot_id'})
-    spot: Spot;
-
-  /*
-    * Ordenes pedidas por la persona
-    */
   @OneToMany(
-    (type) => Order, (orders: Order) => orders.person, {
-    eager: true,
-    cascade: true,
-  })
-
+    (type) => Order, (orders: Order) => orders.person)
   orders?: Order[];
 
   /*
@@ -79,4 +63,17 @@ export class Person {
     (type) => Favorite, (favorites: Favorite) => favorites.person)
 
   favorites?: Favorite[];
+
+  @OneToMany(
+    (type) => CustomerAssignedSpot, (customerAssignedSpot: CustomerAssignedSpot) => customerAssignedSpot.person)
+    customerAssignedSpot?: CustomerAssignedSpot[];
+
+  @OneToMany(
+    (type) => AssignedVenue,(assignedVenues: AssignedVenue) => assignedVenues.person)
+    assignedVenues?: AssignedVenue[];
+
+  @OneToMany(
+    (type) => WaiterAssignedSpot, (waiterAssignedSpots: WaiterAssignedSpot) => waiterAssignedSpots.person)
+    waiterAssignedSpots?: WaiterAssignedSpot[];
+
 }

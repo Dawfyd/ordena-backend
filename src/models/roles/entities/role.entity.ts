@@ -41,9 +41,6 @@ export class Role {
    /*
    * ID de la sede
    */
-  @ManyToOne(
-    () => Venue,
-    (venue: Venue) => venue.roles)
 
   @JoinColumn({name: 'id_venue'})
   venue: Venue;
