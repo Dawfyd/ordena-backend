@@ -37,8 +37,6 @@ class Permission {
       order: this.isAllowed,
       spots: this.isAllowed,
       spot: this.isAllowed,
-      services: this.isAllowed,
-      service: this.isAllowed,
       customerAssignedSpots: this.isAllowed,
       customerAssignedSpot: this.isAllowed,
       assignedVenues: this.isAllowed,
@@ -52,7 +50,7 @@ class Permission {
       modifiersPerRequests: this.isAllowed,
       modifiersPerRequest: this.isAllowed,
       requestStatuses: this.isAllowed,
-      requestStatus: this.isAllowed,
+      requestStatus: this.isAllowed
     },
     Mutation: {
       createCompany: this.isAllowed,
@@ -108,9 +106,6 @@ class Permission {
       createSpot: this.isAllowed,
       updateSpot: this.isAllowed,
       removeSpot: this.isAllowed,
-      createService: this.isAllowed,
-      updateService: this.isAllowed,
-      removeService: this.isAllowed,
       createCustomerAssignedSpot: this.isAllowed,
       updateCustomerAssignedSpot: this.isAllowed,
       removeCustomerAssignedSpot: this.isAllowed,
@@ -131,7 +126,7 @@ class Permission {
       removeModifiersPerRequest: this.isAllowed,
       createRequestStatus: this.isAllowed,
       updateRequestStatus: this.isAllowed,
-      removeRequestStatus: this.isAllowed,
+      removeRequestStatus: this.isAllowed
     }
   },
   {

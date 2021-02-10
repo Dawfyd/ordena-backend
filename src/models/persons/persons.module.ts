@@ -13,12 +13,12 @@ import { OrdersModule } from '../orders/orders.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Person]),
-    BasicAclModule, ParametersModule],
-  forwardRef(() => FavoritesModule),
-  forwardRef(() => CustomerAssignedSpotsModule),
-  forwardRef(() => AssignedVenuesModule),
-  forwardRef(() => WaiterAssignedSpotsModule),
-  forwardRef(() => OrdersModule)],
+    BasicAclModule, ParametersModule,
+    forwardRef(() => FavoritesModule),
+    forwardRef(() => CustomerAssignedSpotsModule),
+    forwardRef(() => AssignedVenuesModule),
+    forwardRef(() => WaiterAssignedSpotsModule),
+    forwardRef(() => OrdersModule)],
   providers: [PersonsResolver, PersonsService],
   exports: [PersonsService]
 })

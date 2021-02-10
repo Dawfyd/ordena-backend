@@ -14,13 +14,13 @@ import { RequestsModule } from '../requests/requests.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product]),
-  forwardRef(() => FavoritesModule),
-  forwardRef(() => AssignedCategoriesModule),
-  forwardRef(() => ProductTypesModule),
-  forwardRef(() => PricesModule),
-  forwardRef(() => ModifiersModule),
-  forwardRef(() => AssignedProductsModule),
-  forwardRef(() => RequestsModule)],
+    forwardRef(() => FavoritesModule),
+    forwardRef(() => AssignedCategoriesModule),
+    forwardRef(() => ProductTypesModule),
+    forwardRef(() => PricesModule),
+    forwardRef(() => ModifiersModule),
+    forwardRef(() => AssignedProductsModule),
+    forwardRef(() => RequestsModule),
     ParametersModule],
   providers: [ProductsResolver, ProductsService],
   exports: [ProductsService]

@@ -19,7 +19,6 @@ import { OrdersModule } from './models/orders/orders.module';
 import { SpotsModule } from './models/spots/spots.module';
 import { PersonsModule } from './models/persons/persons.module';
 import { FavoritesModule } from './models/favorites/favorites.module';
-import { ServicesModule } from './models/services/services.module';
 import { AssignedCategoriesModule } from './models/assigned-categories/assigned-categories.module';
 import { ProductTypesModule } from './models/product-types/product-types.module';
 import { AssignedProductsModule } from './models/assigned-products/assigned-products.module';
@@ -83,10 +82,9 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
     SpotsModule,
     PersonsModule,
     FavoritesModule,
-    ServicesModule,
     AssignedCategoriesModule,
     ProductTypesModule,
-    ParametersModule
+    ParametersModule,
     BasicAclModule,
     AssignedProductsModule,
     CustomerAssignedSpotsModule,

@@ -3,7 +3,6 @@ import { type } from 'os';
 import { AssignedVenue } from 'src/models/assigned-venues/entities/assigned-venue.entity';
 import { Company } from 'src/models/companies/entities/company.entity';
 import { Menu } from 'src/models/menus/entities/menu.entity';
-import { Service } from 'src/models/services/entities/service.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
