@@ -3,7 +3,7 @@ import { Person } from 'src/models/persons/entities/person.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
 import { CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
 
-@Entity('customer_Assigned_Spots')
+@Entity('customer_assigned_spots')
 @ObjectType()
 export class CustomerAssignedSpot {
  @PrimaryGeneratedColumn()

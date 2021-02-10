@@ -3,7 +3,7 @@ import { Person } from 'src/models/persons/entities/person.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('waiter_Assigned_Spots')
+@Entity('waiter_assigned_spots')
 @ObjectType()
 export class WaiterAssignedSpot {
   @PrimaryGeneratedColumn()

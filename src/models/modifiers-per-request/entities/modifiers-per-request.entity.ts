@@ -3,7 +3,7 @@ import { Modifier } from 'src/models/modifiers/entities/modifier.entity';
 import { Request } from 'src/models/requests/entities/request.entity';
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('modifiers_Per_Requests')
+@Entity('modifiers_per_requests')
 @ObjectType()
 export class ModifiersPerRequest {
   @PrimaryGeneratedColumn()

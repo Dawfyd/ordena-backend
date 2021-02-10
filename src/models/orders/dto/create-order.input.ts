@@ -1,12 +1,7 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateOrderInput {
-  /*
-   * ID de la orden
-   */
-  id: number;
-
   /*
    * Valor de la orden
    */

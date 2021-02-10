@@ -2,7 +2,7 @@ import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Order } from 'src/models/orders/entities/order.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('order_Statuses')
+@Entity('order_statuses')
 @ObjectType()
 export class OrderStatus {
   @PrimaryGeneratedColumn()

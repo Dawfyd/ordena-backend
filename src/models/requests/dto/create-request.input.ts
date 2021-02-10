@@ -1,12 +1,7 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateRequestInput {
-  /*
-   * ID del producto solicitado
-   */
-  id?: number;
-
   /*
    * Numero de unidades del solicitado
    */
@@ -45,8 +40,4 @@ export class CreateRequestInput {
   *ID del  estado de la solicitud
   */
   request_status_id: number
-
-
-
-
 }

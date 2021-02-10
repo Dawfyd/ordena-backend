@@ -56,21 +56,21 @@ export class Request {
 
 
   @ManyToOne(
-    () => Product, 
+    () => Product,
     (product: Product) => product.requests)
 
   @JoinColumn({name: 'product_id'})
     product: Product;
 
   @ManyToOne(
-    () => Order, 
+    () => Order,
     (order: Order) => order.requests)
 
   @JoinColumn({name: 'order_id'})
   order: Order;
 
   @ManyToOne(
-    () => Spot, 
+    () => Spot,
     (spot: Spot) => spot.requests)
 
   @JoinColumn({name: 'spot_id'})

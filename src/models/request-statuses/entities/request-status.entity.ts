@@ -2,7 +2,7 @@ import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Request } from 'src/models/requests/entities/request.entity';
 import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('request_Statuses')
+@Entity('request_statuses')
 @ObjectType()
 export class RequestStatus {
   @PrimaryGeneratedColumn()

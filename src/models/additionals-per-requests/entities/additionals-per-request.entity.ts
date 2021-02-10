@@ -3,7 +3,7 @@ import { Product } from 'src/models/products/entities/product.entity';
 import { Request } from 'src/models/requests/entities/request.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('additional_Per_Requests')
+@Entity('additional_per_requests')
 @ObjectType()
 export class AdditionalsPerRequest {
   @PrimaryGeneratedColumn()
