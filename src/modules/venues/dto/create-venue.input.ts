@@ -2,7 +2,6 @@ import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateVenueInput {
-
   /*
    * Nombre de la sede o sucursal
    */

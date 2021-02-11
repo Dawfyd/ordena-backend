@@ -6,30 +6,30 @@ import { UpdateModifiersPerRequestInput } from './dto/update-modifiers-per-reque
 
 @Resolver(() => ModifiersPerRequest)
 export class ModifiersPerRequestResolver {
-  constructor(private readonly modifiersPerRequestService: ModifiersPerRequestService) {}
+  constructor (private readonly modifiersPerRequestService: ModifiersPerRequestService) {}
 
   @Mutation(() => ModifiersPerRequest)
-  createModifiersPerRequest(@Args('createModifiersPerRequestInput') createModifiersPerRequestInput: CreateModifiersPerRequestInput) {
+  createModifiersPerRequest (@Args('createModifiersPerRequestInput') createModifiersPerRequestInput: CreateModifiersPerRequestInput) {
     return this.modifiersPerRequestService.create(createModifiersPerRequestInput);
   }
 
   @Query(() => [ModifiersPerRequest], { name: 'modifiersPerRequests' })
-  findAll() {
+  findAll () {
     return this.modifiersPerRequestService.findAll();
   }
 
   @Query(() => ModifiersPerRequest, { name: 'modifiersPerRequest' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.modifiersPerRequestService.findOne(id);
   }
 
   @Mutation(() => ModifiersPerRequest)
-  updateModifiersPerRequest(@Args('updateModifiersPerRequestInput') updateModifiersPerRequestInput: UpdateModifiersPerRequestInput) {
+  updateModifiersPerRequest (@Args('updateModifiersPerRequestInput') updateModifiersPerRequestInput: UpdateModifiersPerRequestInput) {
     return this.modifiersPerRequestService.update(updateModifiersPerRequestInput.id, updateModifiersPerRequestInput);
   }
 
   @Mutation(() => ModifiersPerRequest)
-  removeModifiersPerRequest(@Args('id', { type: () => Int }) id: number) {
+  removeModifiersPerRequest (@Args('id', { type: () => Int }) id: number) {
     return this.modifiersPerRequestService.remove(id);
   }
 }

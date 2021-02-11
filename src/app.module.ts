@@ -24,7 +24,7 @@ import { ProductTypesModule } from './modules/product-types/product-types.module
 import { AssignedProductsModule } from './modules/assigned-products/assigned-products.module';
 import { BasicAclModule } from './common/integrations/basic-acl/basic-acl.module';
 import { ParametersModule } from './modules/parameters/parameters.module';
-import {permission} from './permissions/permissions';
+import { permission } from './permissions/permissions';
 import { CustomerAssignedSpotsModule } from './modules/customer-assigned-spots/customer-assigned-spots.module';
 import { AssignedVenuesModule } from './modules/assigned-venues/assigned-venues.module';
 import { WaiterAssignedSpotsModule } from './modules/waiter-assigned-spots/waiter-assigned-spots.module';

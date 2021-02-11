@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Product } from '../../products/entities/product.entity';
 import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
+import { Product } from '../../products/entities/product.entity';
 
 @Entity('assigned_products')
 @Unique('uk_assigned_products', ['parent', 'assigned'])
@@ -27,22 +27,21 @@ export class AssignedProduct {
 
   @ManyToOne(
     () => Product,
-    (product: Product) => product.assignedProducts,  {
+    (product: Product) => product.assignedProducts, {
       eager: true,
       cascade: true
     })
 
-  @JoinColumn({name: 'parent_id'})
+  @JoinColumn({ name: 'parent_id' })
   parent: Product;
 
   @ManyToOne(
     () => Product,
-    (product: Product) => product.assignedProducts,  {
+    (product: Product) => product.assignedProducts, {
       eager: true,
       cascade: true
     })
 
-  @JoinColumn({name: 'assigned_id'})
+  @JoinColumn({ name: 'assigned_id' })
   assigned: Product;
-
 }

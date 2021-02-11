@@ -11,7 +11,7 @@ import { AssignedCategory } from './entities/assigned-category.entity';
 
 @Injectable()
 export class AssignedCategoriesService {
-  constructor(
+  constructor (
     @InjectRepository(AssignedCategory)
     private readonly AssignedCategoryRepository: Repository<AssignedCategory>,
     private readonly productsService: ProductsService,
@@ -19,10 +19,10 @@ export class AssignedCategoriesService {
     private readonly parametersService: ParametersService
   ) {}
 
-  async assingCategoryToCategoryProduct(createAssignedCategoryInput: CreateAssignedCategoryInput): Promise<AssignedCategory> {
+  async assingCategoryToCategoryProduct (createAssignedCategoryInput: CreateAssignedCategoryInput): Promise<AssignedCategory> {
     const productTypeCategory = await this.parametersService.findOneName('PRODUCT_TYPE_ASSIGNED_CATEGORIES');
 
-    if(!productTypeCategory){
+    if (!productTypeCategory) {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_CATEGORIES".');
     }
 
@@ -30,7 +30,7 @@ export class AssignedCategoriesService {
 
     const product = await this.productsService.findOne(product_id);
 
-    if(productTypeCategory.value !== product.productType.code){
+    if (productTypeCategory.value !== product.productType.code) {
       throw new PreconditionFailedException(`Solo se pueden asignar productos de tipo ${productTypeCategory.value}`);
     }
 
@@ -44,10 +44,10 @@ export class AssignedCategoriesService {
     return await this.AssignedCategoryRepository.save(newAssignedCategory);
   }
 
-  async assingCategoriesToMenuProduct(createAssignedCategoryMenuInput: CreateAssignedCategoryMenuInput): Promise<string> {
+  async assingCategoriesToMenuProduct (createAssignedCategoryMenuInput: CreateAssignedCategoryMenuInput): Promise<string> {
     const productTypeMenu = await this.parametersService.findOneName('PRODUCT_TYPE_MENUS');
 
-    if(!productTypeMenu){
+    if (!productTypeMenu) {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_MENUS".');
     }
 
@@ -55,13 +55,13 @@ export class AssignedCategoriesService {
 
     const product = await this.productsService.findOne(product_id);
 
-    if(productTypeMenu.value !== product.productType.code ){
+    if (productTypeMenu.value !== product.productType.code) {
       throw new PreconditionFailedException(`Solo se pueden asignar productos de tipo ${productTypeMenu.value}`);
     }
 
     const categories = await this.categoriesService.findAll();
 
-    const data =  categories.map(category => ({category, product}));
+    const data = categories.map(category => ({ category, product }));
 
     await this.AssignedCategoryRepository.createQueryBuilder()
       .insert()
@@ -72,17 +72,17 @@ export class AssignedCategoriesService {
     return 'OK';
   }
 
-  async findAll(): Promise<AssignedCategory[]> {
+  async findAll (): Promise<AssignedCategory[]> {
     return await this.AssignedCategoryRepository.find();
   }
 
-  async findOne(id: number): Promise<AssignedCategory> {
+  async findOne (id: number): Promise<AssignedCategory> {
     const assignedCategory = await this.AssignedCategoryRepository.findOne(id);
     if (!assignedCategory) throw new NotFoundException('No hay un categoria asignada con esa ID');
     return assignedCategory;
   }
 
-  async findCategoriesProduct(product: number): Promise<AssignedCategory[]> {
+  async findCategoriesProduct (product: number): Promise<AssignedCategory[]> {
     return await this.AssignedCategoryRepository.find({
       where: {
         product
@@ -90,7 +90,7 @@ export class AssignedCategoriesService {
     });
   }
 
-  async findProductsCategory(category: number): Promise<AssignedCategory[]> {
+  async findProductsCategory (category: number): Promise<AssignedCategory[]> {
     return await this.AssignedCategoryRepository.find({
       where: {
         category
@@ -98,7 +98,7 @@ export class AssignedCategoriesService {
     });
   }
 
-  async update(id: number, updateAssignedCategoryInput: UpdateAssignedCategoryInput): Promise<AssignedCategory> {
+  async update (id: number, updateAssignedCategoryInput: UpdateAssignedCategoryInput): Promise<AssignedCategory> {
     const assignedCategory = await this.findOne(id);
 
     const { product_id, category_id } = updateAssignedCategoryInput;
@@ -114,7 +114,7 @@ export class AssignedCategoriesService {
     return await this.AssignedCategoryRepository.save(editedAssignedCategory);
   }
 
-  async remove(id: number): Promise<AssignedCategory> {
+  async remove (id: number): Promise<AssignedCategory> {
     const assignedCategory = await this.findOne(id);
     return await this.AssignedCategoryRepository.remove(assignedCategory);
   }

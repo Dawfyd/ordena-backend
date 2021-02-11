@@ -65,12 +65,12 @@ export class Modifier {
 
   @ManyToOne(
     () => Product,
-    (product: Product) => product.modifiers,{
+    (product: Product) => product.modifiers, {
       eager: true,
       cascade: true
     })
 
-  @JoinColumn({name: 'product_id'})
+  @JoinColumn({ name: 'product_id' })
     product: Product;
 
   @OneToMany(

@@ -6,30 +6,30 @@ import { UpdateAssignedProductInput } from './dto/update-assigned-product.input'
 
 @Resolver(() => AssignedProduct)
 export class AssignedProductsResolver {
-  constructor(private readonly assignedProductsService: AssignedProductsService) {}
+  constructor (private readonly assignedProductsService: AssignedProductsService) {}
 
   @Mutation(() => AssignedProduct)
-  assingProductToProduct(@Args('createAssignedProductInput') createAssignedProductInput: CreateAssignedProductInput) {
+  assingProductToProduct (@Args('createAssignedProductInput') createAssignedProductInput: CreateAssignedProductInput) {
     return this.assignedProductsService.assingProductToProduct(createAssignedProductInput);
   }
 
   @Query(() => [AssignedProduct], { name: 'assignedProducts' })
-  findAll() {
+  findAll () {
     return this.assignedProductsService.findAll();
   }
 
   @Query(() => AssignedProduct, { name: 'assignedProduct' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.assignedProductsService.findOne(id);
   }
 
   @Mutation(() => AssignedProduct)
-  updateAssignedProduct(@Args('updateAssignedProductInput') updateAssignedProductInput: UpdateAssignedProductInput) {
+  updateAssignedProduct (@Args('updateAssignedProductInput') updateAssignedProductInput: UpdateAssignedProductInput) {
     return this.assignedProductsService.update(updateAssignedProductInput.id, updateAssignedProductInput);
   }
 
   @Mutation(() => AssignedProduct)
-  removeAssignedProduct(@Args('id', { type: () => Int }) id: number) {
+  removeAssignedProduct (@Args('id', { type: () => Int }) id: number) {
     return this.assignedProductsService.remove(id);
   }
 }

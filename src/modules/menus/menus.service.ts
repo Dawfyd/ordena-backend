@@ -8,13 +8,13 @@ import { Menu } from './entities/menu.entity';
 
 @Injectable()
 export class MenusService {
-  constructor(
+  constructor (
     @InjectRepository(Menu)
     private readonly MenuRepository: Repository<Menu>,
     private readonly venuesService: VenuesService
   ) {}
 
-  async create(createMenuInput: CreateMenuInput): Promise<Menu> {
+  async create (createMenuInput: CreateMenuInput): Promise<Menu> {
     const { venue_id } = createMenuInput;
 
     const venue = await this.venuesService.findOne(venue_id);
@@ -27,11 +27,11 @@ export class MenusService {
     return await this.MenuRepository.save(newMenu);
   }
 
-  async findAll(): Promise<Menu[]> {
+  async findAll (): Promise<Menu[]> {
     return await this.MenuRepository.find();
   }
 
-  async findMenus(venue: number): Promise<Menu[]> {
+  async findMenus (venue: number): Promise<Menu[]> {
     return await this.MenuRepository.find({
       where: {
         venue
@@ -39,13 +39,13 @@ export class MenusService {
     });
   }
 
-  async findOne(id: number): Promise<Menu> {
+  async findOne (id: number): Promise<Menu> {
     const menu = await this.MenuRepository.findOne(id);
     if (!menu) throw new NotFoundException('No hay un menu con esa ID');
     return menu;
   }
 
-  async update(id: number, updateMenuInput: UpdateMenuInput): Promise<Menu> {
+  async update (id: number, updateMenuInput: UpdateMenuInput): Promise<Menu> {
     const menu = await this.findOne(id);
 
     const { venue_id } = updateMenuInput;
@@ -60,7 +60,7 @@ export class MenusService {
     return await this.MenuRepository.save(editedMenu);
   }
 
-  async remove(id: number): Promise<Menu> {
+  async remove (id: number): Promise<Menu> {
     const menu = await this.findOne(id);
     return await this.MenuRepository.remove(menu);
   }

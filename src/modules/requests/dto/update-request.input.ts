@@ -1,9 +1,9 @@
-import { CreateRequestInput } from './create-request.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { CreateRequestInput } from './create-request.input';
 
 @InputType()
 export class UpdateRequestInput extends PartialType(
-  CreateRequestInput,
+  CreateRequestInput
 ) {
   @Field(() => Int)
 
@@ -36,6 +36,4 @@ export class UpdateRequestInput extends PartialType(
    * Modificadores del solicitado
    */
   modifier_request?: string;
-
-
 }

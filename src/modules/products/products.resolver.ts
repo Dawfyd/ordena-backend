@@ -12,7 +12,7 @@ import { RequestsService } from '../requests/requests.service';
 
 @Resolver(() => Product)
 export class ProductsResolver {
-  constructor(private readonly productsService: ProductsService,
+  constructor (private readonly productsService: ProductsService,
     private readonly favoritesService: FavoritesService,
     private readonly assignedCategoriesService: AssignedCategoriesService,
     private readonly pricesService: PricesService,
@@ -21,96 +21,96 @@ export class ProductsResolver {
     private readonly requestsService: RequestsService) {}
 
   @Mutation(() => Product)
-  createMenuProduct(
-    @Args('createProductInput') createProductInput: CreateProductInput,
+  createMenuProduct (
+    @Args('createProductInput') createProductInput: CreateProductInput
   ) {
     return this.productsService.createMenuProduct(createProductInput);
   }
 
   @Mutation(() => Product)
-  createCategoryProduct(
-    @Args('createProductInput') createProductInput: CreateProductInput,
+  createCategoryProduct (
+    @Args('createProductInput') createProductInput: CreateProductInput
   ) {
     return this.productsService.createCategoryProduct(createProductInput);
   }
 
   @Mutation(() => Product)
-  createPureProduct(
-    @Args('createProductInput') createProductInput: CreateProductInput,
+  createPureProduct (
+    @Args('createProductInput') createProductInput: CreateProductInput
   ) {
     return this.productsService.createPureProduct(createProductInput);
   }
 
   @Mutation(() => Product)
-  createProductAssignedProduct(
-    @Args('createProductInput') createProductInput: CreateProductInput,
+  createProductAssignedProduct (
+    @Args('createProductInput') createProductInput: CreateProductInput
   ) {
     return this.productsService.createProductAssignedProduct(createProductInput);
   }
 
   @Query(() => [Product], { name: 'products' })
-  findAll() {
+  findAll () {
     return this.productsService.findAll();
   }
 
   @Query(() => Product, { name: 'product' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.productsService.findOne(id);
   }
 
   @Mutation(() => Product)
-  updateProduct(
-    @Args('updateProductInput') updateProductInput: UpdateProductInput,
+  updateProduct (
+    @Args('updateProductInput') updateProductInput: UpdateProductInput
   ) {
     return this.productsService.update(
       updateProductInput.id,
-      updateProductInput,
+      updateProductInput
     );
   }
 
   @Mutation(() => Product)
-  removeProduct(@Args('id', { type: () => Int }) id: number) {
+  removeProduct (@Args('id', { type: () => Int }) id: number) {
     return this.productsService.remove(id);
   }
 
   @ResolveField()
-  async favorites(@Parent() product: Product) {
+  async favorites (@Parent() product: Product) {
     const { id } = product;
     return this.favoritesService.findFavoritesProduct(id);
   }
 
   @ResolveField()
-  async assignedCategories(@Parent() product: Product) {
+  async assignedCategories (@Parent() product: Product) {
     const { id } = product;
     return this.assignedCategoriesService.findCategoriesProduct(id);
   }
 
   @ResolveField()
-  async prices(@Parent() product: Product) {
+  async prices (@Parent() product: Product) {
     const { id } = product;
     return this.pricesService.findPriceProduct(id);
   }
 
   @ResolveField()
-  async modifiers(@Parent() product: Product) {
+  async modifiers (@Parent() product: Product) {
     const { id } = product;
     return this.modifiersService.findModifierProduct(id);
   }
 
   @ResolveField()
-  async parentProducts(@Parent() product: Product) {
+  async parentProducts (@Parent() product: Product) {
     const { id } = product;
     return this.assignedProductsService.findProductsParent(id);
   }
 
   @ResolveField()
-  async assignedProducts(@Parent() product: Product) {
+  async assignedProducts (@Parent() product: Product) {
     const { id } = product;
     return this.assignedProductsService.findProductsAssigned(id);
   }
 
   @ResolveField()
-  async requests(@Parent() product: Product) {
+  async requests (@Parent() product: Product) {
     const { id } = product;
     return this.requestsService.findProductRequest(id);
   }

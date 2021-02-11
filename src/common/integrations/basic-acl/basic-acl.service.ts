@@ -5,14 +5,14 @@ import appConfig from '../../../config/app.config';
 
 @Injectable()
 export class BasicAclService {
-  constructor(
+  constructor (
         @Inject(appConfig.KEY)
-        private readonly appConfiguration: ConfigType<typeof appConfig>,
-  ){}
+        private readonly appConfiguration: ConfigType<typeof appConfig>
+  ) {}
 
-  async getToken(): Promise<string> {
+  async getToken (): Promise<string> {
     const {
-      acl: { baseUrl, companyUuid, email, password}
+      acl: { baseUrl, companyUuid, email, password }
     } = this.appConfiguration;
 
     const response = await axios({
@@ -35,7 +35,7 @@ export class BasicAclService {
       const token = await this.getToken();
 
       const {
-        acl: { baseUrl, companyUuid}
+        acl: { baseUrl, companyUuid }
       } = this.appConfiguration;
 
       const response = await axios({
@@ -62,7 +62,7 @@ export class BasicAclService {
       const token = await this.getToken();
 
       const {
-        acl: { baseUrl, companyUuid}
+        acl: { baseUrl, companyUuid }
       } = this.appConfiguration;
 
       const response = await axios({
@@ -96,7 +96,7 @@ export class BasicAclService {
       const token = await this.getToken();
 
       const {
-        acl: { baseUrl, companyUuid}
+        acl: { baseUrl, companyUuid }
       } = this.appConfiguration;
 
       const response = await axios({
@@ -126,7 +126,7 @@ export class BasicAclService {
       const token = await this.getToken();
 
       const {
-        acl: { baseUrl, companyUuid}
+        acl: { baseUrl, companyUuid }
       } = this.appConfiguration;
 
       const response = await axios({
@@ -152,7 +152,7 @@ export class BasicAclService {
   async sendForgottenPasswordEmail (email: string) {
     try {
       const {
-        acl: { baseUrl, companyUuid}
+        acl: { baseUrl, companyUuid }
       } = this.appConfiguration;
 
       const response = await axios({
@@ -175,12 +175,12 @@ export class BasicAclService {
     }
   }
 
-  async changePassword (email: string, oldPassword: string , newPassword: string) {
+  async changePassword (email: string, oldPassword: string, newPassword: string) {
     try {
       const token = await this.getToken();
 
       const {
-        acl: { baseUrl, companyUuid}
+        acl: { baseUrl, companyUuid }
       } = this.appConfiguration;
 
       const response = await axios({
@@ -211,9 +211,8 @@ export class BasicAclService {
 
   async checkPermission (token: string, requestedRoute: string, requestedMethod: string) {
     try {
-
       const {
-        acl: { baseUrl, companyUuid, projectCode}
+        acl: { baseUrl, companyUuid, projectCode }
       } = this.appConfiguration;
 
       const response = await axios({
@@ -277,7 +276,7 @@ export class BasicAclService {
       const token = await this.getToken();
 
       const {
-        acl: { baseUrl, companyUuid}
+        acl: { baseUrl, companyUuid }
       } = this.appConfiguration;
 
       const response = await axios({
@@ -310,7 +309,7 @@ export class BasicAclService {
       const token = await this.getToken();
 
       const {
-        acl: { baseUrl, companyUuid}
+        acl: { baseUrl, companyUuid }
       } = this.appConfiguration;
 
       const response = await axios({

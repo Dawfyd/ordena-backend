@@ -6,33 +6,33 @@ import { UpdatePriceInput } from './dto/update-price.input';
 
 @Resolver(() => Price)
 export class PricesResolver {
-  constructor(private readonly pricesService: PricesService) {}
+  constructor (private readonly pricesService: PricesService) {}
 
   @Mutation(() => Price)
-  createPrice(@Args('createPriceInput') createPriceInput: CreatePriceInput) {
+  createPrice (@Args('createPriceInput') createPriceInput: CreatePriceInput) {
     return this.pricesService.create(createPriceInput);
   }
 
   @Query(() => [Price], { name: 'prices' })
-  findAll() {
+  findAll () {
     return this.pricesService.findAll();
   }
 
   @Query(() => Price, { name: 'price' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.pricesService.findOne(id);
   }
 
   @Mutation(() => Price)
-  updatePrice(@Args('updatePriceInput') updatePriceInput: UpdatePriceInput) {
+  updatePrice (@Args('updatePriceInput') updatePriceInput: UpdatePriceInput) {
     return this.pricesService.update(
       updatePriceInput.id,
-      updatePriceInput,
+      updatePriceInput
     );
   }
 
   @Mutation(() => Price)
-  removePrice(@Args('id', { type: () => Int }) id: number) {
+  removePrice (@Args('id', { type: () => Int }) id: number) {
     return this.pricesService.remove(id);
   }
 }

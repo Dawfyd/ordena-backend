@@ -7,48 +7,48 @@ import { ModifiersPerRequestService } from '../modifiers-per-request/modifiers-p
 
 @Resolver(() => Request)
 export class RequestsResolver {
-  constructor(
+  constructor (
     private readonly RequestsService: RequestsService,
     private readonly modifiersPerRequestsService: ModifiersPerRequestService
   ) {}
 
   @Mutation(() => Request)
-  createRequest(
+  createRequest (
     @Args('createRequestInput')
-      createRequestInput: CreateRequestInput,
+      createRequestInput: CreateRequestInput
   ) {
     return this.RequestsService.create(createRequestInput);
   }
 
   @Query(() => [Request], { name: 'requests' })
-  findAll() {
+  findAll () {
     return this.RequestsService.findAll();
   }
 
   @Query(() => Request, { name: 'request' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.RequestsService.findOne(id);
   }
 
   @Mutation(() => Request)
-  updateRequest(
+  updateRequest (
     @Args('updateRequestInput')
-      updateRequestInput: UpdateRequestInput,
+      updateRequestInput: UpdateRequestInput
   ) {
     return this.RequestsService.update(
       updateRequestInput.id_request,
-      updateRequestInput,
+      updateRequestInput
     );
   }
 
   @Mutation(() => Request)
-  removeRequest(@Args('id', { type: () => Int }) id: number) {
+  removeRequest (@Args('id', { type: () => Int }) id: number) {
     return this.RequestsService.remove(id);
   }
 
   @ResolveField()
-  async modifiersPerRequests(@Parent() Request: Request){
+  async modifiersPerRequests (@Parent() Request: Request) {
     const { id } = Request;
-    return  this.modifiersPerRequestsService.findRequestModifiersPerRequest(id);
+    return this.modifiersPerRequestsService.findRequestModifiersPerRequest(id);
   }
 }

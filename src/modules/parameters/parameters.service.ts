@@ -8,12 +8,12 @@ import { Parameter } from './entities/parameter.entity';
 
 @Injectable()
 export class ParametersService {
-  constructor(
+  constructor (
     @InjectRepository(Parameter)
     private readonly ParameterRepository: Repository<Parameter>
-  ){}
+  ) {}
 
-  async create(createParameterInput: CreateParameterInput): Promise<Parameter> {
+  async create (createParameterInput: CreateParameterInput): Promise<Parameter> {
     const name = createParameterInput.name
       .trim()
       .toUpperCase()
@@ -22,7 +22,7 @@ export class ParametersService {
 
     const parameter = await this.findOneName(name);
 
-    if(parameter) {
+    if (parameter) {
       throw new HttpException('El parametro ingresado ya existe en el sistema', HttpStatus.PRECONDITION_FAILED);
     }
 
@@ -34,17 +34,17 @@ export class ParametersService {
     return await this.ParameterRepository.save(newParameter);
   }
 
-  async findAll(): Promise<Parameter[]> {
+  async findAll (): Promise<Parameter[]> {
     return await this.ParameterRepository.find();
   }
 
-  async findOne(id: number): Promise<Parameter> {
+  async findOne (id: number): Promise<Parameter> {
     const parameter = await this.ParameterRepository.findOne(id);
     if (!parameter) throw new NotFoundException('No hay un parametro con esa ID');
     return parameter;
   }
 
-  async findOneName(name: string): Promise<Parameter> {
+  async findOneName (name: string): Promise<Parameter> {
     const parameter = await this.ParameterRepository.findOne({
       where: {
         name
@@ -54,12 +54,12 @@ export class ParametersService {
     return parameter;
   }
 
-  async update(id: number, updateParameterInput: UpdateParameterInput): Promise<Parameter> {
+  async update (id: number, updateParameterInput: UpdateParameterInput): Promise<Parameter> {
     const parameter = await this.findOne(id);
 
     let { name } = updateParameterInput;
 
-    if(name) {
+    if (name) {
       name = name
         .trim()
         .toUpperCase()
@@ -68,7 +68,7 @@ export class ParametersService {
 
       const result = await this.findOneName(name);
 
-      if(result) {
+      if (result) {
         throw new HttpException('El parametro ingresado ya existe en el sistema', HttpStatus.PRECONDITION_FAILED);
       }
     }
@@ -82,7 +82,7 @@ export class ParametersService {
     return await this.ParameterRepository.save(editedParameter);
   }
 
-  async remove(id: number): Promise<Parameter> {
+  async remove (id: number): Promise<Parameter> {
     const parameter = await this.findOne(id);
     return await this.ParameterRepository.remove(parameter);
   }

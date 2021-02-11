@@ -10,33 +10,34 @@ import { ModifiersPerRequest } from './entities/modifiers-per-request.entity';
 
 @Injectable()
 export class ModifiersPerRequestService {
-  constructor(
+  constructor (
     @InjectRepository(ModifiersPerRequest)
     private readonly ModifiersPerRequestRepository: Repository<ModifiersPerRequest>,
     private readonly requestService: RequestsService,
     private readonly modifiersService: ModifiersService
-  ){}
-  async create(createModifiersPerRequestInput: CreateModifiersPerRequestInput) {
+  ) {}
+
+  async create (createModifiersPerRequestInput: CreateModifiersPerRequestInput) {
     const { request_id, modifier_id } = createModifiersPerRequestInput;
     const request = await this.requestService.findOne(request_id);
     const modifier = await this.modifiersService.findOne(modifier_id);
 
-    const newModifiersPerRequest = this.ModifiersPerRequestRepository.create({request, modifier});
+    const newModifiersPerRequest = this.ModifiersPerRequestRepository.create({ request, modifier });
 
     return await this.ModifiersPerRequestRepository.save(newModifiersPerRequest);
   }
 
-  async findAll() {
+  async findAll () {
     return await this.ModifiersPerRequestRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne (id: number) {
     const modifiersPerRequest = await this.ModifiersPerRequestRepository.findOne(id);
-    if(!modifiersPerRequest) throw new NotFoundException('no hay solicitud por modificador con este id');
+    if (!modifiersPerRequest) throw new NotFoundException('no hay solicitud por modificador con este id');
     return modifiersPerRequest;
   }
 
-  async findModifierModifiersPerRequest(modifier: number): Promise<ModifiersPerRequest[]> {
+  async findModifierModifiersPerRequest (modifier: number): Promise<ModifiersPerRequest[]> {
     return await this.ModifiersPerRequestRepository.find({
       where: {
         modifier
@@ -44,7 +45,7 @@ export class ModifiersPerRequestService {
     });
   }
 
-  async findRequestModifiersPerRequest(request: number): Promise<ModifiersPerRequest[]> {
+  async findRequestModifiersPerRequest (request: number): Promise<ModifiersPerRequest[]> {
     return await this.ModifiersPerRequestRepository.find({
       where: {
         request
@@ -52,17 +53,17 @@ export class ModifiersPerRequestService {
     });
   }
 
-  async update(id: number, updateModifiersPerRequestInput: UpdateModifiersPerRequestInput) {
+  async update (id: number, updateModifiersPerRequestInput: UpdateModifiersPerRequestInput) {
     const modifiersPerRequest = await this.findOne(id);
-    const { request_id, modifier_id } = updateModifiersPerRequestInput  ;
+    const { request_id, modifier_id } = updateModifiersPerRequestInput;
     const request = await this.requestService.findOne(request_id);
     const modifier = await this.modifiersService.findOne(modifier_id);
 
-    const editedModifiersPerRequest = this.ModifiersPerRequestRepository.merge(modifiersPerRequest,{request, modifier});
+    const editedModifiersPerRequest = this.ModifiersPerRequestRepository.merge(modifiersPerRequest, { request, modifier });
     return await this.ModifiersPerRequestRepository.save(editedModifiersPerRequest);
   }
 
-  async remove(id: number) {
+  async remove (id: number) {
     const modifiersPerRequest = await this.findOne(id);
     return await this.ModifiersPerRequestRepository.remove(modifiersPerRequest);
   }

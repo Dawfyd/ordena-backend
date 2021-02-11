@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Product } from '../../products/entities/product.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Product } from '../../products/entities/product.entity';
 
 @Entity('prices')
 @ObjectType()
@@ -44,12 +44,12 @@ export class Price {
   updated_at: Date;
 
   @ManyToOne(
-    () => Product, 
-    (product: Product) => product.prices,{
+    () => Product,
+    (product: Product) => product.prices, {
       eager: true,
       cascade: true
     })
 
-  @JoinColumn({name: 'product_id'})
+  @JoinColumn({ name: 'product_id' })
     product: Product;
 }

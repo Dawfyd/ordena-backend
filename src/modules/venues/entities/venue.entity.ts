@@ -60,5 +60,4 @@ export class Venue {
 
   @OneToMany((type) => AssignedVenue, (assignedVenues: AssignedVenue) => assignedVenues.venue)
   assignedVenues?: AssignedVenue[];
-
 }

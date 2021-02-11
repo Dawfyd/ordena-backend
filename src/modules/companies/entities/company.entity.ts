@@ -6,7 +6,6 @@ import { Venue } from '../../venues/entities/venue.entity';
 @Entity('companies')
 @ObjectType()
 export class Company {
-
   /*
    * ID del cliente
    */

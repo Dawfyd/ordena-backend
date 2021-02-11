@@ -11,18 +11,17 @@ import { Person } from './entities/person.entity';
 
 @Injectable()
 export class PersonsService {
-  constructor(
+  constructor (
     @InjectRepository(Person)
     private readonly PersonRepository: Repository<Person>,
     private readonly basicAclService: BasicAclService,
     private readonly parametersService: ParametersService
   ) {}
 
-  async createAdmin(createPersonInput: CreatePersonInput): Promise<Person> {
-
+  async createAdmin (createPersonInput: CreatePersonInput): Promise<Person> {
     const admin = await this.parametersService.findOneName('ADMIN_ROLE');
 
-    if(!admin){
+    if (!admin) {
       throw new PreconditionFailedException('El parametro para identificar el código del rol (admin) debe estar configurado.');
     }
 
@@ -46,11 +45,10 @@ export class PersonsService {
     }
   }
 
-  async createWaiter(createPersonInput: CreatePersonInput): Promise<Person> {
-
+  async createWaiter (createPersonInput: CreatePersonInput): Promise<Person> {
     const admin = await this.parametersService.findOneName('WAITER_ROLE');
 
-    if(!admin){
+    if (!admin) {
       throw new PreconditionFailedException('El parametro para identificar el código del rol (waiter) debe estar configurado.');
     }
 
@@ -74,11 +72,10 @@ export class PersonsService {
     }
   }
 
-  async createCustomer(createPersonInput: CreatePersonInput): Promise<Person> {
-
+  async createCustomer (createPersonInput: CreatePersonInput): Promise<Person> {
     const admin = await this.parametersService.findOneName('CUSTOMER_ROLE');
 
-    if(!admin){
+    if (!admin) {
       throw new PreconditionFailedException('El parametro para identificar el código del rol (customer) debe estar configurado.');
     }
 
@@ -102,17 +99,17 @@ export class PersonsService {
     }
   }
 
-  async findAll(): Promise<Person[]> {
+  async findAll (): Promise<Person[]> {
     return await this.PersonRepository.find();
   }
 
-  async findOne(id: number): Promise<Person> {
+  async findOne (id: number): Promise<Person> {
     const person = await this.PersonRepository.findOne(id);
     if (!person) throw new NotFoundException('No hay una persona con esa ID');
     return person;
   }
 
-  async update(id: number, updatePersonInput: UpdatePersonInput): Promise<Person> {
+  async update (id: number, updatePersonInput: UpdatePersonInput): Promise<Person> {
     const person = await this.findOne(id);
 
     const originPerson = { ...person };
@@ -121,27 +118,25 @@ export class PersonsService {
 
     const { email, phone } = updatePersonInput;
 
-    if(email){
+    if (email) {
       await this.basicAclService.updateUser(user.id, email);
     }
 
-    if(phone){
-      const mail =  email ?? person.email;
+    if (phone) {
+      const mail = email ?? person.email;
       await this.basicAclService.changePhone(mail, phone);
     }
 
     try {
-
       const editedPerson = this.PersonRepository.merge(person, updatePersonInput);
       return await this.PersonRepository.save(editedPerson);
-
     } catch (error) {
       await this.basicAclService.updateUser(user.id, originPerson.email);
       await this.basicAclService.changePhone(originPerson.email, originPerson.phone);
     }
   }
 
-  async remove(id: number) {
+  async remove (id: number) {
     const person = await this.findOne(id);
     const user = await this.basicAclService.findUser(person.authUid);
 
@@ -149,8 +144,7 @@ export class PersonsService {
     return await this.PersonRepository.remove(person);
   }
 
-  async sendForgottenPasswordEmail(sendForgottenPasswordEmailInput: SendForgottenPasswordEmailInput): Promise<Person> {
-
+  async sendForgottenPasswordEmail (sendForgottenPasswordEmailInput: SendForgottenPasswordEmailInput): Promise<Person> {
     const person = await this.PersonRepository.findOne({
       where: {
         email: sendForgottenPasswordEmailInput.email
@@ -166,8 +160,7 @@ export class PersonsService {
     return person;
   }
 
-  async changePassword(changePasswordInput: ChangePasswordInput): Promise<Person> {
-
+  async changePassword (changePasswordInput: ChangePasswordInput): Promise<Person> {
     const person = await this.PersonRepository.findOne({
       where: {
         email: changePasswordInput.email

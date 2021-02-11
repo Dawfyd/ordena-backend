@@ -16,7 +16,6 @@ import { Category } from '../../categories/entities/category.entity';
 @Entity('menus')
 @ObjectType()
 export class Menu {
-
   @PrimaryGeneratedColumn()
   /*
    * ID del menu
@@ -54,7 +53,7 @@ export class Menu {
       cascade: true
     })
 
-  @JoinColumn({name: 'venue_id'})
+  @JoinColumn({ name: 'venue_id' })
     venue: Venue;
 
   @OneToMany(

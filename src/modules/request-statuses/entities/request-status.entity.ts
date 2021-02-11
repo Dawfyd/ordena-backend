@@ -12,7 +12,7 @@ export class RequestStatus {
   /*
   *ID del estado de la solicitud
   */
-  id:  number;
+  id: number;
 
   /*
   *nombre del estado de la solicitud

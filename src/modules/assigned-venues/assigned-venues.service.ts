@@ -9,33 +9,34 @@ import { AssignedVenue } from './entities/assigned-venue.entity';
 
 @Injectable()
 export class AssignedVenuesService {
-  constructor(
+  constructor (
     @InjectRepository(AssignedVenue)
     private readonly AssignedVenueRepository: Repository<AssignedVenue>,
     private readonly personsService: PersonsService,
     private readonly venuesService: VenuesService
-  ){}
-  async create(createAssignedVenueInput: CreateAssignedVenueInput): Promise<AssignedVenue> {
+  ) {}
+
+  async create (createAssignedVenueInput: CreateAssignedVenueInput): Promise<AssignedVenue> {
     const { venue_id, worker_id } = createAssignedVenueInput;
 
     const venue = await this.venuesService.findOne(venue_id);
     const person = await this.personsService.findOne(worker_id);
 
-    const newAssignedVenue = this.AssignedVenueRepository.create({person, venue});
+    const newAssignedVenue = this.AssignedVenueRepository.create({ person, venue });
     return await this.AssignedVenueRepository.save(newAssignedVenue);
   }
 
-  async findAll(): Promise<AssignedVenue[]> {
+  async findAll (): Promise<AssignedVenue[]> {
     return await this.AssignedVenueRepository.find();
   }
 
-  async findOne(id: number): Promise<AssignedVenue> {
+  async findOne (id: number): Promise<AssignedVenue> {
     const assignedVenue = await this.AssignedVenueRepository.findOne(id);
-    if(!assignedVenue) throw new NotFoundException('no hay sede asignada con este id');
+    if (!assignedVenue) throw new NotFoundException('no hay sede asignada con este id');
     return assignedVenue;
   }
 
-  async findPersonAssignedVenue(person: number): Promise<AssignedVenue[]> {
+  async findPersonAssignedVenue (person: number): Promise<AssignedVenue[]> {
     return await this.AssignedVenueRepository.find({
       where: {
         person
@@ -43,7 +44,7 @@ export class AssignedVenuesService {
     });
   }
 
-  async findVenueAssignedVenue(venue: number): Promise<AssignedVenue[]> {
+  async findVenueAssignedVenue (venue: number): Promise<AssignedVenue[]> {
     return await this.AssignedVenueRepository.find({
       where: {
         venue
@@ -51,18 +52,18 @@ export class AssignedVenuesService {
     });
   }
 
-  async update(id: number, updateAssignedVenueInput: UpdateAssignedVenueInput): Promise<AssignedVenue> {
+  async update (id: number, updateAssignedVenueInput: UpdateAssignedVenueInput): Promise<AssignedVenue> {
     const assignedVenue = await this.findOne(id);
     const { venue_id, worker_id } = updateAssignedVenueInput;
 
     const venue = await this.venuesService.findOne(venue_id);
     const person = await this.personsService.findOne(worker_id);
 
-    const editedAssignedVenue = this.AssignedVenueRepository.merge(assignedVenue,{venue, person});
+    const editedAssignedVenue = this.AssignedVenueRepository.merge(assignedVenue, { venue, person });
     return await this.AssignedVenueRepository.save(editedAssignedVenue);
   }
 
-  async remove(id: number): Promise<AssignedVenue> {
+  async remove (id: number): Promise<AssignedVenue> {
     const assignedVenue = await this.findOne(id);
     return await this.AssignedVenueRepository.remove(assignedVenue);
   }

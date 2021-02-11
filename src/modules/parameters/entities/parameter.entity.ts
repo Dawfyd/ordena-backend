@@ -14,7 +14,7 @@ export class Parameter {
   /*
    * Nombre del parametro
    */
-  @Column({ type: 'varchar', length: 100 , unique: true})
+  @Column({ type: 'varchar', length: 100, unique: true })
   name: string;
 
   /*

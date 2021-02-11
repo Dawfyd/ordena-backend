@@ -9,60 +9,60 @@ import { AssignedVenuesService } from '../assigned-venues/assigned-venues.servic
 
 @Resolver(() => Venue)
 export class VenuesResolver {
-  constructor(private readonly VenuesService: VenuesService,
+  constructor (private readonly VenuesService: VenuesService,
               private readonly menusServices: MenusService,
               private readonly spotsService: SpotsService,
               private readonly assignedVenuesService: AssignedVenuesService
   ) {}
 
   @Mutation(() => Venue)
-  createVenue(
+  createVenue (
     @Args('createVenueInput')
-      createVenueInput: CreateVenueInput,
+      createVenueInput: CreateVenueInput
   ) {
     return this.VenuesService.create(createVenueInput);
   }
 
   @Query(() => [Venue], { name: 'venues' })
-  findAll() {
+  findAll () {
     return this.VenuesService.findAll();
   }
 
   @Query(() => Venue, { name: 'venue' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.VenuesService.findOne(id);
   }
 
   @Mutation(() => Venue)
-  updateVenue(
+  updateVenue (
     @Args('updateVenueInput')
-      updateVenueInput: UpdateVenueInput,
+      updateVenueInput: UpdateVenueInput
   ) {
     return this.VenuesService.update(
       updateVenueInput.id,
-      updateVenueInput,
+      updateVenueInput
     );
   }
 
   @Mutation(() => Venue)
-  removeVenue(@Args('id', { type: () => Int }) id: number) {
+  removeVenue (@Args('id', { type: () => Int }) id: number) {
     return this.VenuesService.remove(id);
   }
 
   @ResolveField()
-  async menus(@Parent() venue: Venue) {
+  async menus (@Parent() venue: Venue) {
     const { id } = venue;
     return this.menusServices.findMenus(id);
   }
 
   @ResolveField()
-  async spots(@Parent() venue: Venue) {
+  async spots (@Parent() venue: Venue) {
     const { id } = venue;
     return this.spotsService.findSpost(id);
   }
 
   @ResolveField()
-  async assignedVenues(@Parent() venue: Venue) {
+  async assignedVenues (@Parent() venue: Venue) {
     const { id } = venue;
     return this.assignedVenuesService.findVenueAssignedVenue(id);
   }

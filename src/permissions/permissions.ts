@@ -1,7 +1,7 @@
 import { rule, shield } from 'graphql-shield';
 class Permission {
   // Permissions
-  isAllowed = rule() (async (parent, args, ctx, info) => {
+  isAllowed = rule()(async (parent, args, ctx, info) => {
     return true;
   });
 

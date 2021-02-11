@@ -76,11 +76,10 @@ export class Person {
     customerAssignedSpot?: CustomerAssignedSpot[];
 
   @OneToMany(
-    (type) => AssignedVenue,(assignedVenues: AssignedVenue) => assignedVenues.person)
+    (type) => AssignedVenue, (assignedVenues: AssignedVenue) => assignedVenues.person)
     assignedVenues?: AssignedVenue[];
 
   @OneToMany(
     (type) => WaiterAssignedSpot, (waiterAssignedSpots: WaiterAssignedSpot) => waiterAssignedSpots.person)
     waiterAssignedSpots?: WaiterAssignedSpot[];
-
 }

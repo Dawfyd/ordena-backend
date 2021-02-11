@@ -1,5 +1,5 @@
-import { CreateModifierInput } from './create-modifier.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { CreateModifierInput } from './create-modifier.input';
 
 @InputType()
 export class UpdateModifierInput extends PartialType(CreateModifierInput) {

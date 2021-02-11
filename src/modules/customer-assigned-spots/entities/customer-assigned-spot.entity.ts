@@ -41,21 +41,21 @@ export class CustomerAssignedSpot {
 
  @ManyToOne(
    () => Person,
-   (person: Person) => person.customerAssignedSpot,  {
+   (person: Person) => person.customerAssignedSpot, {
      eager: true,
      cascade: true
    })
 
-  @JoinColumn({name: 'person_id'})
+  @JoinColumn({ name: 'person_id' })
   person: Person;
 
   @ManyToOne(
     () => Spot,
-    (spot: Spot) => spot.customerAssignedSpot,  {
+    (spot: Spot) => spot.customerAssignedSpot, {
       eager: true,
       cascade: true
     })
 
-  @JoinColumn({name: 'spot_id'})
+  @JoinColumn({ name: 'spot_id' })
   spot: Spot;
 }

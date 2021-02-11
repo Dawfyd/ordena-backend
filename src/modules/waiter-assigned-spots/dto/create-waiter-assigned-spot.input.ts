@@ -2,7 +2,6 @@ import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateWaiterAssignedSpotInput {
-
   /*
   * id de la persona al que pertenece
   */
