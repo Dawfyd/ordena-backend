@@ -7,15 +7,5 @@ export class UpdateOrderInput extends PartialType(CreateOrderInput) {
   /*
    * ID de la orden
    */
-  id_order: number;
-
-  /*
-   * Valor de la orden
-   */
-  price_order: number;
-
-  /*
-   *  Estado de la orden
-   */
-  state_order: boolean;
+  id: number;
 }

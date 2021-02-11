@@ -10,6 +10,7 @@ import { PricesModule } from '../prices/prices.module';
 import { ModifiersModule } from '../modifiers/modifiers.module';
 import { AssignedProductsModule } from '../assigned-products/assigned-products.module';
 import { ParametersModule } from '../parameters/parameters.module';
+import { RequestsModule } from '../requests/requests.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product]),
@@ -19,6 +20,7 @@ import { ParametersModule } from '../parameters/parameters.module';
     forwardRef(() => PricesModule),
     forwardRef(() => ModifiersModule),
     forwardRef(() => AssignedProductsModule),
+    forwardRef(() => RequestsModule),
     ParametersModule],
   providers: [ProductsResolver, ProductsService],
   exports: [ProductsService]

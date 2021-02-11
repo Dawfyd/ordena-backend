@@ -1,10 +1,10 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { Venue } from 'src/models/venues/entities/venue.entity';
-import { Person } from 'src/models/persons/entities/person.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Order } from 'src/models/orders/entities/order.entity';
+import { CustomerAssignedSpot } from 'src/models/customer-assigned-spots/entities/customer-assigned-spot.entity';
+import { WaiterAssignedSpot } from 'src/models/waiter-assigned-spots/entities/waiter-assigned-spot.entity';
 import { Request } from 'src/models/requests/entities/request.entity';
-import { Service } from 'src/models/services/entities/service.entity';
 
 @Entity('spots')
 @ObjectType()
@@ -15,25 +15,25 @@ export class Spot {
   /*
    * ID de la mesa
    */
-  id_spot: number;
+  id: number;
 
   /*
    * Estado de la mesa
    */
   @Column()
-  state_spot: string;
+  state: string;
 
   /*
    * Nombre de la mesa
    */
   @Column()
-  name_spot: string;
+  name: string;
 
   /*
    * Numero de la mesa
    */
   @Column()
-  number_spot: number;
+  number: number;
 
   /*
   *fecha cuando se realizo el registro
@@ -48,32 +48,28 @@ export class Spot {
   updated_at: Date;
 
   @ManyToOne(
-    () => Service,
-    (service: Service) => service.spots)
-
-  @JoinColumn({name: 'id_service'})
-  service: Service;
-
-  @OneToMany(
-    (type) => Order, (orders: Order) => orders.spot)
-    orders?: Order[];
-
-  @OneToMany(
-    (type) => Request, (requests: Request) => requests.spot)
-    requests?: Request[];
-
-  @ManyToOne(
     () => Venue,
-    (venue: Venue) => venue.spots)
-
-  @JoinColumn({name: 'id_venue'})
-    venue: Venue;
-
-  @OneToMany(
-    (type) => Person, (persons: Person) => persons.spot, {
+    (venue: Venue) => venue.spots,{
       eager: true,
       cascade: true
     })
-    persons?: Person[];
 
+  @JoinColumn({name: 'venue_id'})
+    venue: Venue;
+
+    @OneToMany(
+      (type) => CustomerAssignedSpot, (customerAssignedSpot: CustomerAssignedSpot) => customerAssignedSpot.spot)
+      customerAssignedSpot?: CustomerAssignedSpot[];
+
+    @OneToMany(
+      (type) => WaiterAssignedSpot, (waiterAssignedSpots: WaiterAssignedSpot) => waiterAssignedSpots.spot)
+      waiterAssignedSpots?: WaiterAssignedSpot[];
+
+    @OneToMany(
+      (type) => Order, (orders: Order) => orders.spot)
+      orders?: Order[];
+
+    @OneToMany(
+      (type) => Request, (request: Request) => request.spot)
+      requests?: Request[];
 }

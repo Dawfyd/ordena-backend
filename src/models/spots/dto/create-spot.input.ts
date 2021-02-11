@@ -1,24 +1,24 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateSpotInput {
   /*
-   * ID de la mesa
-   */
-  id_spot: number;
-
-  /*
    * Estado de la mesa
    */
-  state_spot: string;
+  state: string;
 
   /*
    * Nombre de la mesa
    */
-  name_spot: string;
+  name: string;
 
   /*
    * Numero de la mesa
    */
-  number_spot: number;
+  number: number;
+
+  /*
+  *
+  */
+ venue_id: number;
 }

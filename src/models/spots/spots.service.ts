@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { VenuesService } from '../venues/venues.service';
 import { CreateSpotInput } from './dto/create-spot.input';
 import { UpdateSpotInput } from './dto/update-spot.input';
 import { Spot } from './entities/spot.entity';
@@ -10,10 +11,14 @@ export class SpotsService {
   constructor(
     @InjectRepository(Spot)
     private readonly SpotRepository: Repository<Spot>,
+    private readonly venuesService: VenuesService
   ) {}
 
   async create(createSpotInput: CreateSpotInput): Promise<Spot> {
-    const newSpot = this.SpotRepository.create(createSpotInput);
+    const { venue_id } = createSpotInput;
+    const venue = await this.venuesService.findOne(venue_id);
+
+    const newSpot = this.SpotRepository.create({...createSpotInput, venue});
     return await this.SpotRepository.save(newSpot);
   }
 
@@ -27,17 +32,27 @@ export class SpotsService {
     return spot;
   }
 
-  async update(id: number, updateSpotInput: UpdateSpotInput) {
-    const spot = await this.SpotRepository.findOne(id);
-    if (!spot) throw new NotFoundException('No hay una mesa con esa ID');
+  async findSpost(venue: number): Promise<Spot[]> {
+    return await this.SpotRepository.find({
+      where: {
+        venue
+      }
+    });
+  }
 
-    const editedSpot = Object.assign(spot, updateSpotInput);
+  async update(id: number, updateSpotInput: UpdateSpotInput) {
+    const spot = await this.findOne(id);
+
+    const { venue_id } =  updateSpotInput;
+
+    const venue = await this.venuesService.findOne(venue_id);
+
+    const editedSpot = this.SpotRepository.merge(spot, { ...updateSpotInput, venue});
     return await this.SpotRepository.save(editedSpot);
   }
 
   async remove(id: number) {
-    const spot = await this.SpotRepository.findOne(id);
-    if (!spot) throw new NotFoundException('No hay una mesa con esa ID');
+    const spot = await this.findOne(id);
     return await this.SpotRepository.remove(spot);
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CustomersService } from '../customers/customers.service';
+import { CompaniesService } from '../companies/companies.service';
 import { CreateVenueInput } from './dto/create-venue.input';
 import { UpdateVenueInput } from './dto/update-venue.input';
 import { Venue } from './entities/venue.entity';
@@ -12,21 +12,21 @@ export class VenuesService {
   constructor(
     @InjectRepository(Venue)
     private readonly VenueRepository: Repository<Venue>,
-    private readonly  customersService: CustomersService
+    private readonly  companiesService: CompaniesService
   ) {}
 
   async create(
     createVenueInput: CreateVenueInput,
   ): Promise<Venue> {
-    const { customer_id } = createVenueInput;
+    const { company_id } = createVenueInput;
 
-    const customer = await this.customersService.findOne(customer_id);
+    const company = await this.companiesService.findOne(company_id);
 
-    delete createVenueInput.customer_id;
+    delete createVenueInput.company_id;
 
     const newVenue = this.VenueRepository.create({
       ...createVenueInput,
-      customer
+      company
     });
 
     return await this.VenueRepository.save(newVenue);
@@ -54,13 +54,13 @@ export class VenuesService {
   async update(id: number, updateVenueInput: UpdateVenueInput): Promise<Venue> {
     const venue = await this.findOne(id);
 
-    const { customer_id } = updateVenueInput;
+    const { company_id } = updateVenueInput;
 
-    const customer = await this.customersService.findOne(customer_id);
-    delete updateVenueInput.customer_id;
+    const company = await this.companiesService.findOne(company_id);
+    delete updateVenueInput.company_id;
     const editedVenue = this.VenueRepository.merge(venue,{
       ...updateVenueInput,
-      customer
+      company
     });
 
     return await this.VenueRepository.save(editedVenue);

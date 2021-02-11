@@ -1,13 +1,15 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { RequestsService } from './requests.service';
 import { Request } from './entities/request.entity';
 import { CreateRequestInput } from './dto/create-request.input';
 import { UpdateRequestInput } from './dto/update-request.input';
+import { ModifiersPerRequestService } from '../modifiers-per-request/modifiers-per-request.service';
 
 @Resolver(() => Request)
 export class RequestsResolver {
   constructor(
     private readonly RequestsService: RequestsService,
+    private readonly modifiersPerRequestsService: ModifiersPerRequestService
   ) {}
 
   @Mutation(() => Request)
@@ -42,5 +44,11 @@ export class RequestsResolver {
   @Mutation(() => Request)
   removeRequest(@Args('id', { type: () => Int }) id: number) {
     return this.RequestsService.remove(id);
+  }
+
+  @ResolveField()
+  async modifiersPerRequests(@Parent() Request: Request){
+    const { id } = Request;
+    return  this.modifiersPerRequestsService.findRequestModifiersPerRequest(id);
   }
 }

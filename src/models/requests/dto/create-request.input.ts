@@ -1,35 +1,43 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateRequestInput {
   /*
-   * ID del producto solicitado
-   */
-  id_request?: number;
-
-  /*
    * Numero de unidades del solicitado
    */
-  unit_request: number;
+  unit: number;
 
   /*
    * Comentario del solicitado
    */
-  comentary_request?: string;
-
-  /*
-   * Estado del pedido - 1: solicitado - 2: registrado - 3: servido - 4:pagado 
-   */
-  state_request = 1;
-
+  comentary?: string;
   /*
    * Asociacion con producto si es una adicion
    */
-  addition_request: string;
+  addition: string;
 
   /*
    * Modificadores del solicitado
    */
-  modifier_request: string;
+  modifier: string;
 
+  /*
+  *ID del producto al que pertenece
+  */
+  product_id: number;
+
+  /*
+  *ID del pedido al que pertenece
+  */
+  order_id: number;
+
+  /*
+  *ID del mesa al que pertenence
+  */
+  spot_id: number;
+
+  /*
+  *ID del  estado de la solicitud
+  */
+  request_status_id: number
 }

@@ -1,8 +1,11 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { AdditionalsPerRequest } from 'src/models/additionals-per-requests/entities/additionals-per-request.entity';
+import { ModifiersPerRequest } from 'src/models/modifiers-per-request/entities/modifiers-per-request.entity';
 import { Order } from 'src/models/orders/entities/order.entity';
 import { Product } from 'src/models/products/entities/product.entity';
+import { RequestStatus } from 'src/models/request-statuses/entities/request-status.entity';
 import { Spot } from 'src/models/spots/entities/spot.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
 @Entity('requests')
 @ObjectType()
@@ -13,37 +16,31 @@ export class Request {
   /*
    * ID del producto solicitado
    */
-  id_request: number;
+  id: number;
 
   /*
    * Numero de unidades del solicitado
    */
   @Column()
-  unit_request: number;
+  unit: number;
 
   /*
    * Comentario del solicitado
    */
   @Column()
-  comentary_request: string;
-
-  /*
-   * Estado del pedido - 1: solicitado - 2: registrado - 3: servido - 4:pagado 
-   */
-  @Column()
-  state_request: number;
+  comentary: string;
 
   /*
    * Asociacion con producto si es una adicion
    */
   @Column()
-  addition_request: string;
+  addition: string;
 
   /*
    * Modificadores del solicitado
    */
   @Column()
-  modifier_request: string;
+  modifier: string;
 
   /*
   *fecha cuando se realizo el registro
@@ -59,23 +56,39 @@ export class Request {
 
 
   @ManyToOne(
-    () => Product, 
+    () => Product,
     (product: Product) => product.requests)
 
-  @JoinColumn({name: 'id_product'})
+  @JoinColumn({name: 'product_id'})
     product: Product;
 
   @ManyToOne(
-    () => Order, 
+    () => Order,
     (order: Order) => order.requests)
 
-  @JoinColumn({name: 'id_order'})
+  @JoinColumn({name: 'order_id'})
   order: Order;
 
   @ManyToOne(
-    () => Spot, 
+    () => Spot,
     (spot: Spot) => spot.requests)
 
-  @JoinColumn({name: 'id_spot'})
+  @JoinColumn({name: 'spot_id'})
   spot: Spot;
+
+  @ManyToOne(
+    () => RequestStatus, 
+    (requestStatus: RequestStatus) => requestStatus.requests)
+
+  @JoinColumn({name: 'request_status_id'})
+  requestStatus: RequestStatus;
+
+  @OneToMany(
+    (type) => AdditionalsPerRequest, (additionalsPerRequests: AdditionalsPerRequest) => additionalsPerRequests.request)
+    additionalsPerRequests?: AdditionalsPerRequest[];
+
+  @OneToMany(
+    (type) => ModifiersPerRequest, (modifiersPerRequests: ModifiersPerRequest) => modifiersPerRequests.request)
+    modifiersPerRequests?: ModifiersPerRequest[];
+
 }

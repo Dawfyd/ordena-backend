@@ -26,5 +26,5 @@ export class CreateVenueInput {
   /*
    * ID del cliente
    */
-  customer_id: number;
+  company_id: number;
 }
