@@ -20,13 +20,12 @@ export class VenuesService {
   ): Promise<Venue> {
     const { company_id } = createVenueInput;
 
-    const company = await this.companiesService.findOne(company_id);
+    // const company = await this.companiesService.findOne(company_id);
 
     delete createVenueInput.company_id;
 
     const newVenue = this.VenueRepository.create({
-      ...createVenueInput,
-      company
+      ...createVenueInput
     });
 
     return await this.VenueRepository.save(newVenue);
@@ -56,11 +55,10 @@ export class VenuesService {
 
     const { company_id } = updateVenueInput;
 
-    const company = await this.companiesService.findOne(company_id);
+    // const company = await this.companiesService.findOne(company_id);
     delete updateVenueInput.company_id;
     const editedVenue = this.VenueRepository.merge(venue,{
-      ...updateVenueInput,
-      company
+      ...updateVenueInput
     });
 
     return await this.VenueRepository.save(editedVenue);

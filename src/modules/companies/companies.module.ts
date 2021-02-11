@@ -1,14 +1,19 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { CompaniesService } from './companies.service';
 import { CompaniesResolver } from './companies.resolver';
-import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { Company } from './entities/company.entity';
-import { VenuesModule } from '../venues/venues.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Company]),
-    forwardRef(() => VenuesModule)],
-  providers: [CompaniesResolver, CompaniesService],
+  imports: [
+    TypeOrmModule.forFeature([Company])
+  ],
+  providers: [
+    CompaniesService,
+    CompaniesResolver
+  ],
   exports: [CompaniesService]
 })
-export class CompaniesModule {}
+export class CompaniesModule { }
