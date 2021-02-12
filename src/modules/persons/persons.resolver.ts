@@ -13,7 +13,7 @@ import { OrdersService } from '../orders/orders.service';
 
 @Resolver(() => Person)
 export class PersonsResolver {
-  constructor(private readonly personsService: PersonsService,
+  constructor (private readonly personsService: PersonsService,
     private readonly favoritesService: FavoritesService,
     private readonly customerAssignedSpotsService: CustomerAssignedSpotsService,
     private readonly assignedVenuesService: AssignedVenuesService,
@@ -22,39 +22,39 @@ export class PersonsResolver {
   ) {}
 
   @Mutation(() => Person)
-  createAdminPerson(
-    @Args('createPersonInput') createPersonInput: CreatePersonInput,
+  createAdminPerson (
+    @Args('createPersonInput') createPersonInput: CreatePersonInput
   ) {
     return this.personsService.createAdmin(createPersonInput);
   }
 
   @Mutation(() => Person)
-  createWaiterPerson(
-    @Args('createPersonInput') createPersonInput: CreatePersonInput,
+  createWaiterPerson (
+    @Args('createPersonInput') createPersonInput: CreatePersonInput
   ) {
     return this.personsService.createWaiter(createPersonInput);
   }
 
   @Mutation(() => Person)
-  createCustomerPerson(
-    @Args('createPersonInput') createPersonInput: CreatePersonInput,
+  createCustomerPerson (
+    @Args('createPersonInput') createPersonInput: CreatePersonInput
   ) {
     return this.personsService.createCustomer(createPersonInput);
   }
 
   @Query(() => [Person], { name: 'persons' })
-  findAll() {
+  findAll () {
     return this.personsService.findAll();
   }
 
   @Query(() => Person, { name: 'person' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.personsService.findOne(id);
   }
 
   @Mutation(() => Person)
-  updatePerson(
-    @Args('updatePersonInput') updatePersonInput: UpdatePersonInput,
+  updatePerson (
+    @Args('updatePersonInput') updatePersonInput: UpdatePersonInput
   ) {
     return this.personsService.update(
       updatePersonInput.id,
@@ -63,50 +63,50 @@ export class PersonsResolver {
   }
 
   @Mutation(() => Person)
-  removePerson(@Args('id', { type: () => Int }) id: number) {
+  removePerson (@Args('id', { type: () => Int }) id: number) {
     return this.personsService.remove(id);
   }
 
   @Mutation(() => Person)
-  sendForgottenPasswordEmail(
-    @Args('sendForgottenPasswordEmailInput') sendForgottenPasswordEmailInput: SendForgottenPasswordEmailInput,
+  sendForgottenPasswordEmail (
+    @Args('sendForgottenPasswordEmailInput') sendForgottenPasswordEmailInput: SendForgottenPasswordEmailInput
   ) {
     return this.personsService.sendForgottenPasswordEmail(sendForgottenPasswordEmailInput);
   }
 
   @Mutation(() => Person)
-  changePassword(
-    @Args('changePasswordInput') changePasswordInput: ChangePasswordInput,
+  changePassword (
+    @Args('changePasswordInput') changePasswordInput: ChangePasswordInput
   ) {
     return this.personsService.changePassword(changePasswordInput);
   }
 
   @ResolveField()
-  async favorites(@Parent() Person: Person) {
+  async favorites (@Parent() Person: Person) {
     const { id } = Person;
     return this.favoritesService.findFavoritesPerson(id);
   }
 
   @ResolveField()
-  async customerAssignedSpot(@Parent() Person: Person) {
+  async customerAssignedSpot (@Parent() Person: Person) {
     const { id } = Person;
     return this.customerAssignedSpotsService.findPersonCustomerAssignedPost(id);
   }
 
   @ResolveField()
-  async assignedVenues(@Parent() Person: Person) {
+  async assignedVenues (@Parent() Person: Person) {
     const { id } = Person;
     return this.assignedVenuesService.findPersonAssignedVenue(id);
   }
 
   @ResolveField()
-  async waiterAssignedSpots(@Parent() Person: Person) {
+  async waiterAssignedSpots (@Parent() Person: Person) {
     const { id } = Person;
     return this.waiterAssignedSpotsService.findPersonWaiterAssignedSpot(id);
   }
 
   @ResolveField()
-  async orders(@Parent() Person: Person) {
+  async orders (@Parent() Person: Person) {
     const { id } = Person;
     return this.ordersService.findPersonOrder(id);
   }

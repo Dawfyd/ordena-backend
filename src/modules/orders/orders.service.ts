@@ -10,7 +10,7 @@ import { Order } from './entities/order.entity';
 
 @Injectable()
 export class OrdersService {
-  constructor(
+  constructor (
     @InjectRepository(Order)
     private readonly OrderRepository: Repository<Order>,
     private readonly personasService: PersonsService,
@@ -18,7 +18,7 @@ export class OrdersService {
     private readonly orderStatusesService: OrderStatusesService
   ) {}
 
-  async create(createOrderInput: CreateOrderInput): Promise<Order> {
+  async create (createOrderInput: CreateOrderInput): Promise<Order> {
     const { person_id, spot_id, order_status_id } = createOrderInput;
 
     const person = await this.personasService.findOne(person_id);
@@ -29,17 +29,17 @@ export class OrdersService {
     return await this.OrderRepository.save(newOrder);
   }
 
-  async findAll(): Promise<Order[]> {
+  async findAll (): Promise<Order[]> {
     return await this.OrderRepository.find();
   }
 
-  async findOne(id: number): Promise<Order> {
+  async findOne (id: number): Promise<Order> {
     const order = await this.OrderRepository.findOne(id);
     if (!order) throw new NotFoundException('No hay una orden con esa ID');
     return order;
   }
 
-  async findPersonOrder(person: number): Promise<Order[]> {
+  async findPersonOrder (person: number): Promise<Order[]> {
     return await this.OrderRepository.find({
       where: {
         person
@@ -47,7 +47,7 @@ export class OrdersService {
     });
   }
 
-  async findOrderStatusOrder(orderStatus: number): Promise<Order[]> {
+  async findOrderStatusOrder (orderStatus: number): Promise<Order[]> {
     return await this.OrderRepository.find({
       where: {
         orderStatus
@@ -55,7 +55,7 @@ export class OrdersService {
     });
   }
 
-  async findSpotOrder(spot: number): Promise<Order[]> {
+  async findSpotOrder (spot: number): Promise<Order[]> {
     return await this.OrderRepository.find({
       where: {
         spot
@@ -63,7 +63,7 @@ export class OrdersService {
     });
   }
 
-  async update(id: number, updateOrderInput: UpdateOrderInput) {
+  async update (id: number, updateOrderInput: UpdateOrderInput) {
     const order = await this.findOne(id);
 
     const { person_id, spot_id, order_status_id } = updateOrderInput;
@@ -76,7 +76,7 @@ export class OrdersService {
     return await this.OrderRepository.save(editedOrder);
   }
 
-  async remove(id: number) {
+  async remove (id: number) {
     const order = await this.findOne(id);
     return await this.OrderRepository.remove(order);
   }

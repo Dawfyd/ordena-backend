@@ -1,5 +1,5 @@
-import { CreateCustomerAssignedSpotInput } from './create-customer-assigned-spot.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { CreateCustomerAssignedSpotInput } from './create-customer-assigned-spot.input';
 
 @InputType()
 export class UpdateCustomerAssignedSpotInput extends PartialType(CreateCustomerAssignedSpotInput) {

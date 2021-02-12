@@ -6,51 +6,51 @@ import { Venue } from '../venues/entities/venue.entity';
 
 import { CompaniesService } from './companies.service';
 
-import { CreateInput } from './dto/create-input.dto';
+import { CreateCompanyInput } from './dto/create-company-input.dto';
 import { UpdateCompanyInput } from './dto/update-company-input.dto';
-import { FindAllInput } from './dto/find-all-input.dto';
-import { FindOneInput } from './dto/find-one-input.dto';
+import { FindAllCompaniesInput } from './dto/find-all-companies-input.dto';
+import { FindOneCompanyInput } from './dto/find-company-one-input.dto';
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 @Resolver(() => Company)
 export class CompaniesResolver {
-  constructor(
+  constructor (
     private readonly service: CompaniesService
   ) {}
 
   @Mutation(() => Company, { name: 'createCompany' })
-  create(
-    @Args('createCompanyInput') createCompanyInput: CreateInput,
+  create (
+    @Args('createCompanyInput') createCompanyInput: CreateCompanyInput
   ): Promise<Company> {
     return this.service.create(createCompanyInput);
   }
 
   @Query(() => [Company], { name: 'companies' })
-  findAll(
-    @Args('findAllInput') findAllInput: FindAllInput,
+  findAll (
+    @Args('findAllCompaniesInput') findAllCompaniesInput: FindAllCompaniesInput
   ): Promise<Company[]> {
-    return this.service.findAll(findAllInput);
+    return this.service.findAll(findAllCompaniesInput);
   }
 
   @Query(() => Company, { name: 'company' })
-  findOne(@Args('findOneInput') findOneInput: FindOneInput): Promise<Company | null> {
-    return this.service.findOne(findOneInput);
+  findOne (@Args('findOneCompanyInput') findOneCompanyInput: FindOneCompanyInput): Promise<Company | null> {
+    return this.service.findOne(findOneCompanyInput);
   }
 
   @Mutation(() => Company, { name: 'updateCompany' })
-  update(
-    @Args('findOneInput') findOneInput: FindOneInput,
+  update (
+    @Args('findOneCompanyInput') findOneInput: FindOneCompanyInput,
     @Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput
   ): Promise<Company> {
     return this.service.update(findOneInput, updateCompanyInput);
   }
 
   @Mutation(() => Company)
-  removeCompany(@Args('findOneInput') findOneInput: FindOneInput,): Promise<Company> {
-    return this.service.remove(findOneInput);
+  removeCompany (@Args('findOneCompanyInput') findOneCompanyInput: FindOneCompanyInput): Promise<Company> {
+    return this.service.remove(findOneCompanyInput);
   }
 
-  @ResolveField()
-  async venues(@Parent() company: Company): Promise<Venue[]> {
+  @ResolveField(() => [Venue], { name: 'venues' })
+  async venues (@Parent() company: Company): Promise<Venue[]> {
     return this.service.venues(company);
   }
 }

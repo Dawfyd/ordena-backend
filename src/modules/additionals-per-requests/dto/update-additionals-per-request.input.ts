@@ -1,5 +1,5 @@
-import { CreateAdditionalsPerRequestInput } from './create-additionals-per-request.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { CreateAdditionalsPerRequestInput } from './create-additionals-per-request.input';
 
 @InputType()
 export class UpdateAdditionalsPerRequestInput extends PartialType(CreateAdditionalsPerRequestInput) {

@@ -7,36 +7,36 @@ import { RequestsService } from '../requests/requests.service';
 
 @Resolver(() => RequestStatus)
 export class RequestStatusesResolver {
-  constructor(private readonly requestStatusesService: RequestStatusesService,
+  constructor (private readonly requestStatusesService: RequestStatusesService,
               private readonly requestsService: RequestsService) {}
 
   @Mutation(() => RequestStatus)
-  createRequestStatus(@Args('createRequestStatusInput') createRequestStatusInput: CreateRequestStatusInput) {
+  createRequestStatus (@Args('createRequestStatusInput') createRequestStatusInput: CreateRequestStatusInput) {
     return this.requestStatusesService.create(createRequestStatusInput);
   }
 
   @Query(() => [RequestStatus], { name: 'requestStatuses' })
-  findAll() {
+  findAll () {
     return this.requestStatusesService.findAll();
   }
 
   @Query(() => RequestStatus, { name: 'requestStatus' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.requestStatusesService.findOne(id);
   }
 
   @Mutation(() => RequestStatus)
-  updateRequestStatus(@Args('updateRequestStatusInput') updateRequestStatusInput: UpdateRequestStatusInput) {
+  updateRequestStatus (@Args('updateRequestStatusInput') updateRequestStatusInput: UpdateRequestStatusInput) {
     return this.requestStatusesService.update(updateRequestStatusInput.id, updateRequestStatusInput);
   }
 
   @Mutation(() => RequestStatus)
-  removeRequestStatus(@Args('id', { type: () => Int }) id: number) {
+  removeRequestStatus (@Args('id', { type: () => Int }) id: number) {
     return this.requestStatusesService.remove(id);
   }
 
   @ResolveField()
-  async requests(@Parent() RequestStatus: RequestStatus) {
+  async requests (@Parent() RequestStatus: RequestStatus) {
     const { id } = RequestStatus;
     return this.requestsService.findRequestStatusRequest(id);
   }

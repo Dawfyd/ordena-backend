@@ -6,30 +6,30 @@ import { UpdateCustomerAssignedSpotInput } from './dto/update-customer-assigned-
 
 @Resolver(() => CustomerAssignedSpot)
 export class CustomerAssignedSpotsResolver {
-  constructor(private readonly customerAssignedSpotsService: CustomerAssignedSpotsService) {}
+  constructor (private readonly customerAssignedSpotsService: CustomerAssignedSpotsService) {}
 
   @Mutation(() => CustomerAssignedSpot)
-  createCustomerAssignedSpot(@Args('createCustomerAssignedSpotInput') createCustomerAssignedSpotInput: CreateCustomerAssignedSpotInput) {
+  createCustomerAssignedSpot (@Args('createCustomerAssignedSpotInput') createCustomerAssignedSpotInput: CreateCustomerAssignedSpotInput) {
     return this.customerAssignedSpotsService.create(createCustomerAssignedSpotInput);
   }
 
   @Query(() => [CustomerAssignedSpot], { name: 'customerAssignedSpots' })
-  findAll() {
+  findAll () {
     return this.customerAssignedSpotsService.findAll();
   }
 
   @Query(() => CustomerAssignedSpot, { name: 'customerAssignedSpot' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.customerAssignedSpotsService.findOne(id);
   }
 
   @Mutation(() => CustomerAssignedSpot)
-  updateCustomerAssignedSpot(@Args('updateCustomerAssignedSpotInput') updateCustomerAssignedSpotInput: UpdateCustomerAssignedSpotInput) {
+  updateCustomerAssignedSpot (@Args('updateCustomerAssignedSpotInput') updateCustomerAssignedSpotInput: UpdateCustomerAssignedSpotInput) {
     return this.customerAssignedSpotsService.update(updateCustomerAssignedSpotInput.id, updateCustomerAssignedSpotInput);
   }
 
   @Mutation(() => CustomerAssignedSpot)
-  removeCustomerAssignedSpot(@Args('id', { type: () => Int }) id: number) {
+  removeCustomerAssignedSpot (@Args('id', { type: () => Int }) id: number) {
     return this.customerAssignedSpotsService.remove(id);
   }
 }

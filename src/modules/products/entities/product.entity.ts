@@ -1,4 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { AdditionalsPerRequest } from '../../additionals-per-requests/entities/additionals-per-request.entity';
 import { AssignedCategory } from '../../assigned-categories/entities/assigned-category.entity';
 import { AssignedProduct } from '../../assigned-products/entities/assigned-product.entity';
@@ -7,7 +8,6 @@ import { Modifier } from '../../modifiers/entities/modifier.entity';
 import { Price } from '../../prices/entities/price.entity';
 import { ProductType } from '../../product-types/entities/product-type.entity';
 import { Request } from '../../requests/entities/request.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('products')
 @ObjectType()
@@ -76,12 +76,12 @@ export class Product {
 
   @ManyToOne(
     () => ProductType,
-    (productType: ProductType) => productType.Products,  {
+    (productType: ProductType) => productType.Products, {
       eager: true,
       cascade: true
     })
 
-  @JoinColumn({name: 'product_type_id'})
+  @JoinColumn({ name: 'product_type_id' })
   productType: ProductType;
 
   @OneToMany(
@@ -101,6 +101,6 @@ export class Product {
   favorites?: Favorite[];
 
   @OneToMany(
-    (type)  => AdditionalsPerRequest, (additionalsPerRequests: AdditionalsPerRequest) => additionalsPerRequests.product)
+    (type) => AdditionalsPerRequest, (additionalsPerRequests: AdditionalsPerRequest) => additionalsPerRequests.product)
     additionalsPerRequests?: AdditionalsPerRequest
 }

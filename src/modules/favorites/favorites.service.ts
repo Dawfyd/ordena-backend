@@ -9,14 +9,14 @@ import { Favorite } from './entities/favorite.entity';
 
 @Injectable()
 export class FavoritesService {
-  constructor(
+  constructor (
     @InjectRepository(Favorite)
     private readonly FavoriteRepository: Repository<Favorite>,
     private readonly personsService: PersonsService,
     private readonly productsService: ProductsService
   ) {}
 
-  async create(createFavoriteInput: CreateFavoriteInput): Promise<Favorite> {
+  async create (createFavoriteInput: CreateFavoriteInput): Promise<Favorite> {
     const { product_id, person_id } = createFavoriteInput;
 
     const person = await this.personsService.findOne(person_id);
@@ -31,17 +31,17 @@ export class FavoritesService {
     return await this.FavoriteRepository.save(newFavorite);
   }
 
-  async findAll(): Promise<Favorite[]> {
+  async findAll (): Promise<Favorite[]> {
     return await this.FavoriteRepository.find();
   }
 
-  async findOne(id: number): Promise<Favorite> {
+  async findOne (id: number): Promise<Favorite> {
     const favorite = await this.FavoriteRepository.findOne(id);
     if (!favorite) throw new NotFoundException('No hay un favorito con esa ID');
     return favorite;
   }
 
-  async findFavoritesPerson(person: number): Promise<Favorite[]> {
+  async findFavoritesPerson (person: number): Promise<Favorite[]> {
     return await this.FavoriteRepository.find({
       where: {
         person
@@ -49,7 +49,7 @@ export class FavoritesService {
     });
   }
 
-  async findFavoritesProduct(product: number): Promise<Favorite[]> {
+  async findFavoritesProduct (product: number): Promise<Favorite[]> {
     return await this.FavoriteRepository.find({
       where: {
         product
@@ -57,7 +57,7 @@ export class FavoritesService {
     });
   }
 
-  async update(id: number, updateFavoriteInput: UpdateFavoriteInput): Promise<Favorite>  {
+  async update (id: number, updateFavoriteInput: UpdateFavoriteInput): Promise<Favorite> {
     const favorite = await this.findOne(id);
 
     const { product_id, person_id } = updateFavoriteInput;
@@ -73,7 +73,7 @@ export class FavoritesService {
     return await this.FavoriteRepository.save(editedFavorite);
   }
 
-  async remove(id: number): Promise<Favorite>{
+  async remove (id: number): Promise<Favorite> {
     const favorite = await this.findOne(id);
     return await this.FavoriteRepository.remove(favorite);
   }

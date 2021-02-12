@@ -8,13 +8,13 @@ import { Category } from './entities/category.entity';
 
 @Injectable()
 export class CategoriesService {
-  constructor(
+  constructor (
     @InjectRepository(Category)
     private readonly CategoryRepository: Repository<Category>,
     private readonly menusService: MenusService
   ) {}
 
-  async create(createCategoryInput: CreateCategoryInput): Promise<Category> {
+  async create (createCategoryInput: CreateCategoryInput): Promise<Category> {
     const { menu_id } = createCategoryInput;
 
     const menu = await this.menusService.findOne(menu_id);
@@ -26,18 +26,17 @@ export class CategoriesService {
     return await this.CategoryRepository.save(newCategory);
   }
 
-  async findAll(): Promise<Category[]> {
+  async findAll (): Promise<Category[]> {
     return await this.CategoryRepository.find();
   }
 
-  async findOne(id: number): Promise<Category> {
+  async findOne (id: number): Promise<Category> {
     const category = await this.CategoryRepository.findOne(id);
-    if (!category)
-      throw new NotFoundException('No hay una categoria con esa ID');
+    if (!category) { throw new NotFoundException('No hay una categoria con esa ID'); }
     return category;
   }
 
-  async findCategories(menu: number): Promise<Category[]> {
+  async findCategories (menu: number): Promise<Category[]> {
     return await this.CategoryRepository.find({
       where: {
         menu
@@ -45,8 +44,7 @@ export class CategoriesService {
     });
   }
 
-  async update(id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category> {
-
+  async update (id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category> {
     const category = await this.findOne(id);
 
     const { menu_id } = updateCategoryInput;
@@ -60,7 +58,7 @@ export class CategoriesService {
     return await this.CategoryRepository.save(editedCategory);
   }
 
-  async remove(id: number) : Promise<Category> {
+  async remove (id: number) : Promise<Category> {
     const category = await this.findOne(id);
     return await this.CategoryRepository.remove(category);
   }

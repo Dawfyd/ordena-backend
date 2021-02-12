@@ -6,37 +6,37 @@ import { UpdateFavoriteInput } from './dto/update-favorite.input';
 
 @Resolver(() => Favorite)
 export class FavoritesResolver {
-  constructor(private readonly favoritesService: FavoritesService) {}
+  constructor (private readonly favoritesService: FavoritesService) {}
 
   @Mutation(() => Favorite)
-  createFavorite(
-    @Args('createFavoriteInput') createFavoriteInput: CreateFavoriteInput,
+  createFavorite (
+    @Args('createFavoriteInput') createFavoriteInput: CreateFavoriteInput
   ) {
     return this.favoritesService.create(createFavoriteInput);
   }
 
   @Query(() => [Favorite], { name: 'favorites' })
-  findAll() {
+  findAll () {
     return this.favoritesService.findAll();
   }
 
   @Query(() => Favorite, { name: 'favorite' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.favoritesService.findOne(id);
   }
 
   @Mutation(() => Favorite)
-  updateFavorite(
-    @Args('updateFavoriteInput') updateFavoriteInput: UpdateFavoriteInput,
+  updateFavorite (
+    @Args('updateFavoriteInput') updateFavoriteInput: UpdateFavoriteInput
   ) {
     return this.favoritesService.update(
       updateFavoriteInput.id,
-      updateFavoriteInput,
+      updateFavoriteInput
     );
   }
 
   @Mutation(() => Favorite)
-  removeFavorite(@Args('id', { type: () => Int }) id: number) {
+  removeFavorite (@Args('id', { type: () => Int }) id: number) {
     return this.favoritesService.remove(id);
   }
 }

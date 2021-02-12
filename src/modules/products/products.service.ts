@@ -9,17 +9,17 @@ import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductsService {
-  constructor(
+  constructor (
     @InjectRepository(Product)
     private readonly ProductRepository: Repository<Product>,
     private readonly ProductTypesService: ProductTypesService,
     private readonly parametersService: ParametersService
   ) {}
 
-  async createMenuProduct(createProductInput: CreateProductInput): Promise<Product> {
+  async createMenuProduct (createProductInput: CreateProductInput): Promise<Product> {
     const productTypeMenu = await this.parametersService.findOneName('PRODUCT_TYPE_MENUS');
 
-    if(!productTypeMenu){
+    if (!productTypeMenu) {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_MENUS".');
     }
 
@@ -33,10 +33,10 @@ export class ProductsService {
     return await this.ProductRepository.save(newProduct);
   }
 
-  async createCategoryProduct(createProductInput: CreateProductInput): Promise<Product> {
+  async createCategoryProduct (createProductInput: CreateProductInput): Promise<Product> {
     const productTypeCategory = await this.parametersService.findOneName('PRODUCT_TYPE_ASSIGNED_CATEGORIES');
 
-    if(!productTypeCategory){
+    if (!productTypeCategory) {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_CATEGORIES".');
     }
 
@@ -50,10 +50,10 @@ export class ProductsService {
     return await this.ProductRepository.save(newProduct);
   }
 
-  async createPureProduct(createProductInput: CreateProductInput): Promise<Product> {
-    const productTypePure= await this.parametersService.findOneName('PRODUCT_TYPE_PURE');
+  async createPureProduct (createProductInput: CreateProductInput): Promise<Product> {
+    const productTypePure = await this.parametersService.findOneName('PRODUCT_TYPE_PURE');
 
-    if(!productTypePure){
+    if (!productTypePure) {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_PURE".');
     }
 
@@ -67,10 +67,10 @@ export class ProductsService {
     return await this.ProductRepository.save(newProduct);
   }
 
-  async createProductAssignedProduct(createProductInput: CreateProductInput): Promise<Product> {
+  async createProductAssignedProduct (createProductInput: CreateProductInput): Promise<Product> {
     const productTypeProduct = await this.parametersService.findOneName('PRODUCT_TYPE_ASSIGNED_PRODUCTS');
 
-    if(!productTypeProduct){
+    if (!productTypeProduct) {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_PRODUCTS".');
     }
 
@@ -84,17 +84,17 @@ export class ProductsService {
     return await this.ProductRepository.save(newProduct);
   }
 
-  async findAll(): Promise<Product[]> {
+  async findAll (): Promise<Product[]> {
     return await this.ProductRepository.find();
   }
 
-  async findOne(id: number): Promise<Product> {
+  async findOne (id: number): Promise<Product> {
     const product = await this.ProductRepository.findOne(id);
     if (!product) throw new NotFoundException('No hay un producto con esa ID');
     return product;
   }
 
-  async findProductsType(productType: number): Promise<Product[]> {
+  async findProductsType (productType: number): Promise<Product[]> {
     return await this.ProductRepository.find({
       where: {
         productType
@@ -102,7 +102,7 @@ export class ProductsService {
     });
   }
 
-  async update(id: number, updateProductInput: UpdateProductInput): Promise<Product> {
+  async update (id: number, updateProductInput: UpdateProductInput): Promise<Product> {
     const product = await this.findOne(id);
 
     const editedProduct = this.ProductRepository.merge(product, {
@@ -111,7 +111,7 @@ export class ProductsService {
     return await this.ProductRepository.save(editedProduct);
   }
 
-  async remove(id: number): Promise<Product> {
+  async remove (id: number): Promise<Product> {
     const product = await this.findOne(id);
     return await this.ProductRepository.remove(product);
   }

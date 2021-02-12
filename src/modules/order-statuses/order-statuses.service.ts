@@ -7,33 +7,34 @@ import { OrderStatus } from './entities/order-status.entity';
 
 @Injectable()
 export class OrderStatusesService {
-  constructor(
+  constructor (
     @InjectRepository(OrderStatus)
     private readonly OrderStatusRepository: Repository<OrderStatus>
-  ){}
-  async create(createOrderStatusInput: CreateOrderStatusInput) {
+  ) {}
+
+  async create (createOrderStatusInput: CreateOrderStatusInput) {
     const newOrderStatus = this.OrderStatusRepository.create(createOrderStatusInput);
     return await this.OrderStatusRepository.save(newOrderStatus);
   }
 
-  async findAll() {
+  async findAll () {
     return await this.OrderStatusRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne (id: number) {
     const orderStatus = await this.OrderStatusRepository.findOne(id);
-    if(!orderStatus) throw new NotFoundException('no hay registro con este id');
+    if (!orderStatus) throw new NotFoundException('no hay registro con este id');
     return orderStatus;
   }
 
-  async update(id: number, updateOrderStatusInput: UpdateOrderStatusInput) {
+  async update (id: number, updateOrderStatusInput: UpdateOrderStatusInput) {
     const orderStatus = await this.findOne(id);
 
-    const editedOrderStatus = this.OrderStatusRepository.merge(orderStatus,updateOrderStatusInput);
+    const editedOrderStatus = this.OrderStatusRepository.merge(orderStatus, updateOrderStatusInput);
     return await this.OrderStatusRepository.save(editedOrderStatus);
   }
 
-  async remove(id: number) {
+  async remove (id: number) {
     const orderStatus = await this.findOne(id);
     return await this.OrderStatusRepository.remove(orderStatus);
   }

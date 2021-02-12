@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Person } from '../../persons/entities/person.entity';
 import { Spot } from '../../spots/entities/spot.entity';
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('waiter_assigned_spots')
 @ObjectType()
@@ -39,21 +39,21 @@ export class WaiterAssignedSpot {
 
  @ManyToOne(
    () => Person,
-   (person: Person) => person.waiterAssignedSpots,  {
+   (person: Person) => person.waiterAssignedSpots, {
      eager: true,
      cascade: true
    })
 
-  @JoinColumn({name: 'person_id'})
+  @JoinColumn({ name: 'person_id' })
   person: Person;
 
   @ManyToOne(
     () => Spot,
-    (spot: Spot) => spot.waiterAssignedSpots,  {
+    (spot: Spot) => spot.waiterAssignedSpots, {
       eager: true,
       cascade: true
     })
 
-    @JoinColumn({name: 'spot_id'})
+    @JoinColumn({ name: 'spot_id' })
     spot: Spot;
 }

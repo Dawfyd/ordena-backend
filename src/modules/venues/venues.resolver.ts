@@ -1,69 +1,80 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
-import { VenuesService } from './venues.service';
-import { Venue } from './entities/venue.entity';
-import { CreateVenueInput } from './dto/create-venue.input';
-import { UpdateVenueInput } from './dto/update-venue.input';
-import { MenusService } from '../menus/menus.service';
-import { SpotsService } from '../spots/spots.service';
-import { AssignedVenuesService } from '../assigned-venues/assigned-venues.service';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 
-@Resolver(() => Venue)
+import { Venue } from './entities/venue.entity';
+import { Menu } from '../menus/entities/menu.entity';
+import { Spot } from '../spots/entities/spot.entity';
+import { AssignedVenue } from '../assigned-venues/entities/assigned-venue.entity';
+
+import { VenuesService } from './venues.service';
+import { VenuesLoaders } from './venues.loaders';
+
+import { CreateVenueInput } from './dto/create-venue-input.dto';
+import { UpdateVenueInput } from './dto/update-venue-input.dto';
+import { FindAllVenuesInput } from './dto/find-all-venues-input.dto';
+import { FindOneVenueInput } from './dto/find-one-venue-input.dto';
+import { Company } from '../companies/entities/company.entity';
+
+@Resolver(Venue)
 export class VenuesResolver {
-  constructor(private readonly VenuesService: VenuesService,
-              private readonly menusServices: MenusService,
-              private readonly spotsService: SpotsService,
-              private readonly assignedVenuesService: AssignedVenuesService
+  constructor (
+    private readonly service: VenuesService,
+    private readonly venuesLoaders: VenuesLoaders
   ) {}
 
-  @Mutation(() => Venue)
-  createVenue(
-    @Args('createVenueInput')
-      createVenueInput: CreateVenueInput,
-  ) {
-    return this.VenuesService.create(createVenueInput);
+  @Mutation(() => Venue, { name: 'createVenue' })
+  create (@Args('createVenueInput') createVenueInput: CreateVenueInput): Promise<Venue> {
+    return this.service.create(createVenueInput);
   }
 
   @Query(() => [Venue], { name: 'venues' })
-  findAll() {
-    return this.VenuesService.findAll();
+  findAll (@Args('findAllVenuesInput') findAllVenuesInput: FindAllVenuesInput): Promise<Venue[]> {
+    return this.service.findAll(findAllVenuesInput);
   }
 
   @Query(() => Venue, { name: 'venue' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.VenuesService.findOne(id);
+  findOne (@Args('findOneVenueInput') findOneVenueInput: FindOneVenueInput): Promise<Venue> {
+    return this.service.findOne(findOneVenueInput);
   }
 
-  @Mutation(() => Venue)
-  updateVenue(
-    @Args('updateVenueInput')
-      updateVenueInput: UpdateVenueInput,
-  ) {
-    return this.VenuesService.update(
-      updateVenueInput.id,
-      updateVenueInput,
+  @Mutation(() => Venue, { name: 'updateVenue' })
+  update (
+    @Args('findOneVenueInput') findOneVenueInput: FindOneVenueInput,
+    @Args('updateVenueInput') updateVenueInput: UpdateVenueInput
+  ): Promise<Venue> {
+    return this.service.update(
+      findOneVenueInput,
+      updateVenueInput
     );
   }
 
-  @Mutation(() => Venue)
-  removeVenue(@Args('id', { type: () => Int }) id: number) {
-    return this.VenuesService.remove(id);
+  @Mutation(() => Venue, { name: 'removeVenue' })
+  removeVenue (@Args('venueInput') findOneVenueInput: FindOneVenueInput): Promise<Venue> {
+    return this.service.remove(findOneVenueInput);
   }
 
-  @ResolveField()
-  async menus(@Parent() venue: Venue) {
-    const { id } = venue;
-    return this.menusServices.findMenus(id);
+  @ResolveField(() => Company, { name: 'company' })
+  async company (@Parent() venue: Venue): Promise<Company> {
+    const companyValue: any = venue.company;
+
+    let companyId = companyValue;
+
+    if (typeof companyValue !== 'number') companyId = companyValue.id;
+
+    return this.venuesLoaders.batchCompanies.load(companyId);
   }
 
-  @ResolveField()
-  async spots(@Parent() venue: Venue) {
-    const { id } = venue;
-    return this.spotsService.findSpost(id);
+  @ResolveField(() => [Menu], { name: 'menus' })
+  async menus (@Parent() venue: Venue): Promise<Menu[]> {
+    return this.service.menus(venue);
   }
 
-  @ResolveField()
-  async assignedVenues(@Parent() venue: Venue) {
-    const { id } = venue;
-    return this.assignedVenuesService.findVenueAssignedVenue(id);
+  @ResolveField(() => [Spot], { name: 'spots' })
+  async spots (@Parent() venue: Venue): Promise<Spot[]> {
+    return this.service.spots(venue);
+  }
+
+  @ResolveField(() => [AssignedVenue], { name: 'assignedVenues' })
+  async assignedVenues (@Parent() venue: Venue): Promise<AssignedVenue[]> {
+    return this.service.assignedVenues(venue);
   }
 }

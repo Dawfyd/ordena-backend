@@ -27,5 +27,4 @@ export class CreateOrderInput {
     *ID del estado del pedido
     */
     order_status_id: number;
-
 }

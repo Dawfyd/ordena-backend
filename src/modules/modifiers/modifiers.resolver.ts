@@ -7,45 +7,44 @@ import { ModifiersPerRequestService } from '../modifiers-per-request/modifiers-p
 
 @Resolver(() => Modifier)
 export class ModifiersResolver {
-  constructor(private readonly modifiersService: ModifiersService,
+  constructor (private readonly modifiersService: ModifiersService,
               private readonly modifiersPerRequestsService: ModifiersPerRequestService) {}
 
   @Mutation(() => Modifier)
-  createModifier(
-    @Args('createModifierInput') createModifierInput: CreateModifierInput,
+  createModifier (
+    @Args('createModifierInput') createModifierInput: CreateModifierInput
   ) {
     return this.modifiersService.create(createModifierInput);
   }
 
   @Query(() => [Modifier], { name: 'modifiers' })
-  findAll() {
+  findAll () {
     return this.modifiersService.findAll();
   }
 
   @Query(() => Modifier, { name: 'modifier' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.modifiersService.findOne(id);
   }
 
   @Mutation(() => Modifier)
-  updateModifier(
-    @Args('updateModifierInput') updateModifierInput: UpdateModifierInput,
+  updateModifier (
+    @Args('updateModifierInput') updateModifierInput: UpdateModifierInput
   ) {
     return this.modifiersService.update(
       updateModifierInput.id,
-      updateModifierInput,
+      updateModifierInput
     );
   }
 
   @Mutation(() => Modifier)
-  removeModifier(@Args('id', { type: () => Int }) id: number) {
+  removeModifier (@Args('id', { type: () => Int }) id: number) {
     return this.modifiersService.remove(id);
   }
 
   @ResolveField()
-  async modifiersPerRequests(@Parent() Modifier: Modifier){
+  async modifiersPerRequests (@Parent() Modifier: Modifier) {
     const { id } = Modifier;
-    return  this.modifiersPerRequestsService.findModifierModifiersPerRequest(id);
+    return this.modifiersPerRequestsService.findModifierModifiersPerRequest(id);
   }
-
 }

@@ -50,12 +50,12 @@ export class Spot {
 
   @ManyToOne(
     () => Venue,
-    (venue: Venue) => venue.spots,{
+    (venue: Venue) => venue.spots, {
       eager: true,
       cascade: true
     })
 
-  @JoinColumn({name: 'venue_id'})
+  @JoinColumn({ name: 'venue_id' })
     venue: Venue;
 
     @OneToMany(

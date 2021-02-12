@@ -11,7 +11,7 @@ import { Request } from './entities/request.entity';
 
 @Injectable()
 export class RequestsService {
-  constructor(
+  constructor (
     @InjectRepository(Request)
     private readonly RequestRepository: Repository<Request>,
     private readonly productsService: ProductsService,
@@ -20,7 +20,7 @@ export class RequestsService {
     private readonly requestStatusesService: RequestStatusesService
   ) {}
 
-  async create(createRequestInput: CreateRequestInput): Promise<Request> {
+  async create (createRequestInput: CreateRequestInput): Promise<Request> {
     const { product_id, order_id, spot_id, request_status_id } = createRequestInput;
 
     const product = await this.productsService.findOne(product_id);
@@ -29,23 +29,22 @@ export class RequestsService {
     const requestStatus = await this.requestStatusesService.findOne(request_status_id);
 
     const newRequest = this.RequestRepository.create(
-      {...createRequestInput, product, order, spot, requestStatus}
+      { ...createRequestInput, product, order, spot, requestStatus }
     );
     return await this.RequestRepository.save(newRequest);
   }
 
-  async findAll(): Promise<Request[]> {
+  async findAll (): Promise<Request[]> {
     return await this.RequestRepository.find();
   }
 
-  async findOne(id: number): Promise<Request> {
+  async findOne (id: number): Promise<Request> {
     const request = await this.RequestRepository.findOne(id);
-    if (!request)
-      throw new NotFoundException('No hay un producto ordenado con esa ID');
+    if (!request) { throw new NotFoundException('No hay un producto ordenado con esa ID'); }
     return request;
   }
 
-  async findProductRequest(product: number): Promise<Request[]> {
+  async findProductRequest (product: number): Promise<Request[]> {
     return await this.RequestRepository.find({
       where: {
         product
@@ -53,7 +52,7 @@ export class RequestsService {
     });
   }
 
-  async findOrderRequest(order: number): Promise<Request[]> {
+  async findOrderRequest (order: number): Promise<Request[]> {
     return await this.RequestRepository.find({
       where: {
         order
@@ -61,7 +60,7 @@ export class RequestsService {
     });
   }
 
-  async findSpotRequest(spot: number): Promise<Request[]> {
+  async findSpotRequest (spot: number): Promise<Request[]> {
     return await this.RequestRepository.find({
       where: {
         spot
@@ -69,7 +68,7 @@ export class RequestsService {
     });
   }
 
-  async findRequestStatusRequest(requestStatus: number): Promise<Request[]> {
+  async findRequestStatusRequest (requestStatus: number): Promise<Request[]> {
     return await this.RequestRepository.find({
       where: {
         requestStatus
@@ -77,10 +76,10 @@ export class RequestsService {
     });
   }
 
-  async update(id: number, updateRequestInput: UpdateRequestInput) {
+  async update (id: number, updateRequestInput: UpdateRequestInput) {
     const request = await this.findOne(id);
 
-    const { product_id, order_id, spot_id ,request_status_id } = updateRequestInput;
+    const { product_id, order_id, spot_id, request_status_id } = updateRequestInput;
 
     const product = await this.productsService.findOne(product_id);
     const order = await this.ordersService.findOne(order_id);
@@ -89,12 +88,12 @@ export class RequestsService {
 
     const editedRequest = this.RequestRepository.merge(
       request,
-      {...updateRequestInput, product, order, spot, requestStatus },
+      { ...updateRequestInput, product, order, spot, requestStatus }
     );
     return await this.RequestRepository.save(editedRequest);
   }
 
-  async remove(id: number) {
+  async remove (id: number) {
     const request = await this.findOne(id);
     return await this.RequestRepository.remove(request);
   }

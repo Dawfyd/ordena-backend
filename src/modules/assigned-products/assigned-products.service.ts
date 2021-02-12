@@ -9,23 +9,23 @@ import { AssignedProduct } from './entities/assigned-product.entity';
 
 @Injectable()
 export class AssignedProductsService {
-  constructor(
+  constructor (
     @InjectRepository(AssignedProduct)
     private readonly AssignedProductRepository: Repository<AssignedProduct>,
     private readonly productsService: ProductsService,
     private readonly parametersService: ParametersService
   ) {}
 
-  async assingProductToProduct(createAssignedProductInput: CreateAssignedProductInput): Promise<AssignedProduct> {
+  async assingProductToProduct (createAssignedProductInput: CreateAssignedProductInput): Promise<AssignedProduct> {
     const productTypeProduct = await this.parametersService.findOneName('PRODUCT_TYPE_ASSIGNED_PRODUCTS');
 
-    if(!productTypeProduct){
+    if (!productTypeProduct) {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_PRODUCTS".');
     }
 
     const productTypePure = await this.parametersService.findOneName('PRODUCT_TYPE_PURE');
 
-    if(!productTypePure){
+    if (!productTypePure) {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_PURE".');
     }
 
@@ -33,13 +33,13 @@ export class AssignedProductsService {
 
     const parent = await this.productsService.findOne(parent_id);
 
-    if(productTypePure.value !== parent.productType.code){
+    if (productTypePure.value !== parent.productType.code) {
       throw new PreconditionFailedException(`Para parent solo se pueden asignar productos de tipo ${productTypePure.value}`);
     }
 
     const assigned = await this.productsService.findOne(assigned_id);
 
-    if(productTypeProduct.value !== assigned.productType.code){
+    if (productTypeProduct.value !== assigned.productType.code) {
       throw new PreconditionFailedException(`Para assigned solo se pueden asignar productos de tipo ${productTypeProduct.value}`);
     }
 
@@ -51,17 +51,17 @@ export class AssignedProductsService {
     return await this.AssignedProductRepository.save(newProductsService);
   }
 
-  async findAll(): Promise<AssignedProduct[]> {
+  async findAll (): Promise<AssignedProduct[]> {
     return await this.AssignedProductRepository.find();
   }
 
-  async findOne(id: number): Promise<AssignedProduct> {
+  async findOne (id: number): Promise<AssignedProduct> {
     const assignedProduct = await this.AssignedProductRepository.findOne(id);
     if (!assignedProduct) throw new NotFoundException('No hay un producto asignado con esa ID');
     return assignedProduct;
   }
 
-  async findProductsParent(parent: number): Promise<AssignedProduct[]> {
+  async findProductsParent (parent: number): Promise<AssignedProduct[]> {
     return await this.AssignedProductRepository.find({
       where: {
         parent
@@ -69,7 +69,7 @@ export class AssignedProductsService {
     });
   }
 
-  async findProductsAssigned(assigned: number): Promise<AssignedProduct[]> {
+  async findProductsAssigned (assigned: number): Promise<AssignedProduct[]> {
     return await this.AssignedProductRepository.find({
       where: {
         assigned
@@ -77,7 +77,7 @@ export class AssignedProductsService {
     });
   }
 
-  async update(id: number, updateAssignedProductInput: UpdateAssignedProductInput): Promise<AssignedProduct> {
+  async update (id: number, updateAssignedProductInput: UpdateAssignedProductInput): Promise<AssignedProduct> {
     const assignedProduct = await this.findOne(id);
 
     const { parent_id, assigned_id } = updateAssignedProductInput;
@@ -93,7 +93,7 @@ export class AssignedProductsService {
     return await this.AssignedProductRepository.save(editedProductsService);
   }
 
-  async remove(id: number): Promise<AssignedProduct> {
+  async remove (id: number): Promise<AssignedProduct> {
     const assignedProduct = await this.findOne(id);
     return await this.AssignedProductRepository.remove(assignedProduct);
   }

@@ -55,33 +55,32 @@ export class Request {
   @UpdateDateColumn()
   updated_at: Date;
 
-
   @ManyToOne(
     () => Product,
     (product: Product) => product.requests)
 
-  @JoinColumn({name: 'product_id'})
+  @JoinColumn({ name: 'product_id' })
     product: Product;
 
   @ManyToOne(
     () => Order,
     (order: Order) => order.requests)
 
-  @JoinColumn({name: 'order_id'})
+  @JoinColumn({ name: 'order_id' })
   order: Order;
 
   @ManyToOne(
     () => Spot,
     (spot: Spot) => spot.requests)
 
-  @JoinColumn({name: 'spot_id'})
+  @JoinColumn({ name: 'spot_id' })
   spot: Spot;
 
   @ManyToOne(
-    () => RequestStatus, 
+    () => RequestStatus,
     (requestStatus: RequestStatus) => requestStatus.requests)
 
-  @JoinColumn({name: 'request_status_id'})
+  @JoinColumn({ name: 'request_status_id' })
   requestStatus: RequestStatus;
 
   @OneToMany(
@@ -91,5 +90,4 @@ export class Request {
   @OneToMany(
     (type) => ModifiersPerRequest, (modifiersPerRequests: ModifiersPerRequest) => modifiersPerRequests.request)
     modifiersPerRequests?: ModifiersPerRequest[];
-
 }

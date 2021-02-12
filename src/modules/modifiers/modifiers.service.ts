@@ -8,52 +8,51 @@ import { Modifier } from './entities/modifier.entity';
 
 @Injectable()
 export class ModifiersService {
-  constructor(
+  constructor (
     @InjectRepository(Modifier)
     private readonly ModifierRepository: Repository<Modifier>,
     private readonly productsSerice: ProductsService
   ) {}
 
-  async create(createModifierInput: CreateModifierInput): Promise<Modifier> {
+  async create (createModifierInput: CreateModifierInput): Promise<Modifier> {
     const { product_id } = createModifierInput;
 
     const product = await this.productsSerice.findOne(product_id);
 
-    const newModifier = this.ModifierRepository.create({...createModifierInput, product});
+    const newModifier = this.ModifierRepository.create({ ...createModifierInput, product });
     return await this.ModifierRepository.save(newModifier);
   }
 
-  async findAll(): Promise<Modifier[]> {
+  async findAll (): Promise<Modifier[]> {
     return await this.ModifierRepository.find();
   }
 
-  async findOne(id: number): Promise<Modifier> {
+  async findOne (id: number): Promise<Modifier> {
     const modifier = await this.ModifierRepository.findOne(id);
-    if (!modifier)
-      throw new NotFoundException('No hay un modificador con esa ID');
+    if (!modifier) { throw new NotFoundException('No hay un modificador con esa ID'); }
     return modifier;
   }
 
-  async findModifierProduct(product: number): Promise<Modifier[]> {
-    return await  this.ModifierRepository.find({
+  async findModifierProduct (product: number): Promise<Modifier[]> {
+    return await this.ModifierRepository.find({
       where: {
         product
       }
     });
   }
 
-  async update(id: number, updateModifierInput: UpdateModifierInput) {
+  async update (id: number, updateModifierInput: UpdateModifierInput) {
     const modifier = await this.findOne(id);
 
     const { product_id } = updateModifierInput;
 
     const product = await this.productsSerice.findOne(product_id);
 
-    const editedModifier = this.ModifierRepository.merge(modifier, {...updateModifierInput, product});
+    const editedModifier = this.ModifierRepository.merge(modifier, { ...updateModifierInput, product });
     return await this.ModifierRepository.save(editedModifier);
   }
 
-  async remove(id: number) {
+  async remove (id: number) {
     const modifier = await this.findOne(id);
     return await this.ModifierRepository.remove(modifier);
   }

@@ -1,10 +1,10 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { BasicAclModule } from 'src/common/integrations/basic-acl/basic-acl.module';
 import { PersonsService } from './persons.service';
 import { PersonsResolver } from './persons.resolver';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Person } from './entities/person.entity';
 import { FavoritesModule } from '../favorites/favorites.module';
-import { BasicAclModule } from 'src/common/integrations/basic-acl/basic-acl.module';
 import { ParametersModule } from '../parameters/parameters.module';
 import { CustomerAssignedSpotsModule } from '../customer-assigned-spots/customer-assigned-spots.module';
 import { AssignedVenuesModule } from '../assigned-venues/assigned-venues.module';

@@ -7,30 +7,30 @@ import { CreateAssignedCategoryMenuInput } from './dto/create-assigned-category-
 
 @Resolver(() => AssignedCategory)
 export class AssignedCategoriesResolver {
-  constructor(private readonly assignedCategoriesService: AssignedCategoriesService) {}
+  constructor (private readonly assignedCategoriesService: AssignedCategoriesService) {}
 
   @Mutation(() => AssignedCategory)
-  assingCategoryToCategoryProduct(@Args('createAssignedCategoryInput') createAssignedCategoryInput: CreateAssignedCategoryInput) {
+  assingCategoryToCategoryProduct (@Args('createAssignedCategoryInput') createAssignedCategoryInput: CreateAssignedCategoryInput) {
     return this.assignedCategoriesService.assingCategoryToCategoryProduct(createAssignedCategoryInput);
   }
 
   @Mutation(() => String)
-  assingCategoriesToMenuProduct(@Args('createAssignedCategoryMenuInput') createAssignedCategoryMenuInput: CreateAssignedCategoryMenuInput) {
+  assingCategoriesToMenuProduct (@Args('createAssignedCategoryMenuInput') createAssignedCategoryMenuInput: CreateAssignedCategoryMenuInput) {
     return this.assignedCategoriesService.assingCategoriesToMenuProduct(createAssignedCategoryMenuInput);
   }
 
   @Query(() => [AssignedCategory], { name: 'assignedCategories' })
-  findAll() {
+  findAll () {
     return this.assignedCategoriesService.findAll();
   }
 
   @Query(() => AssignedCategory, { name: 'assignedCategory' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.assignedCategoriesService.findOne(id);
   }
 
   @Mutation(() => AssignedCategory)
-  updateAssignedCategory(@Args('updateAssignedCategoryInput') updateAssignedCategoryInput: UpdateAssignedCategoryInput) {
+  updateAssignedCategory (@Args('updateAssignedCategoryInput') updateAssignedCategoryInput: UpdateAssignedCategoryInput) {
     return this.assignedCategoriesService.update(
       updateAssignedCategoryInput.id,
       updateAssignedCategoryInput
@@ -38,7 +38,7 @@ export class AssignedCategoriesResolver {
   }
 
   @Mutation(() => AssignedCategory)
-  removeAssignedCategory(@Args('id', { type: () => Int }) id: number) {
+  removeAssignedCategory (@Args('id', { type: () => Int }) id: number) {
     return this.assignedCategoriesService.remove(id);
   }
 }

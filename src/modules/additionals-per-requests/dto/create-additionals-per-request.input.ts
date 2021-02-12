@@ -2,7 +2,6 @@ import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateAdditionalsPerRequestInput {
-
   /*
   *ID del producto al que pertenece
   */

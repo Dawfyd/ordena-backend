@@ -34,7 +34,7 @@ export class AssignedVenue {
       cascade: true
     })
 
-  @JoinColumn({name: 'worker_id'})
+  @JoinColumn({ name: 'worker_id' })
   person: Person
 
   @ManyToOne(
@@ -44,7 +44,6 @@ export class AssignedVenue {
       cascade: true
     })
 
-  @JoinColumn({name: 'venue_id'})
+  @JoinColumn({ name: 'venue_id' })
   venue: Venue
-
 }

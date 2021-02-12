@@ -21,6 +21,4 @@ export class CreateCustomerAssignedSpotInput {
   * fecha y hora cuando la mesa es desocupada
   */
   end: Date
-
-
 }

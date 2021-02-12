@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn,CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 import { Person } from '../../persons/entities/person.entity';
 import { Product } from '../../products/entities/product.entity';
@@ -35,12 +35,12 @@ export class Favorite {
 
   @ManyToOne(
     () => Product,
-    (product: Product) => product.favorites,  {
+    (product: Product) => product.favorites, {
       eager: true,
       cascade: true
     })
 
-  @JoinColumn({name: 'product_id'})
+  @JoinColumn({ name: 'product_id' })
   product: Product;
 
   @ManyToOne(
@@ -50,6 +50,6 @@ export class Favorite {
       cascade: true
     })
 
-  @JoinColumn({name: 'person_id'})
+  @JoinColumn({ name: 'person_id' })
     person: Person;
 }

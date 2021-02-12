@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
 import { Product } from '../../products/entities/product.entity';
-import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 
 @Entity('assigned_categories')
 @Unique('uk_assigned_categories', ['category', 'product'])
@@ -28,21 +28,21 @@ export class AssignedCategory {
 
   @ManyToOne(
     () => Category,
-    (category: Category) => category.assignedCategories,  {
+    (category: Category) => category.assignedCategories, {
       eager: true,
       cascade: true
     })
 
-  @JoinColumn({name: 'category_id'})
+  @JoinColumn({ name: 'category_id' })
   category: Category;
 
   @ManyToOne(
     () => Product,
-    (product: Product) => product.assignedCategories,  {
+    (product: Product) => product.assignedCategories, {
       eager: true,
       cascade: true
     })
 
-  @JoinColumn({name: 'product_id'})
+  @JoinColumn({ name: 'product_id' })
   product: Product;
 }

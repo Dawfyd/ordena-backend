@@ -9,50 +9,50 @@ import { RequestsService } from '../requests/requests.service';
 
 @Resolver(() => Spot)
 export class SpotsResolver {
-  constructor(private readonly spotsService: SpotsService,
+  constructor (private readonly spotsService: SpotsService,
     private readonly customerAssignedSpotsService: CustomerAssignedSpotsService,
     private readonly ordersService: OrdersService,
     private readonly requestsService: RequestsService) {}
 
   @Mutation(() => Spot)
-  createSpot(@Args('createSpotInput') createSpotInput: CreateSpotInput) {
+  createSpot (@Args('createSpotInput') createSpotInput: CreateSpotInput) {
     return this.spotsService.create(createSpotInput);
   }
 
   @Query(() => [Spot], { name: 'spots' })
-  findAll() {
+  findAll () {
     return this.spotsService.findAll();
   }
 
   @Query(() => Spot, { name: 'spot' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne (@Args('id', { type: () => Int }) id: number) {
     return this.spotsService.findOne(id);
   }
 
   @Mutation(() => Spot)
-  updateSpot(@Args('updateSpotInput') updateSpotInput: UpdateSpotInput) {
+  updateSpot (@Args('updateSpotInput') updateSpotInput: UpdateSpotInput) {
     return this.spotsService.update(updateSpotInput.id, updateSpotInput);
   }
 
   @Mutation(() => Spot)
-  removeSpot(@Args('id', { type: () => Int }) id: number) {
+  removeSpot (@Args('id', { type: () => Int }) id: number) {
     return this.spotsService.remove(id);
   }
 
   @ResolveField()
-  async customerAssignedSpot(@Parent() Spot: Spot) {
+  async customerAssignedSpot (@Parent() Spot: Spot) {
     const { id } = Spot;
     return this.customerAssignedSpotsService.findSpotCustomerAssignedPost(id);
   }
 
   @ResolveField()
-  async orders(@Parent() Spot: Spot) {
+  async orders (@Parent() Spot: Spot) {
     const { id } = Spot;
     return this.ordersService.findSpotOrder(id);
   }
 
   @ResolveField()
-  async requests(@Parent() Spot: Spot) {
+  async requests (@Parent() Spot: Spot) {
     const { id } = Spot;
     return this.requestsService.findSpotRequest(id);
   }

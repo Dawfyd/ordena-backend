@@ -61,7 +61,7 @@ export class Category {
       cascade: true
     })
 
-  @JoinColumn({name: 'menu_id'})
+  @JoinColumn({ name: 'menu_id' })
   menu: Menu;
 
   @OneToMany(
