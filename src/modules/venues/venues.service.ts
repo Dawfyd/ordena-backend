@@ -22,6 +22,8 @@ export class VenuesService {
     private readonly companiesService: CompaniesService
   ) {}
 
+  /* CRUD RELATED OPERATIONS */
+
   public async create (
     createVenueInput: CreateVenueInput
   ): Promise<Venue> {
@@ -47,13 +49,15 @@ export class VenuesService {
   }
 
   public async findAll (findAllVenuesInput: FindAllVenuesInput): Promise<Venue[]> {
-    const { limit, skip, search } = findAllVenuesInput;
+    const { companyUuid, limit, skip, search } = findAllVenuesInput;
 
     const query = this.venueRepository.createQueryBuilder('v')
-      .loadAllRelationIds();
+      .loadAllRelationIds()
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid });
 
     if (search) {
-      query.where('v.name ilike :search', { search: `%${search}%` })
+      query.andWhere('v.name ilike :search', { search: `%${search}%` })
         .orWhere('v.address ilike :search', { search: `%${search}%` })
         .orWhere('v.phone ilike :search', { search: `%${search}%` });
     }
@@ -121,6 +125,18 @@ export class VenuesService {
     return clone;
   }
 
+  /* CRUD RELATED OPERATIONS */
+
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
+  public async getByIds (ids: number[]): Promise<Venue[]> {
+    return this.venueRepository.findByIds(ids);
+  }
+
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
+
   public async menus (venue: Venue): Promise<Menu[]> {
     const { id } = venue;
 
@@ -153,4 +169,6 @@ export class VenuesService {
 
     return item ? item.assignedVenues : [];
   }
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 }

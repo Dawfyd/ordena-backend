@@ -17,7 +17,8 @@ export class CategoriesService {
   async create (createCategoryInput: CreateCategoryInput): Promise<Category> {
     const { menu_id } = createCategoryInput;
 
-    const menu = await this.menusService.findOne(menu_id);
+    // FIXME:
+    const menu = {};
     const newCategory = this.CategoryRepository.create({
       ...createCategoryInput,
       menu
@@ -49,7 +50,8 @@ export class CategoriesService {
 
     const { menu_id } = updateCategoryInput;
 
-    const menu = await this.menusService.findOne(menu_id);
+    // FIXME:
+    const menu = {};
     const editedCategory = this.CategoryRepository.merge(category, {
       ...updateCategoryInput,
       menu

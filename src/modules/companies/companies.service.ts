@@ -9,13 +9,15 @@ import { Venue } from '../venues/entities/venue.entity';
 import { CreateCompanyInput } from './dto/create-company-input.dto';
 import { UpdateCompanyInput } from './dto/update-company-input.dto';
 import { FindAllCompaniesInput } from './dto/find-all-companies-input.dto';
-import { FindOneCompanyInput } from './dto/find-company-one-input.dto';
+import { FindOneCompanyInput } from './dto/find-one-company-input.dto';
 @Injectable()
 export class CompaniesService {
   constructor (
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>
   ) {}
+
+  /* CRUD RELATED OPERATIONS */
 
   public async create (createCompanyInput: CreateCompanyInput): Promise<Company> {
     const created = this.companyRepository.create({
@@ -91,9 +93,17 @@ export class CompaniesService {
     return clone;
   }
 
+  /* CRUD RELATED OPERATIONS */
+
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
   public async getByIds (ids: number[]): Promise<Company[]> {
     return this.companyRepository.findByIds(ids);
   }
+
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 
   public async venues (company: Company): Promise<Venue[]> {
     const { id } = company;
@@ -105,4 +115,6 @@ export class CompaniesService {
 
     return item ? item.venues : [];
   }
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 }

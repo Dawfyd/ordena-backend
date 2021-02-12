@@ -1,68 +1,139 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { VenuesService } from '../venues/venues.service';
-import { CreateMenuInput } from './dto/create-menu.input';
-import { UpdateMenuInput } from './dto/update-menu.input';
+
 import { Menu } from './entities/menu.entity';
+
+import { VenuesService } from '../venues/venues.service';
+
+import { CreateMenuInput } from './dto/create-menu-input.dto';
+import { UpdateMenuInput } from './dto/update-menu.input';
+import { FindAllMenusInput } from './dto/find-all-menus-input.dto';
+import { FindOneMenuInput } from './dto/find-one-menu-input.dto';
+import { Category } from '../categories/entities/category.entity';
 
 @Injectable()
 export class MenusService {
   constructor (
     @InjectRepository(Menu)
-    private readonly MenuRepository: Repository<Menu>,
+    private readonly menuRepository: Repository<Menu>,
     private readonly venuesService: VenuesService
   ) {}
 
-  async create (createMenuInput: CreateMenuInput): Promise<Menu> {
-    const { venue_id } = createMenuInput;
+  /* CRUD RELATED OPERATIONS */
 
-    // FIXME:
-    const venue = {};
-    delete createMenuInput.venue_id;
-    const newMenu = this.MenuRepository.create({
+  async create (createMenuInput: CreateMenuInput): Promise<Menu> {
+    const { companyUuid, venueId } = createMenuInput;
+
+    const venue = await this.venuesService.findOne({ companyUuid, id: venueId });
+
+    if (!venue) {
+      throw new NotFoundException(`can't get the venue ${venueId} for the company ${companyUuid}.`);
+    }
+
+    const created = this.menuRepository.create({
       ...createMenuInput,
       venue
     });
 
-    return await this.MenuRepository.save(newMenu);
+    const saved = await this.menuRepository.save(created);
+
+    return saved;
   }
 
-  async findAll (): Promise<Menu[]> {
-    return await this.MenuRepository.find();
+  async findAll (findAllMenusInput: FindAllMenusInput): Promise<Menu[]> {
+    const { companyUuid, limit, skip, search } = findAllMenusInput;
+
+    const query = this.menuRepository.createQueryBuilder('m')
+      .loadAllRelationIds()
+      .innerJoin('m.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid });
+
+    if (search) {
+      query.andWhere('m.name ilike :search', { search: `%${search}%` });
+    }
+
+    query.limit(limit || 10)
+      .offset(skip || 0)
+      .orderBy('m.id', 'DESC');
+
+    const items = await query.getMany();
+
+    return items;
   }
 
-  async findMenus (venue: number): Promise<Menu[]> {
-    return await this.MenuRepository.find({
-      where: {
-        venue
-      }
+  async findOne (findOneMenuInput: FindOneMenuInput): Promise<Menu | null> {
+    const { companyUuid, id } = findOneMenuInput;
+
+    const item = await this.menuRepository.createQueryBuilder('m')
+      .loadAllRelationIds()
+      .innerJoin('m.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('m.id = :id', { id })
+      .getOne();
+
+    return item || null;
+  }
+
+  async update (findOneMenuInput: FindOneMenuInput, updateMenuInput: UpdateMenuInput): Promise<Menu> {
+    const { companyUuid, id } = findOneMenuInput;
+
+    const existing = await this.findOne(findOneMenuInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the menu ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const preloaded = await this.menuRepository.preload({
+      id: existing.id,
+      ...updateMenuInput
     });
+
+    const saved = await this.menuRepository.save(preloaded);
+
+    return saved;
   }
 
-  async findOne (id: number): Promise<Menu> {
-    const menu = await this.MenuRepository.findOne(id);
-    if (!menu) throw new NotFoundException('No hay un menu con esa ID');
-    return menu;
+  async remove (findOneMenuInput: FindOneMenuInput): Promise<Menu> {
+    const { companyUuid, id } = findOneMenuInput;
+
+    const existing = await this.findOne(findOneMenuInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the menu ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const clone = { ...existing };
+
+    await this.menuRepository.remove(existing);
+
+    return clone;
   }
 
-  async update (id: number, updateMenuInput: UpdateMenuInput): Promise<Menu> {
-    const menu = await this.findOne(id);
+  /* CRUD RELATED OPERATIONS */
 
-    const { venue_id } = updateMenuInput;
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
 
-    const venue = {};
-    delete updateMenuInput.venue_id;
-    const editedMenu = this.MenuRepository.merge(menu, {
-      ...updateMenuInput,
-      venue
-    });
-
-    return await this.MenuRepository.save(editedMenu);
+  public async getByIds (ids: number[]): Promise<Menu[]> {
+    return this.menuRepository.findByIds(ids);
   }
 
-  async remove (id: number): Promise<Menu> {
-    const menu = await this.findOne(id);
-    return await this.MenuRepository.remove(menu);
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
+
+  async categories (menu: Menu): Promise<Category[]> {
+    const { id } = menu;
+
+    const item = await this.menuRepository.createQueryBuilder('m')
+      .leftJoinAndSelect('m.categories', 'c')
+      .where('m.id = :id', { id })
+      .getOne();
+
+    return item ? item.categories : [];
   }
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 }
