@@ -19,7 +19,8 @@ export class AssignedVenuesService {
   async create (createAssignedVenueInput: CreateAssignedVenueInput): Promise<AssignedVenue> {
     const { venue_id, worker_id } = createAssignedVenueInput;
 
-    const venue = await this.venuesService.findOne(venue_id);
+    // TODO: fix this
+    const venue = {};
     const person = await this.personsService.findOne(worker_id);
 
     const newAssignedVenue = this.AssignedVenueRepository.create({ person, venue });
@@ -56,7 +57,8 @@ export class AssignedVenuesService {
     const assignedVenue = await this.findOne(id);
     const { venue_id, worker_id } = updateAssignedVenueInput;
 
-    const venue = await this.venuesService.findOne(venue_id);
+    // TODO: fix this
+    const venue = {};
     const person = await this.personsService.findOne(worker_id);
 
     const editedAssignedVenue = this.AssignedVenueRepository.merge(assignedVenue, { venue, person });

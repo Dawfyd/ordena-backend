@@ -31,24 +31,33 @@ export class Venue {
   /*
    * Ubicacion de la sede o sucursal
    */
+  @Column({ type: 'varchar', length: 10 })
+  phone: string;
+
+  /*
+   * Ubicacion de la sede o sucursal
+   */
   @Column({ type: 'varchar', length: 150 })
   address: string;
 
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
   // relations
 
-  @ManyToOne(() => Company, (company: Company) => company.venues, { eager: true, cascade: true })
+  /*
+  * company that owns the venue
+  */
+  @ManyToOne(type => Company, (company: Company) => company.venues)
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
@@ -59,5 +68,5 @@ export class Venue {
   spots: Spot[];
 
   @OneToMany((type) => AssignedVenue, (assignedVenues: AssignedVenue) => assignedVenues.venue)
-  assignedVenues?: AssignedVenue[];
+  assignedVenues: AssignedVenue[];
 }

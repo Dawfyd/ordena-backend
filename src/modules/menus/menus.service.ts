@@ -17,7 +17,8 @@ export class MenusService {
   async create (createMenuInput: CreateMenuInput): Promise<Menu> {
     const { venue_id } = createMenuInput;
 
-    const venue = await this.venuesService.findOne(venue_id);
+    // FIXME:
+    const venue = {};
     delete createMenuInput.venue_id;
     const newMenu = this.MenuRepository.create({
       ...createMenuInput,
@@ -50,7 +51,7 @@ export class MenusService {
 
     const { venue_id } = updateMenuInput;
 
-    const venue = await this.venuesService.findOne(venue_id);
+    const venue = {};
     delete updateMenuInput.venue_id;
     const editedMenu = this.MenuRepository.merge(menu, {
       ...updateMenuInput,

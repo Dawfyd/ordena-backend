@@ -1,69 +1,156 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CompaniesService } from '../companies/companies.service';
-import { CreateVenueInput } from './dto/create-venue.input';
-import { UpdateVenueInput } from './dto/update-venue.input';
+
 import { Venue } from './entities/venue.entity';
+import { Menu } from '../menus/entities/menu.entity';
+import { Spot } from '../spots/entities/spot.entity';
+import { AssignedVenue } from '../assigned-venues/entities/assigned-venue.entity';
+
+import { CompaniesService } from '../companies/companies.service';
+
+import { CreateVenueInput } from './dto/create-venue-input.dto';
+import { UpdateVenueInput } from './dto/update-venue-input.dto';
+import { FindAllVenuesInput } from './dto/find-all-venues-input.dto';
+import { FindOneVenueInput } from './dto/find-one-venue-input.dto';
 
 @Injectable()
 export class VenuesService {
   constructor (
     @InjectRepository(Venue)
-    private readonly VenueRepository: Repository<Venue>,
+    private readonly venueRepository: Repository<Venue>,
     private readonly companiesService: CompaniesService
   ) {}
 
-  async create (
+  public async create (
     createVenueInput: CreateVenueInput
   ): Promise<Venue> {
-    const { company_id } = createVenueInput;
+    const { companyUuid } = createVenueInput;
 
-    // const company = await this.companiesService.findOne(company_id);
+    const company = await this.companiesService.findOne({ companyUuid });
 
-    delete createVenueInput.company_id;
+    if (!company) {
+      throw new NotFoundException(`can't get the company with uuid ${companyUuid}.`);
+    }
 
-    const newVenue = this.VenueRepository.create({
-      ...createVenueInput
+    const created = this.venueRepository.create({
+      name: createVenueInput.name,
+      description: createVenueInput.description,
+      address: createVenueInput.address,
+      phone: createVenueInput.phone,
+      company
     });
 
-    return await this.VenueRepository.save(newVenue);
+    const saved = this.venueRepository.save(created);
+
+    return saved;
   }
 
-  async findAll (): Promise<Venue[]> {
-    return await this.VenueRepository.find();
+  public async findAll (findAllVenuesInput: FindAllVenuesInput): Promise<Venue[]> {
+    const { limit, skip, search } = findAllVenuesInput;
+
+    const query = this.venueRepository.createQueryBuilder('v')
+      .loadAllRelationIds();
+
+    if (search) {
+      query.where('v.name ilike :search', { search: `%${search}%` })
+        .orWhere('v.address ilike :search', { search: `%${search}%` })
+        .orWhere('v.phone ilike :search', { search: `%${search}%` });
+    }
+
+    const items = await query.limit(limit || undefined)
+      .offset(skip || 0)
+      .orderBy('v.id', 'DESC')
+      .getMany();
+
+    return items;
   }
 
-  async findOne (id: number): Promise<Venue> {
-    const venue = await this.VenueRepository.findOne(id);
-    if (!venue) { throw new NotFoundException('No hay una sede con esa ID'); }
-    return venue;
+  public async findOne (findOneVenueInput: FindOneVenueInput): Promise<Venue | null> {
+    const { companyUuid, id } = findOneVenueInput;
+
+    const item = await this.venueRepository.createQueryBuilder('v')
+      .loadAllRelationIds()
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('v.id = :id', { id })
+      .getOne();
+
+    return item || null;
   }
 
-  async findVenues (customer: number): Promise<Venue[]> {
-    return await this.VenueRepository.find({
-      where: {
-        customer
-      }
-    });
-  }
+  public async update (findOneVenueInput: FindOneVenueInput, updateVenueInput: UpdateVenueInput): Promise<Venue> {
+    const { companyUuid, id } = findOneVenueInput;
 
-  async update (id: number, updateVenueInput: UpdateVenueInput): Promise<Venue> {
-    const venue = await this.findOne(id);
+    const company = await this.companiesService.findOne({ companyUuid });
 
-    const { company_id } = updateVenueInput;
+    if (!company) {
+      throw new NotFoundException(`can't get the company with uuid ${companyUuid}.`);
+    }
 
-    // const company = await this.companiesService.findOne(company_id);
-    delete updateVenueInput.company_id;
-    const editedVenue = this.VenueRepository.merge(venue, {
+    const existing = await this.findOne(findOneVenueInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the venue ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const preloaded = await this.venueRepository.preload({
+      id: existing.id,
+      company,
       ...updateVenueInput
     });
 
-    return await this.VenueRepository.save(editedVenue);
+    const saved = await this.venueRepository.save(preloaded);
+
+    return saved;
   }
 
-  async remove (id: number): Promise<Venue> {
-    const venue = await this.findOne(id);
-    return await this.VenueRepository.remove(venue);
+  public async remove (findOneVenueInput: FindOneVenueInput): Promise<Venue> {
+    const { companyUuid, id } = findOneVenueInput;
+
+    const existing = await this.findOne(findOneVenueInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the venue ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const clone = { ...existing };
+
+    await this.venueRepository.remove(existing);
+
+    return clone;
+  }
+
+  public async menus (venue: Venue): Promise<Menu[]> {
+    const { id } = venue;
+
+    const item = await this.venueRepository.createQueryBuilder('v')
+      .leftJoinAndSelect('v.menus', 'm')
+      .where('v.id = :id', { id })
+      .getOne();
+
+    return item ? item.menus : [];
+  }
+
+  public async spots (venue: Venue): Promise<Spot[]> {
+    const { id } = venue;
+
+    const item = await this.venueRepository.createQueryBuilder('v')
+      .leftJoinAndSelect('v.spots', 's')
+      .where('v.id = :id', { id })
+      .getOne();
+
+    return item ? item.spots : [];
+  }
+
+  public async assignedVenues (venue: Venue): Promise<AssignedVenue[]> {
+    const { id } = venue;
+
+    const item = await this.venueRepository.createQueryBuilder('v')
+      .leftJoinAndSelect('v.assignedVenues', 'av')
+      .where('v.id = :id', { id })
+      .getOne();
+
+    return item ? item.assignedVenues : [];
   }
 }

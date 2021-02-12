@@ -1,23 +1,20 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
-import { VenuesResolver } from './venues.resolver';
+import { VenuesLoaders } from './venues.loaders';
 import { VenuesService } from './venues.service';
+import { VenuesResolver } from './venues.resolver';
+
 import { Venue } from './entities/venue.entity';
 
 import { CompaniesModule } from '../companies/companies.module';
-import { MenusModule } from '../menus/menus.module';
-import { SpotsModule } from '../spots/spots.module';
-import { AssignedVenuesModule } from '../assigned-venues/assigned-venues.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Venue]),
-    forwardRef(() => CompaniesModule),
-    forwardRef(() => MenusModule),
-    forwardRef(() => SpotsModule),
-    forwardRef(() => AssignedVenuesModule)
+  imports: [
+    TypeOrmModule.forFeature([Venue]),
+    CompaniesModule
   ],
-  providers: [VenuesResolver, VenuesService],
+  providers: [VenuesLoaders, VenuesService, VenuesResolver],
   exports: [VenuesService]
 })
 export class VenuesModule {}

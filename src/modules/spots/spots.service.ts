@@ -16,7 +16,7 @@ export class SpotsService {
 
   async create (createSpotInput: CreateSpotInput): Promise<Spot> {
     const { venue_id } = createSpotInput;
-    const venue = await this.venuesService.findOne(venue_id);
+    const venue = {};
 
     const newSpot = this.SpotRepository.create({ ...createSpotInput, venue });
     return await this.SpotRepository.save(newSpot);
@@ -45,7 +45,8 @@ export class SpotsService {
 
     const { venue_id } = updateSpotInput;
 
-    const venue = await this.venuesService.findOne(venue_id);
+    // FIXME:
+    const venue = {};
 
     const editedSpot = this.SpotRepository.merge(spot, { ...updateSpotInput, venue });
     return await this.SpotRepository.save(editedSpot);

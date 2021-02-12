@@ -6,10 +6,10 @@ import { generateUuid } from 'src/utils';
 import { Company } from './entities/company.entity';
 import { Venue } from '../venues/entities/venue.entity';
 
-import { CreateInput } from './dto/create-input.dto';
+import { CreateCompanyInput } from './dto/create-company-input.dto';
 import { UpdateCompanyInput } from './dto/update-company-input.dto';
-import { FindAllInput } from './dto/find-all-input.dto';
-import { FindOneInput } from './dto/find-one-input.dto';
+import { FindAllCompaniesInput } from './dto/find-all-companies-input.dto';
+import { FindOneCompanyInput } from './dto/find-company-one-input.dto';
 @Injectable()
 export class CompaniesService {
   constructor (
@@ -17,7 +17,7 @@ export class CompaniesService {
     private readonly companyRepository: Repository<Company>
   ) {}
 
-  public async create (createCompanyInput: CreateInput): Promise<Company> {
+  public async create (createCompanyInput: CreateCompanyInput): Promise<Company> {
     const created = this.companyRepository.create({
       ...createCompanyInput,
       uuid: generateUuid()
@@ -28,8 +28,8 @@ export class CompaniesService {
     return saved;
   }
 
-  public async findAll (findAllInput: FindAllInput): Promise<Company[]> {
-    const { limit, skip, search = '' } = findAllInput;
+  public async findAll (findAllCompaniesInput: FindAllCompaniesInput): Promise<Company[]> {
+    const { limit, skip, search = '' } = findAllCompaniesInput;
 
     const query = this.companyRepository.createQueryBuilder('c');
 
@@ -38,15 +38,16 @@ export class CompaniesService {
     }
 
     query.limit(limit || undefined)
-      .offset(skip || 0);
+      .offset(skip || 0)
+      .orderBy('c.id', 'DESC');
 
     const companies = await query.getMany();
 
     return companies;
   }
 
-  public async findOne (findOneInput: FindOneInput): Promise<Company | null> {
-    const { companyUuid } = findOneInput;
+  public async findOne (findOneCompanyInput: FindOneCompanyInput): Promise<Company | null> {
+    const { companyUuid } = findOneCompanyInput;
 
     const company = await this.companyRepository.createQueryBuilder('c')
       .where('c.uuid = :companyUuid', { companyUuid })
@@ -55,8 +56,8 @@ export class CompaniesService {
     return company || null;
   }
 
-  public async update (findOneInput: FindOneInput, updateCompanyInput: UpdateCompanyInput): Promise<Company> {
-    const { companyUuid } = findOneInput;
+  public async update (findOneCompanyInput: FindOneCompanyInput, updateCompanyInput: UpdateCompanyInput): Promise<Company> {
+    const { companyUuid } = findOneCompanyInput;
 
     const company = await this.findOne({ companyUuid });
 
@@ -74,8 +75,8 @@ export class CompaniesService {
     return saved;
   }
 
-  public async remove (findOneInput: FindOneInput): Promise<Company> {
-    const { companyUuid } = findOneInput;
+  public async remove (findOneCompanyInput: FindOneCompanyInput): Promise<Company> {
+    const { companyUuid } = findOneCompanyInput;
 
     const existing = await this.findOne({ companyUuid });
 
@@ -83,9 +84,15 @@ export class CompaniesService {
       throw new NotFoundException(`can't get the company with uuid ${companyUuid}.`);
     }
 
-    const removed = await this.companyRepository.remove(existing);
+    const clone = { ...existing };
 
-    return removed;
+    await this.companyRepository.remove(existing);
+
+    return clone;
+  }
+
+  public async getByIds (ids: number[]): Promise<Company[]> {
+    return this.companyRepository.findByIds(ids);
   }
 
   public async venues (company: Company): Promise<Venue[]> {
@@ -96,6 +103,6 @@ export class CompaniesService {
       .where('c.id = :id', { id })
       .getOne();
 
-    return item.venues;
+    return item ? item.venues : [];
   }
 }
