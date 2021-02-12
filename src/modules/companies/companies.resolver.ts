@@ -9,7 +9,7 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyInput } from './dto/create-company-input.dto';
 import { UpdateCompanyInput } from './dto/update-company-input.dto';
 import { FindAllCompaniesInput } from './dto/find-all-companies-input.dto';
-import { FindOneCompanyInput } from './dto/find-company-one-input.dto';
+import { FindOneCompanyInput } from './dto/find-one-company-input.dto';
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 @Resolver(() => Company)
 export class CompaniesResolver {
