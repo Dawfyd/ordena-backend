@@ -10,7 +10,6 @@ import { CreateMenuInput } from './dto/create-menu-input.dto';
 import { UpdateMenuInput } from './dto/update-menu.input';
 import { FindAllMenusInput } from './dto/find-all-menus-input.dto';
 import { FindOneMenuInput } from './dto/find-one-menu-input.dto';
-import { Category } from '../categories/entities/category.entity';
 
 @Injectable()
 export class MenusService {
@@ -139,15 +138,17 @@ export class MenusService {
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 
-  async categories (menu: Menu): Promise<Category[]> {
+  async categories (menu: Menu): Promise<any[]> {
     const { id } = menu;
 
-    const item = await this.menuRepository.createQueryBuilder('m')
+    const master = await this.menuRepository.createQueryBuilder('m')
       .leftJoinAndSelect('m.categories', 'c')
       .where('m.id = :id', { id })
       .getOne();
 
-    return item ? item.categories : [];
+    const items = master ? master.categories : [];
+
+    return items.map(item => ({ ...item, menu: master.id }));
   }
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */

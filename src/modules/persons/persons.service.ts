@@ -244,7 +244,9 @@ export class PersonsService {
   }
 
   public async getByIds (ids: number[]): Promise<Person[]> {
-    return this.personRepository.findByIds(ids);
+    return this.personRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
   }
 
   public async favorites (person: Person): Promise<Favorite[]> {
