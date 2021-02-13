@@ -54,7 +54,6 @@ export class VenuesResolver {
 
   @ResolveField(() => Company, { name: 'company' })
   async company (@Parent() venue: Venue): Promise<Company> {
-    console.log('venue', venue);
     const companyValue: any = venue.company;
 
     let companyId = companyValue;

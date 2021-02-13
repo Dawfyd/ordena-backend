@@ -19,7 +19,8 @@ export class FavoritesService {
   async create (createFavoriteInput: CreateFavoriteInput): Promise<Favorite> {
     const { product_id, person_id } = createFavoriteInput;
 
-    const person = await this.personsService.findOne(person_id);
+    // TODO: fix this
+    const person = {};
     const product = await this.productsService.findOne(product_id);
 
     const newFavorite = this.FavoriteRepository.create({
@@ -41,14 +42,6 @@ export class FavoritesService {
     return favorite;
   }
 
-  async findFavoritesPerson (person: number): Promise<Favorite[]> {
-    return await this.FavoriteRepository.find({
-      where: {
-        person
-      }
-    });
-  }
-
   async findFavoritesProduct (product: number): Promise<Favorite[]> {
     return await this.FavoriteRepository.find({
       where: {
@@ -62,7 +55,8 @@ export class FavoritesService {
 
     const { product_id, person_id } = updateFavoriteInput;
 
-    const person = await this.personsService.findOne(person_id);
+    // TODO: fix this
+    const person = {};
     const product = await this.productsService.findOne(product_id);
 
     const editedFavorite = this.FavoriteRepository.merge(favorite, {

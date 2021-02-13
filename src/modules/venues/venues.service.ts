@@ -3,9 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Venue } from './entities/venue.entity';
-import { Menu } from '../menus/entities/menu.entity';
-import { Spot } from '../spots/entities/spot.entity';
-import { AssignedVenue } from '../assigned-venues/entities/assigned-venue.entity';
 
 import { CompaniesService } from '../companies/companies.service';
 
@@ -139,37 +136,43 @@ export class VenuesService {
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 
-  public async menus (venue: Venue): Promise<Menu[]> {
+  public async menus (venue: Venue): Promise<any[]> {
     const { id } = venue;
 
-    const item = await this.venueRepository.createQueryBuilder('v')
+    const master = await this.venueRepository.createQueryBuilder('v')
       .leftJoinAndSelect('v.menus', 'm')
       .where('v.id = :id', { id })
       .getOne();
 
-    return item ? item.menus : [];
+    const items = master ? master.menus : [];
+
+    return items.map(item => ({ ...item, venue: master.id }));
   }
 
-  public async spots (venue: Venue): Promise<Spot[]> {
+  public async spots (venue: Venue): Promise<any[]> {
     const { id } = venue;
 
-    const item = await this.venueRepository.createQueryBuilder('v')
+    const master = await this.venueRepository.createQueryBuilder('v')
       .leftJoinAndSelect('v.spots', 's')
       .where('v.id = :id', { id })
       .getOne();
 
-    return item ? item.spots : [];
+    const items = master ? master.spots : [];
+
+    return items.map(item => ({ ...item, venue: master.id }));
   }
 
-  public async assignedVenues (venue: Venue): Promise<AssignedVenue[]> {
+  public async assignedVenues (venue: Venue): Promise<any[]> {
     const { id } = venue;
 
-    const item = await this.venueRepository.createQueryBuilder('v')
+    const master = await this.venueRepository.createQueryBuilder('v')
       .leftJoinAndSelect('v.assignedVenues', 'av')
       .where('v.id = :id', { id })
       .getOne();
 
-    return item ? item.assignedVenues : [];
+    const items = master ? master.assignedVenues : [];
+
+    return items.map(item => ({ ...item, venue: master.id }));
   }
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */

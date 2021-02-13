@@ -21,7 +21,8 @@ export class OrdersService {
   async create (createOrderInput: CreateOrderInput): Promise<Order> {
     const { person_id, spot_id, order_status_id } = createOrderInput;
 
-    const person = await this.personasService.findOne(person_id);
+    // TODO: fix this
+    const person = {};
     const spot = {};
     const orderStatus = await this.orderStatusesService.findOne(order_status_id);
 
@@ -37,14 +38,6 @@ export class OrdersService {
     const order = await this.OrderRepository.findOne(id);
     if (!order) throw new NotFoundException('No hay una orden con esa ID');
     return order;
-  }
-
-  async findPersonOrder (person: number): Promise<Order[]> {
-    return await this.OrderRepository.find({
-      where: {
-        person
-      }
-    });
   }
 
   async findOrderStatusOrder (orderStatus: number): Promise<Order[]> {
@@ -68,7 +61,8 @@ export class OrdersService {
 
     const { person_id, spot_id, order_status_id } = updateOrderInput;
 
-    const person = await this.personasService.findOne(person_id);
+    // FIXME:
+    const person = {};
     // FIXME:
     const spot = {};
     const orderStatus = await this.orderStatusesService.findOne(order_status_id);

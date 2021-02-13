@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 
 import { generateUuid } from 'src/utils';
 import { Company } from './entities/company.entity';
-import { Venue } from '../venues/entities/venue.entity';
 
 import { CreateCompanyInput } from './dto/create-company-input.dto';
 import { UpdateCompanyInput } from './dto/update-company-input.dto';
@@ -107,15 +106,17 @@ export class CompaniesService {
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 
-  public async venues (company: Company): Promise<Venue[]> {
+  public async venues (company: Company): Promise<any[]> {
     const { id } = company;
 
-    const item = await this.companyRepository.createQueryBuilder('c')
+    const master = await this.companyRepository.createQueryBuilder('c')
       .leftJoinAndSelect('c.venues', 'v')
       .where('c.id = :id', { id })
       .getOne();
 
-    return item ? item.venues : [];
+    const items = master ? master.venues : [];
+
+    return items.map(item => ({ ...item, company: master.id }));
   }
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */

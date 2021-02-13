@@ -19,7 +19,8 @@ export class CustomerAssignedSpotsService {
   async create (createCustomerAssignedSpotInput: CreateCustomerAssignedSpotInput): Promise<CustomerAssignedSpot> {
     const { person_id, spot_id } = createCustomerAssignedSpotInput;
 
-    const person = await this.personsService.findOne(person_id);
+    // TODO: fix this
+    const person = {};
     // FIXME:
     const spot = {};
 
@@ -57,7 +58,8 @@ export class CustomerAssignedSpotsService {
     const customerAssignedSpot = await this.findOne(id);
     const { person_id, spot_id } = updateCustomerAssignedSpotInput;
 
-    const person = await this.personsService.findOne(person_id);
+    // TODO: fix this
+    const person = {};
     // FIXME:
     const spot = {};
 

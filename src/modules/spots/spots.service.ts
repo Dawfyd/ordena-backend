@@ -5,10 +5,6 @@ import { Repository } from 'typeorm';
 import { Spot } from './entities/spot.entity';
 
 import { VenuesService } from '../venues/venues.service';
-import { CustomerAssignedSpot } from '../customer-assigned-spots/entities/customer-assigned-spot.entity';
-import { WaiterAssignedSpot } from '../waiter-assigned-spots/entities/waiter-assigned-spot.entity';
-import { Order } from '../orders/entities/order.entity';
-import { Request } from '../requests/entities/request.entity';
 
 import { CreateSpotInput } from './dto/create-spot-input.dto';
 import { FindAllSpotsInput } from './dto/find-all-spots-input.dto';
@@ -141,48 +137,56 @@ export class SpotsService {
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 
-  public async customerAssignedSpots (spot: Spot): Promise<CustomerAssignedSpot[]> {
+  public async customerAssignedSpots (spot: Spot): Promise<any[]> {
     const { id } = spot;
 
-    const item = await this.spotRepository.createQueryBuilder('s')
+    const master = await this.spotRepository.createQueryBuilder('s')
       .leftJoinAndSelect('s.customerAssignedSpots', 'cas')
       .where('s.id = :id', { id })
       .getOne();
 
-    return item ? item.customerAssignedSpots : [];
+    const items = master ? master.customerAssignedSpots : [];
+
+    return items.map(item => ({ ...item, spot: master.id }));
   }
 
-  public async waiterAssignedSpots (spot: Spot): Promise<WaiterAssignedSpot[]> {
+  public async waiterAssignedSpots (spot: Spot): Promise<any[]> {
     const { id } = spot;
 
-    const item = await this.spotRepository.createQueryBuilder('s')
+    const master = await this.spotRepository.createQueryBuilder('s')
       .leftJoinAndSelect('s.waiterAssignedSpots', 'was')
       .where('s.id = :id', { id })
       .getOne();
 
-    return item ? item.waiterAssignedSpots : [];
+    const items = master ? master.waiterAssignedSpots : [];
+
+    return items.map(item => ({ ...item, spot: master.id }));
   }
 
-  public async orders (spot: Spot): Promise<Order[]> {
+  public async orders (spot: Spot): Promise<any[]> {
     const { id } = spot;
 
-    const item = await this.spotRepository.createQueryBuilder('s')
+    const master = await this.spotRepository.createQueryBuilder('s')
       .leftJoinAndSelect('s.orders', 'o')
       .where('s.id = :id', { id })
       .getOne();
 
-    return item ? item.orders : [];
+    const items = master ? master.orders : [];
+
+    return items.map(item => ({ ...item, spot: master.id }));
   }
 
-  public async requests (spot: Spot): Promise<Request[]> {
+  public async requests (spot: Spot): Promise<any[]> {
     const { id } = spot;
 
-    const item = await this.spotRepository.createQueryBuilder('s')
+    const master = await this.spotRepository.createQueryBuilder('s')
       .leftJoinAndSelect('s.requests', 'r')
       .where('s.id = :id', { id })
       .getOne();
 
-    return item ? item.requests : [];
+    const items = master ? master.requests : [];
+
+    return items.map(item => ({ ...item, spot: master.id }));
   }
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */

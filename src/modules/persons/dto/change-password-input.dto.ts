@@ -1,13 +1,17 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { IsEmail, IsString } from 'class-validator';
 
 @InputType()
 export class ChangePasswordInput {
-    @Field()
+    @IsEmail()
+    @Field(() => String)
     readonly email: string;
 
-    @Field()
+    @IsString()
+    @Field(() => String)
     readonly oldPassword: string;
 
-    @Field()
+    @IsString()
+    @Field(() => String)
     readonly newPassword: string;
 }

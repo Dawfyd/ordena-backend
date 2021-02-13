@@ -10,76 +10,71 @@ import { WaiterAssignedSpot } from '../../waiter-assigned-spots/entities/waiter-
 @Entity('persons')
 @ObjectType()
 export class Person {
-  @PrimaryGeneratedColumn()
-  @Field()
   /*
    * ID de la persona
    */
+  @PrimaryGeneratedColumn()
+  @Field()
   id: number;
 
   /*
    * Nombre de usuario de la persona
    */
-  @Column()
-  username: string;
+  @Column({ type: 'varchar', length: 100 })
+  name: string;
 
   /*
    * Numero de celular de la persona
    */
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 10, unique: true })
   phone: string;
 
   /*
    * Correo electronico de la persona
    */
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 100, unique: true })
   email: string;
 
   /*
    * URL de la foto de perfil de la persona
    */
-  @Column()
-  photo: string;
+  @Column({ name: 'phone_url', type: 'varchar', length: 100 })
+  photoUrl: string;
 
   /*
    * Identificador unico de la persona asociado con el ACL
    */
-  @Column()
+  @Column({ name: 'auth_uid', type: 'varchar', length: 100 })
   authUid: string
 
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @OneToMany(
-    (type) => Order, (orders: Order) => orders.person)
-  orders?: Order[];
+  // relations
+  @OneToMany((type) => Order, (orders: Order) => orders.person)
+  orders: Order[];
 
   /*
     * Productos favoritos seleccionados por la persona
     */
-  @OneToMany(
-    (type) => Favorite, (favorites: Favorite) => favorites.person)
+  @OneToMany((type) => Favorite, (favorites: Favorite) => favorites.person)
+  favorites: Favorite[];
 
-  favorites?: Favorite[];
+  @OneToMany((type) => CustomerAssignedSpot, (customerAssignedSpot: CustomerAssignedSpot) => customerAssignedSpot.person)
+  customerAssignedSpot: CustomerAssignedSpot[];
 
-  @OneToMany(
-    (type) => CustomerAssignedSpot, (customerAssignedSpot: CustomerAssignedSpot) => customerAssignedSpot.person)
-    customerAssignedSpot?: CustomerAssignedSpot[];
+  @OneToMany((type) => AssignedVenue, (assignedVenues: AssignedVenue) => assignedVenues.person)
+  assignedVenues: AssignedVenue[];
 
-  @OneToMany(
-    (type) => AssignedVenue, (assignedVenues: AssignedVenue) => assignedVenues.person)
-    assignedVenues?: AssignedVenue[];
-
-  @OneToMany(
-    (type) => WaiterAssignedSpot, (waiterAssignedSpots: WaiterAssignedSpot) => waiterAssignedSpots.person)
-    waiterAssignedSpots?: WaiterAssignedSpot[];
+  @OneToMany((type) => WaiterAssignedSpot, (waiterAssignedSpots: WaiterAssignedSpot) => waiterAssignedSpots.person)
+  waiterAssignedSpots: WaiterAssignedSpot[];
 }
