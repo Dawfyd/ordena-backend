@@ -98,7 +98,9 @@ export class CompaniesService {
   /* OPERATIONS BECAUSE OF THE MASTER STATUS */
 
   public async getByIds (ids: number[]): Promise<Company[]> {
-    return this.companyRepository.findByIds(ids);
+    return this.companyRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
   }
 
   /* OPERATIONS BECAUSE OF THE MASTER STATUS */

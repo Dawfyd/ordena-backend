@@ -20,7 +20,8 @@ export class WaiterAssignedSpotsService {
     const { person_id, spot_id } = createWaiterAssignedSpotInput;
 
     const person = await this.personsService.findOne(person_id);
-    const spot = await this.spotsService.findOne(spot_id);
+    // FIXME:
+    const spot = {};
 
     const newWaiterAssignedSpot = this.WaiterAssignedSpotRepository.create({ ...createWaiterAssignedSpotInput, person, spot });
 
@@ -50,7 +51,8 @@ export class WaiterAssignedSpotsService {
     const { person_id, spot_id } = updateWaiterAssignedSpotInput;
 
     const person = await this.personsService.findOne(person_id);
-    const spot = await this.spotsService.findOne(spot_id);
+    // FIXME:
+    const spot = {};
 
     const editedWaiterAssignedSpot = this.WaiterAssignedSpotRepository.merge(waiterAssignedSpot, { person, spot, ...updateWaiterAssignedSpotInput });
     return await this.WaiterAssignedSpotRepository.save(editedWaiterAssignedSpot);

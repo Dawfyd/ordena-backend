@@ -25,7 +25,8 @@ export class RequestsService {
 
     const product = await this.productsService.findOne(product_id);
     const order = await this.ordersService.findOne(order_id);
-    const spot = await this.spotsService.findOne(spot_id);
+    // FIXME:
+    const spot = {};
     const requestStatus = await this.requestStatusesService.findOne(request_status_id);
 
     const newRequest = this.RequestRepository.create(
@@ -83,7 +84,8 @@ export class RequestsService {
 
     const product = await this.productsService.findOne(product_id);
     const order = await this.ordersService.findOne(order_id);
-    const spot = await this.spotsService.findOne(spot_id);
+    // FIXME:
+    const spot = {};
     const requestStatus = await this.requestStatusesService.findOne(request_status_id);
 
     const editedRequest = this.RequestRepository.merge(
