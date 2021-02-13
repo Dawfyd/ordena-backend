@@ -10,67 +10,60 @@ import { Request } from '../../requests/entities/request.entity';
 @Entity('spots')
 @ObjectType()
 export class Spot {
-  @PrimaryGeneratedColumn()
-  @Field()
-
   /*
    * ID de la mesa
    */
+  @Field()
+  @PrimaryGeneratedColumn()
   id: number;
+
+  // TODO: discuss about this field: must it be a entire table?
 
   /*
    * Estado de la mesa
    */
-  @Column()
+  @Column({ type: 'varchar', length: 20 })
   state: string;
 
   /*
    * Nombre de la mesa
    */
-  @Column()
-  name: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  name?: string;
 
   /*
    * Numero de la mesa
    */
-  @Column()
-  number: number;
+  @Column({ name: 'spot_number', type: 'varchar', length: 5 })
+  spotNumber: string;
 
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @ManyToOne(
-    () => Venue,
-    (venue: Venue) => venue.spots, {
-      eager: true,
-      cascade: true
-    })
+  // relations
 
+  @ManyToOne(type => Venue, (venue: Venue) => venue.spots)
   @JoinColumn({ name: 'venue_id' })
-    venue: Venue;
+  venue: Venue;
 
-    @OneToMany(
-      (type) => CustomerAssignedSpot, (customerAssignedSpot: CustomerAssignedSpot) => customerAssignedSpot.spot)
-      customerAssignedSpot?: CustomerAssignedSpot[];
+  @OneToMany(type => CustomerAssignedSpot, (customerAssignedSpot: CustomerAssignedSpot) => customerAssignedSpot.spot)
+  customerAssignedSpots: CustomerAssignedSpot[];
 
-    @OneToMany(
-      (type) => WaiterAssignedSpot, (waiterAssignedSpots: WaiterAssignedSpot) => waiterAssignedSpots.spot)
-      waiterAssignedSpots?: WaiterAssignedSpot[];
+  @OneToMany(type => WaiterAssignedSpot, (waiterAssignedSpots: WaiterAssignedSpot) => waiterAssignedSpots.spot)
+  waiterAssignedSpots: WaiterAssignedSpot[];
 
-    @OneToMany(
-      (type) => Order, (orders: Order) => orders.spot)
-      orders?: Order[];
+  @OneToMany(type => Order, (orders: Order) => orders.spot)
+  orders: Order[];
 
-    @OneToMany(
-      (type) => Request, (request: Request) => request.spot)
-      requests?: Request[];
+  @OneToMany(type => Request, (request: Request) => request.spot)
+  requests: Request[];
 }

@@ -21,7 +21,8 @@ export class CustomerAssignedSpotsService {
 
     // TODO: fix this
     const person = {};
-    const spot = await this.spotsService.findOne(spot_id);
+    // FIXME:
+    const spot = {};
 
     const newCustomerAssignedSpot = this.CustomerAssignedSpotRepository.create({ person, spot, ...createCustomerAssignedSpotInput });
     return await this.CustomerAssignedSpotRepository.save(newCustomerAssignedSpot);
@@ -59,7 +60,8 @@ export class CustomerAssignedSpotsService {
 
     // TODO: fix this
     const person = {};
-    const spot = await this.spotsService.findOne(spot_id);
+    // FIXME:
+    const spot = {};
 
     const editedCustomerAssignedSpot = this.CustomerAssignedSpotRepository.merge(customerAssignedSpot, { person, spot, ...updateCustomerAssignedSpotInput });
 

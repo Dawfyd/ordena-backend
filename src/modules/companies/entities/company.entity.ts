@@ -57,6 +57,6 @@ export class Company {
 
   // relations
 
-  @OneToMany((type) => Venue, (venues: Venue) => venues.company)
+  @OneToMany(type => Venue, (venues: Venue) => venues.company)
   venues: Venue[];
 }

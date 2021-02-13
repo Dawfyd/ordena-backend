@@ -3,6 +3,10 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class FindAllVenuesInput {
+    @IsString()
+    @Field(() => String)
+    readonly companyUuid: string;
+
     @IsOptional()
     @IsNumber()
     @Field(() => Int, { nullable: true })
