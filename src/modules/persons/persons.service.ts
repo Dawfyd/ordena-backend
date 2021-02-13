@@ -4,9 +4,6 @@ import { Repository } from 'typeorm';
 
 import { BasicAclService } from 'src/common/integrations/basic-acl/basic-acl.service';
 
-import { AssignedVenue } from '../assigned-venues/entities/assigned-venue.entity';
-import { CustomerAssignedSpot } from '../customer-assigned-spots/entities/customer-assigned-spot.entity';
-import { Favorite } from '../favorites/entities/favorite.entity';
 import { ParametersService } from '../parameters/parameters.service';
 import { ChangePasswordInput } from './dto/change-password-input.dto';
 import { CreatePersonInput } from './dto/create-person.input.dto';
@@ -16,8 +13,6 @@ import { FindOnePersonInput } from './dto/find-person-one-input.dto';
 import { SendForgottenPasswordEmailInput } from './dto/send-forgotten-password-email-input.dto';
 import { UpdatePersonInput } from './dto/update-person.input.dto';
 import { Person } from './entities/person.entity';
-import { WaiterAssignedSpot } from '../waiter-assigned-spots/entities/waiter-assigned-spot.entity';
-import { Order } from '../orders/entities/order.entity';
 
 @Injectable()
 export class PersonsService {
@@ -27,6 +22,8 @@ export class PersonsService {
     private readonly basicAclService: BasicAclService,
     private readonly parametersService: ParametersService
   ) {}
+
+  /* CRUD RELATED OPERATIONS */
 
   public async createAdmin (createPersonInput: CreatePersonInput): Promise<Person> {
     const admin = await this.parametersService.findOneName('ADMIN_ROLE');
@@ -243,64 +240,84 @@ export class PersonsService {
     return person;
   }
 
+  /* CRUD RELATED OPERATIONS */
+
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
   public async getByIds (ids: number[]): Promise<Person[]> {
     return this.personRepository.findByIds(ids, {
       loadRelationIds: true
     });
   }
 
-  public async favorites (person: Person): Promise<Favorite[]> {
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
+
+  public async favorites (person: Person): Promise<any[]> {
     const { id } = person;
 
-    const item = await this.personRepository.createQueryBuilder('p')
+    const master = await this.personRepository.createQueryBuilder('p')
       .leftJoinAndSelect('p.favorites', 'f')
       .where('p.id = :id', { id })
       .getOne();
 
-    return item ? item.favorites : [];
+    const items = master ? master.favorites : [];
+
+    return items.map(item => ({ ...item, person: master.id }));
   }
 
-  public async customerAssignedSpot (person: Person): Promise<CustomerAssignedSpot[]> {
+  public async customerAssignedSpot (person: Person): Promise<any[]> {
     const { id } = person;
 
-    const item = await this.personRepository.createQueryBuilder('p')
+    const master = await this.personRepository.createQueryBuilder('p')
       .leftJoinAndSelect('p.customerAssignedSpot', 'c')
       .where('p.id = :id', { id })
       .getOne();
 
-    return item ? item.customerAssignedSpot : [];
+    const items = master ? master.customerAssignedSpot : [];
+
+    return items.map(item => ({ ...item, person: master.id }));
   }
 
-  public async assignedVenues (person: Person): Promise<AssignedVenue[]> {
+  public async assignedVenues (person: Person): Promise<any[]> {
     const { id } = person;
 
-    const item = await this.personRepository.createQueryBuilder('p')
+    const master = await this.personRepository.createQueryBuilder('p')
       .leftJoinAndSelect('p.assignedVenues', 'a')
       .where('p.id = :id', { id })
       .getOne();
 
-    return item ? item.assignedVenues : [];
+    const items = master ? master.assignedVenues : [];
+
+    return items.map(item => ({ ...item, person: master.id }));
   }
 
-  public async waiterAssignedSpots (person: Person): Promise<WaiterAssignedSpot[]> {
+  public async waiterAssignedSpots (person: Person): Promise<any[]> {
     const { id } = person;
 
-    const item = await this.personRepository.createQueryBuilder('p')
+    const master = await this.personRepository.createQueryBuilder('p')
       .leftJoinAndSelect('p.waiterAssignedSpots', 'w')
       .where('p.id = :id', { id })
       .getOne();
 
-    return item ? item.waiterAssignedSpots : [];
+    const items = master ? master.waiterAssignedSpots : [];
+
+    return items.map(item => ({ ...item, person: master.id }));
   }
 
-  public async orders (person: Person): Promise<Order[]> {
+  public async orders (person: Person): Promise<any[]> {
     const { id } = person;
 
-    const item = await this.personRepository.createQueryBuilder('p')
+    const master = await this.personRepository.createQueryBuilder('p')
       .leftJoinAndSelect('p.orders', 'o')
       .where('p.id = :id', { id })
       .getOne();
 
-    return item ? item.orders : [];
+    const items = master ? master.orders : [];
+
+    return items.map(item => ({ ...item, person: master.id }));
   }
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 }
