@@ -130,7 +130,9 @@ export class VenuesService {
   /* OPERATIONS BECAUSE OF THE MASTER STATUS */
 
   public async getByIds (ids: number[]): Promise<Venue[]> {
-    return this.venueRepository.findByIds(ids);
+    return this.venueRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
   }
 
   /* OPERATIONS BECAUSE OF THE MASTER STATUS */

@@ -22,7 +22,7 @@ export class OrdersService {
     const { person_id, spot_id, order_status_id } = createOrderInput;
 
     const person = await this.personasService.findOne(person_id);
-    const spot = await this.spotsService.findOne(spot_id);
+    const spot = {};
     const orderStatus = await this.orderStatusesService.findOne(order_status_id);
 
     const newOrder = this.OrderRepository.create({ ...createOrderInput, person, spot, orderStatus });
@@ -69,7 +69,8 @@ export class OrdersService {
     const { person_id, spot_id, order_status_id } = updateOrderInput;
 
     const person = await this.personasService.findOne(person_id);
-    const spot = await this.spotsService.findOne(spot_id);
+    // FIXME:
+    const spot = {};
     const orderStatus = await this.orderStatusesService.findOne(order_status_id);
 
     const editedOrder = this.OrderRepository.merge(order, { ...updateOrderInput, person, spot, orderStatus });

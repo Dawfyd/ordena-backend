@@ -51,7 +51,7 @@ export class CustomerAssignedSpot {
 
   @ManyToOne(
     () => Spot,
-    (spot: Spot) => spot.customerAssignedSpot, {
+    (spot: Spot) => spot.customerAssignedSpots, {
       eager: true,
       cascade: true
     })

@@ -20,7 +20,8 @@ export class CustomerAssignedSpotsService {
     const { person_id, spot_id } = createCustomerAssignedSpotInput;
 
     const person = await this.personsService.findOne(person_id);
-    const spot = await this.spotsService.findOne(spot_id);
+    // FIXME:
+    const spot = {};
 
     const newCustomerAssignedSpot = this.CustomerAssignedSpotRepository.create({ person, spot, ...createCustomerAssignedSpotInput });
     return await this.CustomerAssignedSpotRepository.save(newCustomerAssignedSpot);
@@ -57,7 +58,8 @@ export class CustomerAssignedSpotsService {
     const { person_id, spot_id } = updateCustomerAssignedSpotInput;
 
     const person = await this.personsService.findOne(person_id);
-    const spot = await this.spotsService.findOne(spot_id);
+    // FIXME:
+    const spot = {};
 
     const editedCustomerAssignedSpot = this.CustomerAssignedSpotRepository.merge(customerAssignedSpot, { person, spot, ...updateCustomerAssignedSpotInput });
 

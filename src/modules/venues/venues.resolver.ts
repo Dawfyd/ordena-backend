@@ -48,12 +48,13 @@ export class VenuesResolver {
   }
 
   @Mutation(() => Venue, { name: 'removeVenue' })
-  removeVenue (@Args('venueInput') findOneVenueInput: FindOneVenueInput): Promise<Venue> {
+  remove (@Args('venueInput') findOneVenueInput: FindOneVenueInput): Promise<Venue> {
     return this.service.remove(findOneVenueInput);
   }
 
   @ResolveField(() => Company, { name: 'company' })
   async company (@Parent() venue: Venue): Promise<Company> {
+    console.log('venue', venue);
     const companyValue: any = venue.company;
 
     let companyId = companyValue;

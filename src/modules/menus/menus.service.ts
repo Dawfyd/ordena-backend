@@ -54,7 +54,7 @@ export class MenusService {
       query.andWhere('m.name ilike :search', { search: `%${search}%` });
     }
 
-    query.limit(limit || 10)
+    query.limit(limit || undefined)
       .offset(skip || 0)
       .orderBy('m.id', 'DESC');
 
@@ -86,9 +86,22 @@ export class MenusService {
       throw new NotFoundException(`can't get the menu ${id} for the company with uuid ${companyUuid}.`);
     }
 
+    const { venueId } = updateMenuInput;
+
+    let venue;
+
+    if (venueId) {
+      venue = await this.venuesService.findOne({ companyUuid, id: venueId });
+
+      if (!venue) {
+        throw new NotFoundException(`can't get the venue ${venueId} for the company with uuid ${companyUuid}.`);
+      }
+    }
+
     const preloaded = await this.menuRepository.preload({
       id: existing.id,
-      ...updateMenuInput
+      ...updateMenuInput,
+      venue
     });
 
     const saved = await this.menuRepository.save(preloaded);
@@ -117,7 +130,9 @@ export class MenusService {
   /* OPERATIONS BECAUSE OF THE MASTER STATUS */
 
   public async getByIds (ids: number[]): Promise<Menu[]> {
-    return this.menuRepository.findByIds(ids);
+    return this.menuRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
   }
 
   /* OPERATIONS BECAUSE OF THE MASTER STATUS */
