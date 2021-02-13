@@ -19,7 +19,8 @@ export class WaiterAssignedSpotsService {
   async create (createWaiterAssignedSpotInput: CreateWaiterAssignedSpotInput): Promise<WaiterAssignedSpot> {
     const { person_id, spot_id } = createWaiterAssignedSpotInput;
 
-    const person = await this.personsService.findOne(person_id);
+    // FIXME:
+    const person = {};
     const spot = await this.spotsService.findOne(spot_id);
 
     const newWaiterAssignedSpot = this.WaiterAssignedSpotRepository.create({ ...createWaiterAssignedSpotInput, person, spot });
@@ -37,19 +38,12 @@ export class WaiterAssignedSpotsService {
     return waiterAssignedSpot;
   }
 
-  async findPersonWaiterAssignedSpot (person: number): Promise<WaiterAssignedSpot[]> {
-    return await this.WaiterAssignedSpotRepository.find({
-      where: {
-        person
-      }
-    });
-  }
-
   async update (id: number, updateWaiterAssignedSpotInput: UpdateWaiterAssignedSpotInput): Promise<WaiterAssignedSpot> {
     const waiterAssignedSpot = await this.findOne(id);
     const { person_id, spot_id } = updateWaiterAssignedSpotInput;
 
-    const person = await this.personsService.findOne(person_id);
+    // TODO: fix this
+    const person = {};
     const spot = await this.spotsService.findOne(spot_id);
 
     const editedWaiterAssignedSpot = this.WaiterAssignedSpotRepository.merge(waiterAssignedSpot, { person, spot, ...updateWaiterAssignedSpotInput });

@@ -1,7 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { IsEmail } from 'class-validator';
 
 @InputType()
 export class SendForgottenPasswordEmailInput {
-    @Field()
+    @IsEmail()
+    @Field(() => String)
     readonly email: string;
 }

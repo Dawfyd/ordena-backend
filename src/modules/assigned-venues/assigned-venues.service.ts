@@ -21,7 +21,8 @@ export class AssignedVenuesService {
 
     // TODO: fix this
     const venue = {};
-    const person = await this.personsService.findOne(worker_id);
+    // TODO: fix this
+    const person = {};
 
     const newAssignedVenue = this.AssignedVenueRepository.create({ person, venue });
     return await this.AssignedVenueRepository.save(newAssignedVenue);
@@ -35,14 +36,6 @@ export class AssignedVenuesService {
     const assignedVenue = await this.AssignedVenueRepository.findOne(id);
     if (!assignedVenue) throw new NotFoundException('no hay sede asignada con este id');
     return assignedVenue;
-  }
-
-  async findPersonAssignedVenue (person: number): Promise<AssignedVenue[]> {
-    return await this.AssignedVenueRepository.find({
-      where: {
-        person
-      }
-    });
   }
 
   async findVenueAssignedVenue (venue: number): Promise<AssignedVenue[]> {
@@ -59,7 +52,8 @@ export class AssignedVenuesService {
 
     // TODO: fix this
     const venue = {};
-    const person = await this.personsService.findOne(worker_id);
+    // TODO: fix this
+    const person = {};
 
     const editedAssignedVenue = this.AssignedVenueRepository.merge(assignedVenue, { venue, person });
     return await this.AssignedVenueRepository.save(editedAssignedVenue);

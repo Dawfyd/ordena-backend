@@ -1,113 +1,120 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Parent, ResolveField } from '@nestjs/graphql';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
+
 import { PersonsService } from './persons.service';
 import { Person } from './entities/person.entity';
-import { CreatePersonInput } from './dto/create-person.input';
-import { UpdatePersonInput } from './dto/update-person.input';
-import { FavoritesService } from '../favorites/favorites.service';
-import { SendForgottenPasswordEmailInput } from './dto/send-forgotten-password-email-input';
-import { ChangePasswordInput } from './dto/change-password-input';
-import { CustomerAssignedSpotsService } from '../customer-assigned-spots/customer-assigned-spots.service';
-import { AssignedVenuesService } from '../assigned-venues/assigned-venues.service';
-import { WaiterAssignedSpotsService } from '../waiter-assigned-spots/waiter-assigned-spots.service';
-import { OrdersService } from '../orders/orders.service';
-
+import { CreatePersonInput } from './dto/create-person.input.dto';
+import { UpdatePersonInput } from './dto/update-person.input.dto';
+import { SendForgottenPasswordEmailInput } from './dto/send-forgotten-password-email-input.dto';
+import { ChangePasswordInput } from './dto/change-password-input.dto';
+import { FindAllPersonsInput } from './dto/find-all-persons-input.dto';
+import { FindOnePersonInput } from './dto/find-person-one-input.dto';
+import { FindAllWorkersInput } from './dto/find-all-workers-input.dto';
+import { Favorite } from '../favorites/entities/favorite.entity';
+import { CustomerAssignedSpot } from '../customer-assigned-spots/entities/customer-assigned-spot.entity';
+import { AssignedVenue } from '../assigned-venues/entities/assigned-venue.entity';
+import { WaiterAssignedSpot } from '../waiter-assigned-spots/entities/waiter-assigned-spot.entity';
+import { Order } from '../orders/entities/order.entity';
+@UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 @Resolver(() => Person)
 export class PersonsResolver {
-  constructor (private readonly personsService: PersonsService,
-    private readonly favoritesService: FavoritesService,
-    private readonly customerAssignedSpotsService: CustomerAssignedSpotsService,
-    private readonly assignedVenuesService: AssignedVenuesService,
-    private readonly waiterAssignedSpotsService: WaiterAssignedSpotsService,
-    private readonly ordersService: OrdersService
+  constructor (private readonly service: PersonsService
   ) {}
 
-  @Mutation(() => Person)
+  @Mutation(() => Person, { name: 'createAdminPerson' })
   createAdminPerson (
     @Args('createPersonInput') createPersonInput: CreatePersonInput
-  ) {
-    return this.personsService.createAdmin(createPersonInput);
+  ): Promise<Person> {
+    return this.service.createAdmin(createPersonInput);
   }
 
-  @Mutation(() => Person)
+  @Mutation(() => Person, { name: 'createWaiterPerson' })
   createWaiterPerson (
     @Args('createPersonInput') createPersonInput: CreatePersonInput
-  ) {
-    return this.personsService.createWaiter(createPersonInput);
+  ): Promise<Person> {
+    return this.service.createWaiter(createPersonInput);
   }
 
-  @Mutation(() => Person)
+  @Mutation(() => Person, { name: 'createCustomerPerson' })
   createCustomerPerson (
     @Args('createPersonInput') createPersonInput: CreatePersonInput
-  ) {
-    return this.personsService.createCustomer(createPersonInput);
+  ): Promise<Person> {
+    return this.service.createCustomer(createPersonInput);
   }
 
   @Query(() => [Person], { name: 'persons' })
-  findAll () {
-    return this.personsService.findAll();
+  findAll (
+    @Args('findAllPersonsInput') findAllPersonsInput: FindAllPersonsInput
+  ): Promise<Person[]> {
+    return this.service.findAll(findAllPersonsInput);
+  }
+
+  @Query(() => [Person], { name: 'workers' })
+  findAllWorkers (
+    @Args('findAllWorkersInput') findAllWorkersInput: FindAllWorkersInput
+  ): Promise<Person[]> {
+    return this.service.findAll(
+      findAllWorkersInput
+    );
   }
 
   @Query(() => Person, { name: 'person' })
-  findOne (@Args('id', { type: () => Int }) id: number) {
-    return this.personsService.findOne(id);
+  findOne (@Args('findOnePersonInput') findOnePersonInput: FindOnePersonInput): Promise<Person | null> {
+    return this.service.findOne(findOnePersonInput);
   }
 
-  @Mutation(() => Person)
-  updatePerson (
+  @Mutation(() => Person, { name: 'updatePerson' })
+  update (
+    @Args('findOnePersonInput') findOnePersonInput: FindOnePersonInput,
     @Args('updatePersonInput') updatePersonInput: UpdatePersonInput
-  ) {
-    return this.personsService.update(
-      updatePersonInput.id,
+  ): Promise<Person> {
+    return this.service.update(
+      findOnePersonInput,
       updatePersonInput
     );
   }
 
-  @Mutation(() => Person)
-  removePerson (@Args('id', { type: () => Int }) id: number) {
-    return this.personsService.remove(id);
+  @Mutation(() => Person, { name: 'removePerson' })
+  remove (@Args('findOnePersonInput') findOnePersonInput: FindOnePersonInput): Promise<Person> {
+    return this.service.remove(findOnePersonInput);
   }
 
   @Mutation(() => Person)
   sendForgottenPasswordEmail (
     @Args('sendForgottenPasswordEmailInput') sendForgottenPasswordEmailInput: SendForgottenPasswordEmailInput
-  ) {
-    return this.personsService.sendForgottenPasswordEmail(sendForgottenPasswordEmailInput);
+  ): Promise<Person> {
+    return this.service.sendForgottenPasswordEmail(sendForgottenPasswordEmailInput);
   }
 
   @Mutation(() => Person)
   changePassword (
     @Args('changePasswordInput') changePasswordInput: ChangePasswordInput
-  ) {
-    return this.personsService.changePassword(changePasswordInput);
+  ): Promise<Person> {
+    return this.service.changePassword(changePasswordInput);
   }
 
   @ResolveField()
-  async favorites (@Parent() Person: Person) {
-    const { id } = Person;
-    return this.favoritesService.findFavoritesPerson(id);
+  async favorites (@Parent() person: Person): Promise<Favorite[]> {
+    return this.service.favorites(person);
   }
 
   @ResolveField()
-  async customerAssignedSpot (@Parent() Person: Person) {
-    const { id } = Person;
-    return this.customerAssignedSpotsService.findPersonCustomerAssignedPost(id);
+  async customerAssignedSpot (@Parent() person: Person): Promise<CustomerAssignedSpot[]> {
+    return this.service.customerAssignedSpot(person);
   }
 
   @ResolveField()
-  async assignedVenues (@Parent() Person: Person) {
-    const { id } = Person;
-    return this.assignedVenuesService.findPersonAssignedVenue(id);
+  async assignedVenues (@Parent() person: Person): Promise<AssignedVenue[]> {
+    return this.service.assignedVenues(person);
   }
 
   @ResolveField()
-  async waiterAssignedSpots (@Parent() Person: Person) {
-    const { id } = Person;
-    return this.waiterAssignedSpotsService.findPersonWaiterAssignedSpot(id);
+  async waiterAssignedSpots (@Parent() person: Person): Promise<WaiterAssignedSpot[]> {
+    return this.service.waiterAssignedSpots(person);
   }
 
   @ResolveField()
-  async orders (@Parent() Person: Person) {
-    const { id } = Person;
-    return this.ordersService.findPersonOrder(id);
+  async orders (@Parent() person: Person): Promise<Order[]> {
+    return this.service.orders(person);
   }
 }
