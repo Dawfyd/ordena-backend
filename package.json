@@ -31,7 +31,7 @@
     "@nestjs/typeorm": "7.1.5",
     "apollo-server-express": "2.19.1",
     "axios": "0.21.1",
-    "class-transformer": "0.3.2",
+    "class-transformer": "0.4.0",
     "class-validator": "0.13.1",
     "cross-env": "7.0.3",
     "dataloader": "2.0.0",
