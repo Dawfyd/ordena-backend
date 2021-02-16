@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { BasicAclService } from 'src/common/integrations/basic-acl/basic-acl.service';
-
 import { ParametersService } from '../parameters/parameters.service';
+
+import { Person } from './entities/person.entity';
+
 import { ChangePasswordInput } from './dto/change-password-input.dto';
 import { CreatePersonInput } from './dto/create-person.input.dto';
 import { FindAllPersonsInput } from './dto/find-all-persons-input.dto';
@@ -12,7 +14,7 @@ import { FindAllWorkersInput } from './dto/find-all-workers-input.dto';
 import { FindOnePersonInput } from './dto/find-person-one-input.dto';
 import { SendForgottenPasswordEmailInput } from './dto/send-forgotten-password-email-input.dto';
 import { UpdatePersonInput } from './dto/update-person.input.dto';
-import { Person } from './entities/person.entity';
+import { GetByIdInput } from './dto/get-by-id-input.dto';
 
 @Injectable()
 export class PersonsService {
@@ -150,11 +152,28 @@ export class PersonsService {
   public async findOne (findOnePersonInput: FindOnePersonInput): Promise<Person | null> {
     const { authUid } = findOnePersonInput;
 
+    // FIXME: Kevin this code doesn't work
     const person = await this.personRepository.findOne({
       authUid
     });
 
     return person || null;
+  }
+
+  /**
+   * function to get a person by the id
+   * JUST USE THIS FUNCTION IN INTERNAL FUNCIONALITIES ONLY WHEN'S NEEDED
+   *
+   * @param {*} getByIdInput
+   * @return {*}  {(Promise<Person | null>)}
+   * @memberof PersonsService
+   */
+  public async getById (getByIdInput: GetByIdInput): Promise<Person | null> {
+    const { id } = getByIdInput;
+
+    const existing = await this.personRepository.findOne(id);
+
+    return existing || null;
   }
 
   public async update (findOnePersonInput: FindOnePersonInput, updatePersonInput: UpdatePersonInput): Promise<Person> {

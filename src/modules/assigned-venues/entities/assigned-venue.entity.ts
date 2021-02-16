@@ -7,43 +7,30 @@ import { Venue } from '../../venues/entities/venue.entity';
 @Entity('assigned_venue')
 @ObjectType()
 export class AssignedVenue {
-  @PrimaryGeneratedColumn()
-  @Field()
-
   /*
   *ID de la sede asignada
   */
+  @Field()
+  @PrimaryGeneratedColumn()
   id: number
 
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @ManyToOne(
-    () => Person,
-    (person: Person) => person.assignedVenues, {
-      eager: true,
-      cascade: true
-    })
-
+  @ManyToOne(type => Person, (person: Person) => person.assignedVenues)
   @JoinColumn({ name: 'worker_id' })
   person: Person
 
-  @ManyToOne(
-    () => Venue,
-    (venue: Venue) => venue.assignedVenues, {
-      eager: true,
-      cascade: true
-    })
-
+  @ManyToOne(type => Venue, (venue: Venue) => venue.assignedVenues)
   @JoinColumn({ name: 'venue_id' })
   venue: Venue
 }
