@@ -6,38 +6,37 @@ import { Product } from '../../products/entities/product.entity';
 @Entity('product_types')
 @ObjectType()
 export class ProductType {
-  @PrimaryGeneratedColumn()
-  @Field()
   /*
    * ID del tipo de producto
    */
+  @PrimaryGeneratedColumn()
+  @Field()
   id: number;
 
   /*
    * codigo del tipo de producto
    */
-  @Column()
+  @Column({ type: 'varchar', length: 5 })
   code: string;
 
   /*
    * Nombre del tipo de producto
    */
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @OneToMany(
-    (type) => Product, (product: Product) => product.productType)
-    Products?: Product[];
+  @OneToMany((type) => Product, (products: Product) => products.productType)
+  products: Product[];
 }

@@ -1,12 +1,12 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-import { Person } from '../../persons/entities/person.entity';
 import { Product } from '../../products/entities/product.entity';
+import { Venue } from '../../venues/entities/venue.entity';
 
-@Entity('favorites')
+@Entity('products_in_venue')
 @ObjectType()
-export class Favorite {
+export class ProductsInVenue {
   /*
    * ID del producto favorito
    */
@@ -17,8 +17,8 @@ export class Favorite {
   /*
    * Estado del producto favorito
    */
-  @Column()
-  state: boolean;
+  @Column({ nullable: true, default: true })
+  avaliable?: boolean;
 
   /*
   *fecha cuando se realizo el registro
@@ -34,11 +34,11 @@ export class Favorite {
 
   // relations
 
-  @ManyToOne(type => Product, (product: Product) => product.favorites)
+  @ManyToOne(type => Product, (product: Product) => product.productsInVenues)
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @ManyToOne(type => Person, (person: Person) => person.favorites)
-  @JoinColumn({ name: 'person_id' })
-  person: Person;
+  @ManyToOne(type => Venue, (venue: Venue) => venue.ProductsInVenues)
+  @JoinColumn({ name: 'venue_id' })
+  venue: Venue;
 }

@@ -1,19 +1,15 @@
 import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { CategoriesService } from './categories.service';
 import { Category } from './entities/category.entity';
-import { CreateCategoryInput } from './dto/create-category.input';
+import { CreateCategoryInput } from './dto/create-category-input.dto';
 import { UpdateCategoryInput } from './dto/update-category.input';
-import { AssignedCategoriesService } from '../assigned-categories/assigned-categories.service';
 
 @Resolver(() => Category)
 export class CategoriesResolver {
-  constructor (private readonly categoriesService: CategoriesService,
-    private readonly assignedCategoriesService: AssignedCategoriesService) {}
+  constructor (private readonly categoriesService: CategoriesService) {}
 
   @Mutation(() => Category)
-  createCategory (
-    @Args('createCategoryInput') createCategoryInput: CreateCategoryInput
-  ) {
+  create (@Args('createCategoryInput') createCategoryInput: CreateCategoryInput): Promise<Category> {
     return this.categoriesService.create(createCategoryInput);
   }
 
@@ -44,7 +40,6 @@ export class CategoriesResolver {
 
   @ResolveField()
   async assignedCategories (@Parent() category: Category) {
-    const { id } = category;
-    return this.assignedCategoriesService.findProductsCategory(id);
+    return [];
   }
 }

@@ -5,6 +5,7 @@ import { AssignedVenue } from '../../assigned-venues/entities/assigned-venue.ent
 import { Company } from '../../companies/entities/company.entity';
 import { Menu } from '../../menus/entities/menu.entity';
 import { Spot } from '../../spots/entities/spot.entity';
+import { ProductsInVenue } from '../../products-in-venue/entities/products-in-venue.entity';
 
 @Entity('venues')
 @ObjectType()
@@ -69,4 +70,7 @@ export class Venue {
 
   @OneToMany((type) => AssignedVenue, (assignedVenues: AssignedVenue) => assignedVenues.venue)
   assignedVenues: AssignedVenue[];
+
+  @OneToMany((type) => ProductsInVenue, (ProductsInVenues: ProductsInVenue) => ProductsInVenues.venue)
+  ProductsInVenues: ProductsInVenue[];
 }

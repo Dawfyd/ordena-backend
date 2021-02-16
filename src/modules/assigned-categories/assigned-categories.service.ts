@@ -27,10 +27,11 @@ export class AssignedCategoriesService {
     }
 
     const { product_id, category_id } = createAssignedCategoryInput;
+    // TODO: fix
+    const product = {};
 
-    const product = await this.productsService.findOne(product_id);
-
-    if (productTypeCategory.value !== product.productType.code) {
+    // TODO: fix
+    if (productTypeCategory.value !== 'product.productType.code') {
       throw new PreconditionFailedException(`Solo se pueden asignar productos de tipo ${productTypeCategory.value}`);
     }
 
@@ -52,10 +53,11 @@ export class AssignedCategoriesService {
     }
 
     const { product_id } = createAssignedCategoryMenuInput;
+    // TODO: fix
+    const product = {};
 
-    const product = await this.productsService.findOne(product_id);
-
-    if (productTypeMenu.value !== product.productType.code) {
+    // TODO: fix
+    if (productTypeMenu.value !== 'product.productType.code') {
       throw new PreconditionFailedException(`Solo se pueden asignar productos de tipo ${productTypeMenu.value}`);
     }
 
@@ -82,14 +84,6 @@ export class AssignedCategoriesService {
     return assignedCategory;
   }
 
-  async findCategoriesProduct (product: number): Promise<AssignedCategory[]> {
-    return await this.AssignedCategoryRepository.find({
-      where: {
-        product
-      }
-    });
-  }
-
   async findProductsCategory (category: number): Promise<AssignedCategory[]> {
     return await this.AssignedCategoryRepository.find({
       where: {
@@ -102,8 +96,8 @@ export class AssignedCategoriesService {
     const assignedCategory = await this.findOne(id);
 
     const { product_id, category_id } = updateAssignedCategoryInput;
-
-    const product = await this.productsService.findOne(product_id);
+    // TODO: fix
+    const product = {};
     const category = await this.categoriesService.findOne(category_id);
 
     const editedAssignedCategory = this.AssignedCategoryRepository.merge(assignedCategory, {
