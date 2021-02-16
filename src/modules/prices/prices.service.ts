@@ -16,8 +16,8 @@ export class PricesService {
 
   async create (createPriceInput: CreatePriceInput): Promise<Price> {
     const { product_id } = createPriceInput;
-
-    const product = await this.productsService.findOne(product_id);
+    // TODO: fix
+    const product = {};
     const newPrice = this.PriceRepository.create({ ...createPriceInput, product });
     return await this.PriceRepository.save(newPrice);
   }
@@ -32,20 +32,12 @@ export class PricesService {
     return price;
   }
 
-  async findPriceProduct (product: number): Promise<Price[]> {
-    return await this.PriceRepository.find({
-      where: {
-        product
-      }
-    });
-  }
-
   async update (id: number, updatePriceInput: UpdatePriceInput) {
     const price = await this.findOne(id);
 
     const { product_id } = updatePriceInput;
-
-    const product = await this.productsService.findOne(product_id);
+    // TODO: fix
+    const product = {};
     const editedPrice = this.PriceRepository.merge(price, { ...updatePriceInput, product });
     return await this.PriceRepository.save(editedPrice);
   }

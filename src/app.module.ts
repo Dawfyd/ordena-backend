@@ -32,6 +32,7 @@ import { OrderStatusesModule } from './modules/order-statuses/order-statuses.mod
 import { RequestStatusesModule } from './modules/request-statuses/request-statuses.module';
 import { AdditionalsPerRequestsModule } from './modules/additionals-per-requests/additionals-per-requests.module';
 import { ModifiersPerRequestModule } from './modules/modifiers-per-request/modifiers-per-request.module';
+import { ProductsInVenueModule } from './modules/products-in-venue/products-in-venue.module';
 
 import appConfig from './config/app.config';
 import appConfigSchema from './config/app.config.schema';
@@ -94,7 +95,8 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
     OrderStatusesModule,
     RequestStatusesModule,
     AdditionalsPerRequestsModule,
-    ModifiersPerRequestModule
+    ModifiersPerRequestModule,
+    ProductsInVenueModule
   ],
   controllers: [AppController],
   providers: [AppService]
