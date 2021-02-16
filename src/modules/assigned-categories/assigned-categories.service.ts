@@ -35,7 +35,8 @@ export class AssignedCategoriesService {
       throw new PreconditionFailedException(`Solo se pueden asignar productos de tipo ${productTypeCategory.value}`);
     }
 
-    const category = await this.categoriesService.findOne(category_id);
+    // FIXME:
+    const category = {};
 
     const newAssignedCategory = this.AssignedCategoryRepository.create({
       product,
@@ -61,7 +62,8 @@ export class AssignedCategoriesService {
       throw new PreconditionFailedException(`Solo se pueden asignar productos de tipo ${productTypeMenu.value}`);
     }
 
-    const categories = await this.categoriesService.findAll();
+    // FIXME:
+    const categories = [];
 
     const data = categories.map(category => ({ category, product }));
 
@@ -98,7 +100,8 @@ export class AssignedCategoriesService {
     const { product_id, category_id } = updateAssignedCategoryInput;
     // TODO: fix
     const product = {};
-    const category = await this.categoriesService.findOne(category_id);
+    // FIXME:
+    const category = {};
 
     const editedAssignedCategory = this.AssignedCategoryRepository.merge(assignedCategory, {
       product,
