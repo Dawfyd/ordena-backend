@@ -31,15 +31,16 @@ export class AssignedProductsService {
 
     const { parent_id, assigned_id } = createAssignedProductInput;
 
-    const parent = await this.productsService.findOne(parent_id);
+    // TODO: fix
+    const parent = {};
 
-    if (productTypePure.value !== parent.productType.code) {
+    if (productTypePure.value !== 'parent.productType.code') {
       throw new PreconditionFailedException(`Para parent solo se pueden asignar productos de tipo ${productTypePure.value}`);
     }
+    // TODO: fix
+    const assigned = {};
 
-    const assigned = await this.productsService.findOne(assigned_id);
-
-    if (productTypeProduct.value !== assigned.productType.code) {
+    if (productTypeProduct.value !== 'assigned.productType.code') {
       throw new PreconditionFailedException(`Para assigned solo se pueden asignar productos de tipo ${productTypeProduct.value}`);
     }
 
@@ -61,29 +62,14 @@ export class AssignedProductsService {
     return assignedProduct;
   }
 
-  async findProductsParent (parent: number): Promise<AssignedProduct[]> {
-    return await this.AssignedProductRepository.find({
-      where: {
-        parent
-      }
-    });
-  }
-
-  async findProductsAssigned (assigned: number): Promise<AssignedProduct[]> {
-    return await this.AssignedProductRepository.find({
-      where: {
-        assigned
-      }
-    });
-  }
-
   async update (id: number, updateAssignedProductInput: UpdateAssignedProductInput): Promise<AssignedProduct> {
     const assignedProduct = await this.findOne(id);
 
     const { parent_id, assigned_id } = updateAssignedProductInput;
-
-    const parent = await this.productsService.findOne(parent_id);
-    const assigned = await this.productsService.findOne(assigned_id);
+    // TODO: fix
+    const parent = {};
+    // TODO: fix
+    const assigned = {};
 
     const editedProductsService = this.AssignedProductRepository.merge(assignedProduct, {
       parent,

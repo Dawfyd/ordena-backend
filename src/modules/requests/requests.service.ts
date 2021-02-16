@@ -22,8 +22,8 @@ export class RequestsService {
 
   async create (createRequestInput: CreateRequestInput): Promise<Request> {
     const { product_id, order_id, spot_id, request_status_id } = createRequestInput;
-
-    const product = await this.productsService.findOne(product_id);
+    // TODO: fix
+    const product = {};
     const order = await this.ordersService.findOne(order_id);
     // FIXME:
     const spot = {};
@@ -43,14 +43,6 @@ export class RequestsService {
     const request = await this.RequestRepository.findOne(id);
     if (!request) { throw new NotFoundException('No hay un producto ordenado con esa ID'); }
     return request;
-  }
-
-  async findProductRequest (product: number): Promise<Request[]> {
-    return await this.RequestRepository.find({
-      where: {
-        product
-      }
-    });
   }
 
   async findOrderRequest (order: number): Promise<Request[]> {
@@ -82,7 +74,8 @@ export class RequestsService {
 
     const { product_id, order_id, spot_id, request_status_id } = updateRequestInput;
 
-    const product = await this.productsService.findOne(product_id);
+    // FIXME:
+    const product = {};
     const order = await this.ordersService.findOne(order_id);
     // FIXME:
     const spot = {};

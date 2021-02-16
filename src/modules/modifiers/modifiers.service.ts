@@ -17,7 +17,8 @@ export class ModifiersService {
   async create (createModifierInput: CreateModifierInput): Promise<Modifier> {
     const { product_id } = createModifierInput;
 
-    const product = await this.productsSerice.findOne(product_id);
+    // TODO: fix
+    const product = {};
 
     const newModifier = this.ModifierRepository.create({ ...createModifierInput, product });
     return await this.ModifierRepository.save(newModifier);
@@ -33,20 +34,13 @@ export class ModifiersService {
     return modifier;
   }
 
-  async findModifierProduct (product: number): Promise<Modifier[]> {
-    return await this.ModifierRepository.find({
-      where: {
-        product
-      }
-    });
-  }
-
   async update (id: number, updateModifierInput: UpdateModifierInput) {
     const modifier = await this.findOne(id);
 
     const { product_id } = updateModifierInput;
 
-    const product = await this.productsSerice.findOne(product_id);
+    // TODO: fix
+    const product = {};
 
     const editedModifier = this.ModifierRepository.merge(modifier, { ...updateModifierInput, product });
     return await this.ModifierRepository.save(editedModifier);

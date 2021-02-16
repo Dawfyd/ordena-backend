@@ -20,7 +20,8 @@ export class AdditionalsPerRequestsService {
   async create (createAdditionalsPerRequestInput: CreateAdditionalsPerRequestInput) {
     const { product_id, request_id } = createAdditionalsPerRequestInput;
 
-    const product = await this.productsService.findOne(product_id);
+    // TODO: fix
+    const product = {};
     const request = await this.requestsService.findOne(request_id);
 
     const newAdditionalsPerRequest = this.AdditionalsPerRequestRepository.create({ product, request });
@@ -42,7 +43,8 @@ export class AdditionalsPerRequestsService {
 
     const { product_id, request_id } = updateAdditionalsPerRequestInput;
 
-    const product = await this.productsService.findOne(product_id);
+    // TODO: fix
+    const product = {};
     const request = await this.requestsService.findOne(request_id);
 
     const editedadditionalsPerRequest = this.AdditionalsPerRequestRepository.merge(additionalsPerRequest, {

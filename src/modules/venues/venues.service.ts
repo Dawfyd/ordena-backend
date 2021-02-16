@@ -95,13 +95,13 @@ export class VenuesService {
       throw new NotFoundException(`can't get the venue ${id} for the company with uuid ${companyUuid}.`);
     }
 
-    const preloaded = await this.venueRepository.preload({
-      id: existing.id,
+    const merged = {
+      ...existing,
       company,
       ...updateVenueInput
-    });
+    };
 
-    const saved = await this.venueRepository.save(preloaded);
+    const saved = await this.venueRepository.save(merged);
 
     return saved;
   }

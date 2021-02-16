@@ -3,26 +3,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsService } from './products.service';
 import { ProductsResolver } from './products.resolver';
 import { Product } from './entities/product.entity';
-import { FavoritesModule } from '../favorites/favorites.module';
-import { AssignedCategoriesModule } from '../assigned-categories/assigned-categories.module';
 import { ProductTypesModule } from '../product-types/product-types.module';
-import { PricesModule } from '../prices/prices.module';
-import { ModifiersModule } from '../modifiers/modifiers.module';
-import { AssignedProductsModule } from '../assigned-products/assigned-products.module';
 import { ParametersModule } from '../parameters/parameters.module';
-import { RequestsModule } from '../requests/requests.module';
+import { ProductsLoaders } from './products.loaders';
+import { ProductsInVenueModule } from '../products-in-venue/products-in-venue.module';
+import { VenuesModule } from '../venues/venues.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product]),
-    forwardRef(() => FavoritesModule),
-    forwardRef(() => AssignedCategoriesModule),
-    forwardRef(() => ProductTypesModule),
-    forwardRef(() => PricesModule),
-    forwardRef(() => ModifiersModule),
-    forwardRef(() => AssignedProductsModule),
-    forwardRef(() => RequestsModule),
-    ParametersModule],
-  providers: [ProductsResolver, ProductsService],
+  imports: [
+    TypeOrmModule.forFeature([Product]),
+    forwardRef(() => ProductsInVenueModule),
+    ProductTypesModule,
+    ParametersModule,
+    VenuesModule
+  ],
+  providers: [ProductsResolver, ProductsLoaders, ProductsService],
   exports: [ProductsService]
 })
 export class ProductsModule {}

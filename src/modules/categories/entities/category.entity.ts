@@ -16,55 +16,47 @@ import { Menu } from '../../menus/entities/menu.entity';
 @Entity('categories')
 @ObjectType()
 export class Category {
-  @PrimaryGeneratedColumn()
-  @Field()
-
   /*
    * ID de la categoria
    */
+  @Field()
+  @PrimaryGeneratedColumn()
   id: number;
 
   /*
    * Descripcion de la sede o sucursal
    */
-  @Column()
+  @Column({ type: 'varchar', length: 150 })
   name: string;
 
   /*
    *  Ubicacion de la sede o sucursal
    */
-  @Column()
+  @Column({ type: 'varchar', length: 200 })
   description: string;
 
   /*
    * Ciudad de la sede o sucursal
    */
-  @Column()
-  state: boolean;
+  @Column({ type: 'boolean', default: true })
+  avaliable: boolean;
 
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @ManyToOne(
-    () => Menu,
-    (menu: Menu) => menu.categories, {
-      eager: true,
-      cascade: true
-    })
-
+  @ManyToOne(() => Menu, (menu: Menu) => menu.categories)
   @JoinColumn({ name: 'menu_id' })
   menu: Menu;
 
-  @OneToMany(
-    (type) => AssignedCategory, (assignedCategory: AssignedCategory) => assignedCategory.category)
-    assignedCategories?: AssignedCategory[];
+  @OneToMany(type => AssignedCategory, (assignedCategory: AssignedCategory) => assignedCategory.category)
+  assignedCategories: AssignedCategory[];
 }

@@ -60,18 +60,18 @@ export class CompaniesService {
   public async update (findOneCompanyInput: FindOneCompanyInput, updateCompanyInput: UpdateCompanyInput): Promise<Company> {
     const { companyUuid } = findOneCompanyInput;
 
-    const company = await this.findOne({ companyUuid });
+    const existing = await this.findOne({ companyUuid });
 
-    if (!company) {
+    if (!existing) {
       throw new NotFoundException(`can't get the company with uuid ${companyUuid}.`);
     }
 
-    const preloaded = await this.companyRepository.preload({
-      id: company.id,
+    const merged = {
+      ...existing,
       ...updateCompanyInput
-    });
+    };
 
-    const saved = await this.companyRepository.save(preloaded);
+    const saved = await this.companyRepository.save(merged);
 
     return saved;
   }
