@@ -1,75 +1,149 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PersonsService } from '../persons/persons.service';
-import { SpotsService } from '../spots/spots.service';
-import { CreateCustomerAssignedSpotInput } from './dto/create-customer-assigned-spot.input';
-import { UpdateCustomerAssignedSpotInput } from './dto/update-customer-assigned-spot.input';
+
 import { CustomerAssignedSpot } from './entities/customer-assigned-spot.entity';
 
+import { PersonsService } from '../persons/persons.service';
+import { SpotsService } from '../spots/spots.service';
+
+import { CreateCustomerAssignedSpotInput } from './dto/create-customer-assigned-spot-input.dto';
+import { FindAllCustomerAssignedSpotsInput } from './dto/find-all-customer-assigned-spots-input.dto';
+import { UpdateCustomerAssignedSpotInput } from './dto/update-customer-assigned-spot-input.dto';
+import { FindOneCustomerAssignedSpotInput } from './dto/find-one-customer-assigned-spot-input.dto';
 @Injectable()
 export class CustomerAssignedSpotsService {
   constructor (
     @InjectRepository(CustomerAssignedSpot)
-    private readonly CustomerAssignedSpotRepository: Repository<CustomerAssignedSpot>,
+    private readonly customerAssignedSpotRepository: Repository<CustomerAssignedSpot>,
     private readonly personsService: PersonsService,
     private readonly spotsService: SpotsService
   ) {}
 
-  async create (createCustomerAssignedSpotInput: CreateCustomerAssignedSpotInput): Promise<CustomerAssignedSpot> {
-    const { person_id, spot_id } = createCustomerAssignedSpotInput;
+  public async create (createCustomerAssignedSpotInput: CreateCustomerAssignedSpotInput): Promise<CustomerAssignedSpot> {
+    const { personId } = createCustomerAssignedSpotInput;
 
-    // TODO: fix this
-    const person = {};
-    // FIXME:
-    const spot = {};
+    const person = await this.personsService.getById({ id: personId });
 
-    const newCustomerAssignedSpot = this.CustomerAssignedSpotRepository.create({ person, spot, ...createCustomerAssignedSpotInput });
-    return await this.CustomerAssignedSpotRepository.save(newCustomerAssignedSpot);
-  }
+    if (!person) {
+      throw new NotFoundException('can\'t get person.');
+    }
 
-  async findAll (): Promise<CustomerAssignedSpot[]> {
-    return await this.CustomerAssignedSpotRepository.find();
-  }
+    // TODO check if the person is customer
 
-  async findOne (id: number): Promise<CustomerAssignedSpot> {
-    const customerAssignedSpot = await this.CustomerAssignedSpotRepository.findOne(id);
-    if (!customerAssignedSpot) throw new NotFoundException('no hay ninguna registro con este id');
-    return customerAssignedSpot;
-  }
+    const { companyUuid, spotId } = createCustomerAssignedSpotInput;
 
-  async findPersonCustomerAssignedPost (person: number): Promise<CustomerAssignedSpot[]> {
-    return await this.CustomerAssignedSpotRepository.find({
-      where: {
-        person
-      }
+    const spot = await this.spotsService.findOne({ companyUuid, id: spotId });
+
+    if (!spot) {
+      throw new NotFoundException(`can't get the spot ${spotId} for the company with uuid ${companyUuid}.`);
+    }
+
+    const created = this.customerAssignedSpotRepository.create({
+      start: createCustomerAssignedSpotInput.start,
+      end: createCustomerAssignedSpotInput.end,
+      person,
+      spot
     });
+
+    const saved = await this.customerAssignedSpotRepository.save(created);
+
+    return saved;
   }
 
-  async findSpotCustomerAssignedPost (spot: number): Promise<CustomerAssignedSpot[]> {
-    return await this.CustomerAssignedSpotRepository.find({
-      where: {
-        spot
+  public async findAll (findAllCustomerAssignedSpotsInput: FindAllCustomerAssignedSpotsInput): Promise<CustomerAssignedSpot[]> {
+    const { companyUuid, limit, skip } = findAllCustomerAssignedSpotsInput;
+
+    const items = await this.customerAssignedSpotRepository.createQueryBuilder('cas')
+      .loadAllRelationIds()
+      .innerJoin('cas.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .limit(limit || undefined)
+      .offset(skip || undefined)
+      .orderBy('cas.id', 'DESC')
+      .getMany();
+
+    return items;
+  }
+
+  async findOne (findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput): Promise<CustomerAssignedSpot> {
+    const { companyUuid, id } = findOneCustomerAssignedSpotInput;
+
+    const item = await this.customerAssignedSpotRepository.createQueryBuilder('cas')
+      .loadAllRelationIds()
+      .innerJoin('cas.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('cas.id = :id', { id })
+      .getOne();
+
+    return item || null;
+  }
+
+  async update (
+    findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput,
+    updateCustomerAssignedSpotInput: UpdateCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot> {
+    const { companyUuid, id } = findOneCustomerAssignedSpotInput;
+
+    const existing = await this.findOne(findOneCustomerAssignedSpotInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the customer assigned spot ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const { spotId } = updateCustomerAssignedSpotInput;
+
+    let spot;
+
+    if (spotId) {
+      spot = await this.spotsService.findOne({ companyUuid, id: spotId });
+
+      if (!spot) {
+        throw new NotFoundException(`can't get the spot ${spotId} for the company with uuid ${companyUuid}.`);
       }
+    }
+
+    const { personId } = updateCustomerAssignedSpotInput;
+
+    let person;
+
+    if (personId) {
+      person = await this.personsService.getById({ id: personId });
+
+      if (!person) {
+        throw new NotFoundException('can\'t get person.');
+      }
+    }
+
+    const preloaded = await this.customerAssignedSpotRepository.preload({
+      id: existing.id,
+      ...updateCustomerAssignedSpotInput,
+      person,
+      spot
     });
+
+    const saved = await this.customerAssignedSpotRepository.save(preloaded);
+
+    return saved;
   }
 
-  async update (id: number, updateCustomerAssignedSpotInput: UpdateCustomerAssignedSpotInput): Promise<CustomerAssignedSpot> {
-    const customerAssignedSpot = await this.findOne(id);
-    const { person_id, spot_id } = updateCustomerAssignedSpotInput;
+  async remove (findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput): Promise<CustomerAssignedSpot> {
+    const { companyUuid, id } = findOneCustomerAssignedSpotInput;
 
-    // TODO: fix this
-    const person = {};
-    // FIXME:
-    const spot = {};
+    const existing = await this.findOne(findOneCustomerAssignedSpotInput);
 
-    const editedCustomerAssignedSpot = this.CustomerAssignedSpotRepository.merge(customerAssignedSpot, { person, spot, ...updateCustomerAssignedSpotInput });
+    if (!existing) {
+      throw new NotFoundException(`can't get the customer assigned spot ${id} for the company with uuid ${companyUuid}.`);
+    }
 
-    return await this.CustomerAssignedSpotRepository.save(editedCustomerAssignedSpot);
-  }
+    const clone = { ...existing };
 
-  async remove (id: number): Promise<CustomerAssignedSpot> {
-    const customerAssignedSpot = await this.findOne(id);
-    return await this.CustomerAssignedSpotRepository.remove(customerAssignedSpot);
+    await this.customerAssignedSpotRepository.remove(existing);
+
+    return clone;
   }
 }
