@@ -1,16 +1,22 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { WaiterAssignedSpotsService } from './waiter-assigned-spots.service';
-import { WaiterAssignedSpotsResolver } from './waiter-assigned-spots.resolver';
+
 import { WaiterAssignedSpot } from './entities/waiter-assigned-spot.entity';
+
+import { WaiterAssignedSpotsService } from './waiter-assigned-spots.service';
+import { WaiterAssignedSpotsLoaders } from './waiter-assigned-spots.loaders';
+import { WaiterAssignedSpotsResolver } from './waiter-assigned-spots.resolver';
+
 import { PersonsModule } from '../persons/persons.module';
 import { SpotsModule } from '../spots/spots.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WaiterAssignedSpot]),
-    forwardRef(() => PersonsModule),
-    forwardRef(() => SpotsModule)],
-  providers: [WaiterAssignedSpotsResolver, WaiterAssignedSpotsService],
+  imports: [
+    TypeOrmModule.forFeature([WaiterAssignedSpot]),
+    PersonsModule,
+    SpotsModule
+  ],
+  providers: [WaiterAssignedSpotsService, WaiterAssignedSpotsLoaders, WaiterAssignedSpotsResolver],
   exports: [WaiterAssignedSpotsService]
 })
 export class WaiterAssignedSpotsModule {}

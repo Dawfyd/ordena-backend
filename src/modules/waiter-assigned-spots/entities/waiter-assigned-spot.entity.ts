@@ -6,54 +6,42 @@ import { Spot } from '../../spots/entities/spot.entity';
 @Entity('waiter_assigned_spots')
 @ObjectType()
 export class WaiterAssignedSpot {
-  @PrimaryGeneratedColumn()
-  @Field()
   /*
- * ID de la mesa asignada para el cliente
- */
- id: number;
+  * ID de la mesa asignada para el cliente
+  */
+  @Field()
+  @PrimaryGeneratedColumn()
+  id: number;
 
   /*
  *fecha y hora cuando la mesa es asignada
  */
-  @Column()
+  @Column({ type: 'timestamp' })
   start: Date;
 
   /*
  * fecha y hora cuando la mesa es desocupada
  */
-  @Column()
+  @Column({ type: 'timestamp' })
   end: Date
 
  /*
   *fecha cuando se realizo el registro
   */
- @CreateDateColumn()
- created_at: Date;
+ @CreateDateColumn({ name: 'created_at' })
+ createdAt: Date;
 
  /*
  *fecha cuando se actualiza el registro
  */
- @UpdateDateColumn()
- updated_at: Date;
+ @UpdateDateColumn({ name: 'updated_at' })
+ updatedAt: Date;
 
- @ManyToOne(
-   () => Person,
-   (person: Person) => person.waiterAssignedSpots, {
-     eager: true,
-     cascade: true
-   })
+ @ManyToOne(type => Person, (person: Person) => person.customerAssignedSpot)
+ @JoinColumn({ name: 'person_id' })
+ person: Person;
 
-  @JoinColumn({ name: 'person_id' })
-  person: Person;
-
-  @ManyToOne(
-    () => Spot,
-    (spot: Spot) => spot.waiterAssignedSpots, {
-      eager: true,
-      cascade: true
-    })
-
-    @JoinColumn({ name: 'spot_id' })
-    spot: Spot;
+ @ManyToOne(type => Spot, (spot: Spot) => spot.customerAssignedSpots)
+ @JoinColumn({ name: 'spot_id' })
+ spot: Spot;
 }
