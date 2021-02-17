@@ -50,7 +50,7 @@ export class FavoritesService {
   }
 
   async findAll (findAllFavoritesInput: FindAllFavoritesInput): Promise<Favorite[]> {
-    const { companyUuid, authUid, limit, skip, search } = findAllFavoritesInput;
+    const { companyUuid, authUid, limit, skip } = findAllFavoritesInput;
 
     const query = this.favoriteRepository.createQueryBuilder('f')
       .loadAllRelationIds()
@@ -61,10 +61,6 @@ export class FavoritesService {
       .innerJoin('v.company', 'c')
       .where('c.uuid = :companyUuid', { companyUuid })
       .andWhere('pe.authUid = :authUid', { authUid });
-
-    if (search) {
-      query.andWhere('f.state = :search', { search });
-    }
 
     query.limit(limit || undefined)
       .offset(skip || 0)
@@ -96,17 +92,18 @@ export class FavoritesService {
   async update (findOneFavoriteInput: FindOneFavoriteInput, updateFavoriteInput: UpdateFavoriteInput): Promise<Favorite> {
     const { companyUuid, authUid, id } = findOneFavoriteInput;
 
-    const favorite = await this.findOne(findOneFavoriteInput);
+    const existing = await this.findOne(findOneFavoriteInput);
 
-    if (!favorite) {
+    if (!existing) {
       throw new NotFoundException(`can't get the favorite ${id} for the person with authUid ${authUid} and company with uuid ${companyUuid}.`);
     }
 
-    const editedFavorite = this.favoriteRepository.merge(favorite, {
-      state: updateFavoriteInput.state
+    const preloaded = await this.favoriteRepository.preload({
+      id: existing.id,
+      ...updateFavoriteInput
     });
 
-    const saved = await this.favoriteRepository.save(editedFavorite);
+    const saved = await this.favoriteRepository.save(preloaded);
 
     return saved;
   }

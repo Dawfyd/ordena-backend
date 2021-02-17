@@ -8,7 +8,7 @@ export class CreateFavoriteInput {
    */
   @IsBoolean()
   @Field(() => Boolean)
-  readonly state: boolean;
+  readonly avaliable: boolean;
 
   /*
   * ID del producto al que pertenece

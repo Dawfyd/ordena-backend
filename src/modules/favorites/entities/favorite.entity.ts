@@ -19,7 +19,7 @@ export class Favorite {
    * Estado del producto favorito
    */
   @Column()
-  state: boolean;
+  avaliable: boolean;
 
   /*
   *fecha cuando se realizo el registro

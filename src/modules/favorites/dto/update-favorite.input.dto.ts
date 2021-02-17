@@ -8,5 +8,5 @@ export class UpdateFavoriteInput {
    */
     @IsBoolean()
     @Field(() => Boolean)
-    readonly state: boolean;
+    readonly avaliable: boolean;
 }

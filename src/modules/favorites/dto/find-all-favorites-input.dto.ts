@@ -20,9 +20,4 @@ export class FindAllFavoritesInput {
   @IsNumber()
   @Field(() => Int, { nullable: true })
   readonly skip?: number;
-
-  @IsOptional()
-  @IsString()
-  @Field(() => String, { nullable: true })
-  readonly search?: string;
 }

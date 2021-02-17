@@ -198,17 +198,18 @@ export class ProductsService {
   public async update (findOneProductInput: FindOneProductInput, updateProductInput: UpdateProductInput): Promise<Product> {
     const { companyUuid, id } = findOneProductInput;
 
-    const product = await this.findOne(findOneProductInput);
+    const existing = await this.findOne(findOneProductInput);
 
-    if (!product) {
+    if (!existing) {
       throw new NotFoundException(`can't get the product ${id} for the company with uuid ${companyUuid}.`);
     }
 
-    const editedProduct = this.productRepository.merge(product, {
+    const preloaded = await this.productRepository.preload({
+      id: existing.id,
       ...updateProductInput
     });
 
-    const saved = await this.productRepository.save(editedProduct);
+    const saved = await this.productRepository.save(preloaded);
 
     return saved;
   }
