@@ -1,10 +1,11 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 
 import { Person } from '../../persons/entities/person.entity';
 import { Venue } from '../../venues/entities/venue.entity';
 
 @Entity('assigned_venue')
+@Unique('uk_assigned_venue', ['person', 'venue'])
 @ObjectType()
 export class AssignedVenue {
   /*
