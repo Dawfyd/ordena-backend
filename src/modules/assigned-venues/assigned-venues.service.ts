@@ -1,66 +1,143 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { AssignedVenue } from './entities/assigned-venue.entity';
+
 import { PersonsService } from '../persons/persons.service';
 import { VenuesService } from '../venues/venues.service';
-import { CreateAssignedVenueInput } from './dto/create-assigned-venue.input';
-import { UpdateAssignedVenueInput } from './dto/update-assigned-venue.input';
-import { AssignedVenue } from './entities/assigned-venue.entity';
+
+import { CreateAssignedVenueInput } from './dto/create-assigned-venue-input.dto';
+import { FindAllAssignedVenuesInput } from './dto/find-all-assigned-venues-input.dto';
+import { UpdateAssignedVenueInput } from './dto/update-assigned-venue-input.dto';
+import { FindOneAssignedVenueInput } from './dto/find-one-assigned-venue-input.dto';
 
 @Injectable()
 export class AssignedVenuesService {
   constructor (
     @InjectRepository(AssignedVenue)
-    private readonly AssignedVenueRepository: Repository<AssignedVenue>,
+    private readonly assignedVenueRepository: Repository<AssignedVenue>,
     private readonly personsService: PersonsService,
     private readonly venuesService: VenuesService
   ) {}
 
-  async create (createAssignedVenueInput: CreateAssignedVenueInput): Promise<AssignedVenue> {
-    const { venue_id, worker_id } = createAssignedVenueInput;
+  public async create (createAssignedVenueInput: CreateAssignedVenueInput): Promise<AssignedVenue> {
+    const { companyUuid, venueId } = createAssignedVenueInput;
 
-    // TODO: fix this
-    const venue = {};
-    // TODO: fix this
-    const person = {};
+    const venue = await this.venuesService.findOne({ companyUuid, id: venueId });
 
-    const newAssignedVenue = this.AssignedVenueRepository.create({ person, venue });
-    return await this.AssignedVenueRepository.save(newAssignedVenue);
-  }
+    if (!venue) {
+      throw new NotFoundException(`can't get the venue ${venueId} for the company with uuid ${companyUuid}.`);
+    }
 
-  async findAll (): Promise<AssignedVenue[]> {
-    return await this.AssignedVenueRepository.find();
-  }
+    const { workerId } = createAssignedVenueInput;
 
-  async findOne (id: number): Promise<AssignedVenue> {
-    const assignedVenue = await this.AssignedVenueRepository.findOne(id);
-    if (!assignedVenue) throw new NotFoundException('no hay sede asignada con este id');
-    return assignedVenue;
-  }
+    const person = await this.personsService.getById({ id: workerId });
 
-  async findVenueAssignedVenue (venue: number): Promise<AssignedVenue[]> {
-    return await this.AssignedVenueRepository.find({
-      where: {
-        venue
-      }
+    if (!person) {
+      throw new NotFoundException('can\'t get the person.');
+    }
+
+    const created = this.assignedVenueRepository.create({
+      venue,
+      person
     });
+
+    const saved = await this.assignedVenueRepository.save(created);
+
+    return saved;
   }
 
-  async update (id: number, updateAssignedVenueInput: UpdateAssignedVenueInput): Promise<AssignedVenue> {
-    const assignedVenue = await this.findOne(id);
-    const { venue_id, worker_id } = updateAssignedVenueInput;
+  public async findAll (findAllAssignedVenuesInput: FindAllAssignedVenuesInput): Promise<AssignedVenue[]> {
+    const { companyUuid, limit, skip } = findAllAssignedVenuesInput;
 
-    // TODO: fix this
-    const venue = {};
-    // TODO: fix this
-    const person = {};
+    const query = this.assignedVenueRepository.createQueryBuilder('av')
+      .loadAllRelationIds()
+      .innerJoin('av.person', 'p')
+      .innerJoin('av.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid });
 
-    const editedAssignedVenue = this.AssignedVenueRepository.merge(assignedVenue, { venue, person });
-    return await this.AssignedVenueRepository.save(editedAssignedVenue);
+    query.limit(limit || undefined)
+      .offset(skip || 0)
+      .orderBy('av.id', 'DESC');
+
+    const items = await query.getMany();
+
+    return items;
   }
 
-  async remove (id: number): Promise<AssignedVenue> {
-    const assignedVenue = await this.findOne(id);
-    return await this.AssignedVenueRepository.remove(assignedVenue);
+  public async findOne (findOneAssignedVenueInput: FindOneAssignedVenueInput): Promise<AssignedVenue | null> {
+    const { companyUuid, id } = findOneAssignedVenueInput;
+
+    const item = await this.assignedVenueRepository.createQueryBuilder('av')
+      .loadAllRelationIds()
+      .innerJoin('av.person', 'p')
+      .innerJoin('av.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('av.id = :id', { id })
+      .getOne();
+
+    return item || null;
+  }
+
+  public async update (
+    findOneAssignedVenueInput: FindOneAssignedVenueInput,
+    updateAssignedVenueInput: UpdateAssignedVenueInput
+  ): Promise<AssignedVenue> {
+    const { companyUuid, id } = findOneAssignedVenueInput;
+
+    const existing = await this.findOne({ companyUuid, id });
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the assigned value ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const { venueId } = updateAssignedVenueInput;
+
+    let venue;
+
+    if (venueId) {
+      venue = await this.venuesService.findOne({ companyUuid, id: venueId });
+
+      if (!venue) {
+        throw new NotFoundException(`can't get the venue ${venueId} for the company with uuid ${companyUuid}.`);
+      }
+    }
+
+    const { workerId } = updateAssignedVenueInput;
+
+    let person;
+
+    if (workerId) {
+      person = await this.personsService.getById({ id: workerId });
+    }
+
+    const merged : AssignedVenue = {
+      ...existing,
+      venue,
+      person
+    };
+
+    const saved = await this.assignedVenueRepository.save(merged);
+
+    return saved;
+  }
+
+  public async remove (findOneAssignedVenueInput: FindOneAssignedVenueInput): Promise<AssignedVenue> {
+    const { companyUuid, id } = findOneAssignedVenueInput;
+
+    const existing = await this.findOne({ companyUuid, id });
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the assigned value ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const clone = { ...existing };
+
+    await this.assignedVenueRepository.remove(existing);
+
+    return clone;
   }
 }

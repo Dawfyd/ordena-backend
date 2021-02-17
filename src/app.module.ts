@@ -52,6 +52,7 @@ const envPath = path.resolve(__dirname, `../.env.${NODE_ENV}`);
       autoSchemaFile: true,
       playground: true,
       introspection: true,
+      installSubscriptionHandlers: true,
       transformSchema: (schema: GraphQLSchemaHost['schema']) => {
         schema = applyMiddleware(schema, permission.permissions);
         return schema;
