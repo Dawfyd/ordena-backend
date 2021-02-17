@@ -7,6 +7,7 @@ import { ProductsInVenueService } from './products-in-venue.service';
 import { ProductsInVenueResolver } from './products-in-venue.resolver';
 import { VenuesModule } from '../venues/venues.module';
 import { ProductsModule } from '../products/products.module';
+import { ProductsInVenueLoaders } from './products-in-venue.loaders';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { ProductsModule } from '../products/products.module';
     VenuesModule,
     forwardRef(() => ProductsModule)
   ],
-  providers: [ProductsInVenueResolver, ProductsInVenueService],
+  providers: [ProductsInVenueResolver, ProductsInVenueLoaders, ProductsInVenueService],
   exports: [ProductsInVenueService]
 })
 export class ProductsInVenueModule {}

@@ -33,13 +33,13 @@ export class FavoritesResolver {
   }
 
   @Query(() => Favorite, { name: 'favorite', nullable: true })
-  findOne (@Args('findOneMenuInput') findOneFavoriteInput: FindOneFavoriteInput): Promise<Favorite> {
+  findOne (@Args('findOneFavoriteInput') findOneFavoriteInput: FindOneFavoriteInput): Promise<Favorite> {
     return this.service.findOne(findOneFavoriteInput);
   }
 
   @Mutation(() => Favorite, { name: 'updateFavorite' })
   update (
-    @Args('findOneMenuInput') findOneFavoriteInput: FindOneFavoriteInput,
+    @Args('findOneFavoriteInput') findOneFavoriteInput: FindOneFavoriteInput,
     @Args('updateFavoriteInput') updateFavoriteInput: UpdateFavoriteInput
   ): Promise<Favorite> {
     return this.service.update(
@@ -49,7 +49,7 @@ export class FavoritesResolver {
   }
 
   @Mutation(() => Favorite, { name: 'removeFavorite' })
-  remove (@Args('findOneMenuInput') findOneFavoriteInput: FindOneFavoriteInput): Promise<Favorite> {
+  remove (@Args('findOneFavoriteInput') findOneFavoriteInput: FindOneFavoriteInput): Promise<Favorite> {
     return this.service.remove(findOneFavoriteInput);
   }
 

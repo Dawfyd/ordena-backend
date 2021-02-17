@@ -13,6 +13,7 @@ import { UpdateVenueInput } from './dto/update-venue-input.dto';
 import { FindAllVenuesInput } from './dto/find-all-venues-input.dto';
 import { FindOneVenueInput } from './dto/find-one-venue-input.dto';
 import { Company } from '../companies/entities/company.entity';
+import { ProductsInVenue } from '../products-in-venue/entities/products-in-venue.entity';
 
 @Resolver(Venue)
 export class VenuesResolver {
@@ -76,5 +77,10 @@ export class VenuesResolver {
   @ResolveField(() => [AssignedVenue], { name: 'assignedVenues' })
   async assignedVenues (@Parent() venue: Venue): Promise<AssignedVenue[]> {
     return this.service.assignedVenues(venue);
+  }
+
+  @ResolveField(() => [ProductsInVenue], { name: 'productsInVenues' })
+  async productsInVenues (@Parent() venue: Venue): Promise<ProductsInVenue[]> {
+    return this.service.productsInVenues(venue);
   }
 }

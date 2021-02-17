@@ -1,10 +1,11 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
 
 import { Product } from '../../products/entities/product.entity';
 import { Venue } from '../../venues/entities/venue.entity';
 
 @Entity('products_in_venue')
+@Unique('uk_products_in_venue', ['venue', 'product'])
 @ObjectType()
 export class ProductsInVenue {
   /*
@@ -38,7 +39,7 @@ export class ProductsInVenue {
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @ManyToOne(type => Venue, (venue: Venue) => venue.ProductsInVenues)
+  @ManyToOne(type => Venue, (venue: Venue) => venue.productsInVenues)
   @JoinColumn({ name: 'venue_id' })
   venue: Venue;
 }
