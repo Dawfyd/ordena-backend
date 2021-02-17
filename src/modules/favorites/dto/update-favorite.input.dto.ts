@@ -1,5 +1,12 @@
-import { InputType, PartialType } from '@nestjs/graphql';
-import { CreateFavoriteInput } from './create-favorite.input.dto';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsBoolean } from 'class-validator';
 
 @InputType()
-export class UpdateFavoriteInput extends PartialType(CreateFavoriteInput) {}
+export class UpdateFavoriteInput {
+    /*
+   * Estado del producto favorito
+   */
+    @IsBoolean()
+    @Field(() => Boolean)
+    readonly avaliable: boolean;
+}

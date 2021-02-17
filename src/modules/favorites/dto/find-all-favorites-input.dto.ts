@@ -7,6 +7,10 @@ export class FindAllFavoritesInput {
   @Field(() => String)
   readonly companyUuid: string;
 
+  @IsString()
+  @Field(() => String)
+  readonly authUid: string;
+
   @IsOptional()
   @IsNumber()
   @Field(() => Int, { nullable: true })
@@ -16,9 +20,4 @@ export class FindAllFavoritesInput {
   @IsNumber()
   @Field(() => Int, { nullable: true })
   readonly skip?: number;
-
-  @IsOptional()
-  @IsString()
-  @Field(() => String, { nullable: true })
-  readonly search?: string;
 }

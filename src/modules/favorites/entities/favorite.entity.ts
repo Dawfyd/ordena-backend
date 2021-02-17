@@ -1,10 +1,11 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
 
 import { Person } from '../../persons/entities/person.entity';
 import { Product } from '../../products/entities/product.entity';
 
 @Entity('favorites')
+@Unique('uk_favorites', ['person', 'product'])
 @ObjectType()
 export class Favorite {
   /*
@@ -18,7 +19,7 @@ export class Favorite {
    * Estado del producto favorito
    */
   @Column()
-  state: boolean;
+  avaliable: boolean;
 
   /*
   *fecha cuando se realizo el registro

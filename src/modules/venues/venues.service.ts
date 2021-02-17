@@ -175,5 +175,17 @@ export class VenuesService {
     return items.map(item => ({ ...item, venue: master.id }));
   }
 
+  public async productsInVenues (venue: Venue): Promise<any[]> {
+    const { id } = venue;
+
+    const master = await this.venueRepository.createQueryBuilder('v')
+      .leftJoinAndSelect('v.productsInVenues', 'av')
+      .where('v.id = :id', { id })
+      .getOne();
+
+    const items = master ? master.productsInVenues : [];
+
+    return items.map(item => ({ ...item, venue: master.id }));
+  }
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 }

@@ -7,6 +7,10 @@ export class FindOneFavoriteInput {
   @Field(() => String)
   readonly companyUuid: string;
 
+  @IsString()
+  @Field(() => String)
+  readonly authUid: string;
+
   @IsNumber()
   @Field(() => Int)
   readonly id: number;

@@ -71,6 +71,6 @@ export class Venue {
   @OneToMany((type) => AssignedVenue, (assignedVenues: AssignedVenue) => assignedVenues.venue)
   assignedVenues: AssignedVenue[];
 
-  @OneToMany((type) => ProductsInVenue, (ProductsInVenues: ProductsInVenue) => ProductsInVenues.venue)
-  ProductsInVenues: ProductsInVenue[];
+  @OneToMany((type) => ProductsInVenue, (productsInVenues: ProductsInVenue) => productsInVenues.venue)
+  productsInVenues: ProductsInVenue[];
 }
