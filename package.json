@@ -39,7 +39,7 @@
     "graphql-middleware": "6.0.4",
     "graphql-shield": "7.5.0",
     "graphql-tools": "7.0.4",
-    "joi": "17.3.0",
+    "joi": "17.4.0",
     "mysql": "2.18.1",
     "nanoid": "3.1.20",
     "pg": "8.5.1",
