@@ -1,10 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MenusService } from '../menus/menus.service';
-import { CreateCategoryInput } from './dto/create-category-input.dto';
-import { UpdateCategoryInput } from './dto/update-category.input';
+
 import { Category } from './entities/category.entity';
+
+import { MenusService } from '../menus/menus.service';
+
+import { CreateCategoryInput } from './dto/create-category-input.dto';
+import { FindAllCategoriesInput } from './dto/find-all-categories-input.dto';
+import { UpdateCategoryInput } from './dto/update-category.input';
+import { FindOneCategoryInput } from './dto/find-one-category-input.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -13,6 +18,8 @@ export class CategoriesService {
     private readonly categoryRepository: Repository<Category>,
     private readonly menusService: MenusService
   ) {}
+
+  /* CRUD RELATED OPERATIONS */
 
   async create (createCategoryInput: CreateCategoryInput): Promise<Category> {
     const { companyUuid, menuId } = createCategoryInput;
@@ -33,14 +40,43 @@ export class CategoriesService {
     return saved;
   }
 
-  async findAll (): Promise<Category[]> {
-    return await this.categoryRepository.find();
+  async findAll (findAllCategoriesInput: FindAllCategoriesInput): Promise<Category[]> {
+    const { companyUuid, limit, skip, search } = findAllCategoriesInput;
+
+    const query = this.categoryRepository.createQueryBuilder('c')
+      .loadAllRelationIds()
+      .innerJoin('c.menu', 'm')
+      .innerJoin('m.venue', 'v')
+      .innerJoin('v.company', 'c1')
+      .where('c1.uuid = :companyUuid', { companyUuid });
+
+    if (search) {
+      query.andWhere('m.name ilike :search', { search: `%${search}%` })
+        .orWhere('m.description ilike :search', { search: `%${search}%` });
+    }
+
+    query.limit(limit || undefined)
+      .offset(skip || 0)
+      .orderBy('m.id', 'DESC');
+
+    const items = await query.getMany();
+
+    return items;
   }
 
-  async findOne (id: number): Promise<Category> {
-    const category = await this.categoryRepository.findOne(id);
-    if (!category) { throw new NotFoundException('No hay una categoria con esa ID'); }
-    return category;
+  async findOne (findOneCategoryInput: FindOneCategoryInput): Promise<Category | null> {
+    const { companyUuid, id } = findOneCategoryInput;
+
+    const item = await this.categoryRepository.createQueryBuilder('c')
+      .loadAllRelationIds()
+      .innerJoin('c.menu', 'm')
+      .innerJoin('m.venue', 'v')
+      .innerJoin('v.company', 'c1')
+      .where('c1.uuid = :companyUuid', { companyUuid })
+      .andWhere('c.id = :id', { id })
+      .getOne();
+
+    return item || null;
   }
 
   async findCategories (menu: number): Promise<Category[]> {
@@ -51,23 +87,80 @@ export class CategoriesService {
     });
   }
 
-  async update (id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category> {
-    const category = await this.findOne(id);
+  async update (findOneCategoryInput: FindOneCategoryInput, updateCategoryInput: UpdateCategoryInput): Promise<Category> {
+    const { companyUuid, id } = findOneCategoryInput;
+
+    const existing = await this.findOne({ companyUuid, id });
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the category ${id} for the company with uuid ${companyUuid}.`);
+    }
 
     const { menuId } = updateCategoryInput;
 
-    // FIXME:
-    const menu = {};
-    const editedCategory = this.categoryRepository.merge(category, {
+    let menu;
+
+    if (menuId) {
+      menu = await this.menusService.findOne({ companyUuid, id: menuId });
+
+      if (!menu) {
+        throw new NotFoundException(`can't get the menu ${menuId} for the company with uuid ${companyUuid}.`);
+      }
+    }
+
+    const merged: Category = {
+      ...existing,
       ...updateCategoryInput,
       menu
+    };
+
+    const saved = await this.categoryRepository.save(merged);
+
+    return saved;
+  }
+
+  async remove (findOneCategoryInput: FindOneCategoryInput) : Promise<Category> {
+    const { companyUuid, id } = findOneCategoryInput;
+
+    const existing = await this.findOne(findOneCategoryInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the category ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const clone = { ...existing };
+
+    await this.categoryRepository.remove(existing);
+
+    return clone;
+  }
+
+  /* CRUD RELATED OPERATIONS */
+
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
+  public async getByIds (ids: number[]): Promise<Category[]> {
+    return this.categoryRepository.findByIds(ids, {
+      loadRelationIds: true
     });
-
-    return await this.categoryRepository.save(editedCategory);
   }
 
-  async remove (id: number) : Promise<Category> {
-    const category = await this.findOne(id);
-    return await this.categoryRepository.remove(category);
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
+
+  public async assignedCategories (category: Category): Promise<any[]> {
+    const { id } = category;
+
+    const master = await this.categoryRepository.createQueryBuilder('c')
+      .leftJoinAndSelect('c.assignedCategories', 'ac')
+      .where('c.id = :id', { id })
+      .getOne();
+
+    const items = master ? master.assignedCategories : [];
+
+    return items.map(item => ({ ...item, menu: master.id }));
   }
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 }

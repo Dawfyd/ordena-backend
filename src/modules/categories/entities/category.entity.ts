@@ -57,6 +57,6 @@ export class Category {
   @JoinColumn({ name: 'menu_id' })
   menu: Menu;
 
-  @OneToMany((type) => AssignedCategory, (assignedCategory: AssignedCategory) => assignedCategory.category)
-  assignedCategories?: AssignedCategory[];
+  @OneToMany(type => AssignedCategory, (assignedCategory: AssignedCategory) => assignedCategory.category)
+  assignedCategories: AssignedCategory[];
 }
