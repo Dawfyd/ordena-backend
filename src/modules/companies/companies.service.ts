@@ -4,18 +4,19 @@ import { Repository } from 'typeorm';
 
 import { generateUuid } from 'src/utils';
 import { Company } from './entities/company.entity';
-import { Venue } from '../venues/entities/venue.entity';
 
 import { CreateCompanyInput } from './dto/create-company-input.dto';
 import { UpdateCompanyInput } from './dto/update-company-input.dto';
 import { FindAllCompaniesInput } from './dto/find-all-companies-input.dto';
-import { FindOneCompanyInput } from './dto/find-company-one-input.dto';
+import { FindOneCompanyInput } from './dto/find-one-company-input.dto';
 @Injectable()
 export class CompaniesService {
   constructor (
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>
   ) {}
+
+  /* CRUD RELATED OPERATIONS */
 
   public async create (createCompanyInput: CreateCompanyInput): Promise<Company> {
     const created = this.companyRepository.create({
@@ -59,18 +60,18 @@ export class CompaniesService {
   public async update (findOneCompanyInput: FindOneCompanyInput, updateCompanyInput: UpdateCompanyInput): Promise<Company> {
     const { companyUuid } = findOneCompanyInput;
 
-    const company = await this.findOne({ companyUuid });
+    const existing = await this.findOne({ companyUuid });
 
-    if (!company) {
+    if (!existing) {
       throw new NotFoundException(`can't get the company with uuid ${companyUuid}.`);
     }
 
-    const preloaded = await this.companyRepository.preload({
-      id: company.id,
+    const merged = {
+      ...existing,
       ...updateCompanyInput
-    });
+    };
 
-    const saved = await this.companyRepository.save(preloaded);
+    const saved = await this.companyRepository.save(merged);
 
     return saved;
   }
@@ -91,18 +92,32 @@ export class CompaniesService {
     return clone;
   }
 
+  /* CRUD RELATED OPERATIONS */
+
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
   public async getByIds (ids: number[]): Promise<Company[]> {
-    return this.companyRepository.findByIds(ids);
+    return this.companyRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
   }
 
-  public async venues (company: Company): Promise<Venue[]> {
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
+
+  public async venues (company: Company): Promise<any[]> {
     const { id } = company;
 
-    const item = await this.companyRepository.createQueryBuilder('c')
+    const master = await this.companyRepository.createQueryBuilder('c')
       .leftJoinAndSelect('c.venues', 'v')
       .where('c.id = :id', { id })
       .getOne();
 
-    return item ? item.venues : [];
+    const items = master ? master.venues : [];
+
+    return items.map(item => ({ ...item, company: master.id }));
   }
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 }

@@ -1,55 +1,45 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
 
 import { Person } from '../../persons/entities/person.entity';
 import { Product } from '../../products/entities/product.entity';
 
 @Entity('favorites')
+@Unique('uk_favorites', ['person', 'product'])
 @ObjectType()
 export class Favorite {
-  @PrimaryGeneratedColumn()
-  @Field()
-
   /*
    * ID del producto favorito
    */
+  @PrimaryGeneratedColumn()
+  @Field()
   id: number;
 
   /*
    * Estado del producto favorito
    */
   @Column()
-  state: boolean;
+  avaliable: boolean;
 
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @ManyToOne(
-    () => Product,
-    (product: Product) => product.favorites, {
-      eager: true,
-      cascade: true
-    })
+  // relations
 
+  @ManyToOne(type => Product, (product: Product) => product.favorites)
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @ManyToOne(
-    () => Person,
-    (person: Person) => person.favorites, {
-      eager: true,
-      cascade: true
-    })
-
+  @ManyToOne(type => Person, (person: Person) => person.favorites)
   @JoinColumn({ name: 'person_id' })
-    person: Person;
+  person: Person;
 }

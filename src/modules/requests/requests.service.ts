@@ -77,14 +77,6 @@ export class RequestsService {
       return item || null;
   }
 
-  async findProductRequest (product: number): Promise<Request[]> {
-    return await this.RequestRepository.find({
-      where: {
-        product
-      }
-    });
-  }
-
   async findOrderRequest (order: number): Promise<Request[]> {
     return await this.RequestRepository.find({
       where: {

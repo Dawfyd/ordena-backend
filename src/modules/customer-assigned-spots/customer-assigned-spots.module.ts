@@ -1,16 +1,22 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CustomerAssignedSpotsService } from './customer-assigned-spots.service';
-import { CustomerAssignedSpotsResolver } from './customer-assigned-spots.resolver';
+
 import { CustomerAssignedSpot } from './entities/customer-assigned-spot.entity';
+
+import { CustomerAssignedSpotsService } from './customer-assigned-spots.service';
+import { CustomerAssignedSpotsLoaders } from './customer-assigned-spots.loaders';
+import { CustomerAssignedSpotsResolver } from './customer-assigned-spots.resolver';
+
 import { PersonsModule } from '../persons/persons.module';
 import { SpotsModule } from '../spots/spots.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CustomerAssignedSpot]),
-    forwardRef(() => PersonsModule),
-    forwardRef(() => SpotsModule)],
-  providers: [CustomerAssignedSpotsResolver, CustomerAssignedSpotsService],
+  imports: [
+    TypeOrmModule.forFeature([CustomerAssignedSpot]),
+    PersonsModule,
+    SpotsModule
+  ],
+  providers: [CustomerAssignedSpotsService, CustomerAssignedSpotsLoaders, CustomerAssignedSpotsResolver],
   exports: [CustomerAssignedSpotsService]
 })
 export class CustomerAssignedSpotsModule {}

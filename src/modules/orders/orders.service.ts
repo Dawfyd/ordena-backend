@@ -66,14 +66,6 @@ export class OrdersService {
     return item || null;
   }
 
-  async findPersonOrder (person: number): Promise<Order[]> {
-    return await this.OrderRepository.find({
-      where: {
-        person
-      }
-    });
-  }
-
   async findOrderStatusOrder (orderStatus: number): Promise<Order[]> {
     return await this.OrderRepository.find({
       where: {

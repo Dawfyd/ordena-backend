@@ -1,35 +1,79 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { CustomerAssignedSpotsService } from './customer-assigned-spots.service';
+import { Resolver, Query, Mutation, Args, Parent, ResolveField } from '@nestjs/graphql';
+
 import { CustomerAssignedSpot } from './entities/customer-assigned-spot.entity';
-import { CreateCustomerAssignedSpotInput } from './dto/create-customer-assigned-spot.input';
-import { UpdateCustomerAssignedSpotInput } from './dto/update-customer-assigned-spot.input';
+import { Person } from '../persons/entities/person.entity';
+import { Spot } from '../spots/entities/spot.entity';
+
+import { CustomerAssignedSpotsService } from './customer-assigned-spots.service';
+import { CustomerAssignedSpotsLoaders } from './customer-assigned-spots.loaders';
+
+import { CreateCustomerAssignedSpotInput } from './dto/create-customer-assigned-spot-input.dto';
+import { UpdateCustomerAssignedSpotInput } from './dto/update-customer-assigned-spot-input.dto';
+import { FindAllCustomerAssignedSpotsInput } from './dto/find-all-customer-assigned-spots-input.dto';
+import { FindOneCustomerAssignedSpotInput } from './dto/find-one-customer-assigned-spot-input.dto';
 
 @Resolver(() => CustomerAssignedSpot)
 export class CustomerAssignedSpotsResolver {
-  constructor (private readonly customerAssignedSpotsService: CustomerAssignedSpotsService) {}
+  constructor (
+    private readonly customerAssignedSpotsService: CustomerAssignedSpotsService,
+    private readonly customerAssignedSpotsLoaders: CustomerAssignedSpotsLoaders
+  ) {}
 
-  @Mutation(() => CustomerAssignedSpot)
-  createCustomerAssignedSpot (@Args('createCustomerAssignedSpotInput') createCustomerAssignedSpotInput: CreateCustomerAssignedSpotInput) {
+  @Mutation(() => CustomerAssignedSpot, { name: 'createCustomerAssignedSpot' })
+  create (
+    @Args('createCustomerAssignedSpotInput') createCustomerAssignedSpotInput: CreateCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot> {
     return this.customerAssignedSpotsService.create(createCustomerAssignedSpotInput);
   }
 
   @Query(() => [CustomerAssignedSpot], { name: 'customerAssignedSpots' })
-  findAll () {
-    return this.customerAssignedSpotsService.findAll();
+  findAll (
+    @Args('findAllCustomerAssignedSpotsInput') findAllCustomerAssignedSpotsInput: FindAllCustomerAssignedSpotsInput
+  ): Promise<CustomerAssignedSpot[]> {
+    return this.customerAssignedSpotsService.findAll(findAllCustomerAssignedSpotsInput);
   }
 
-  @Query(() => CustomerAssignedSpot, { name: 'customerAssignedSpot' })
-  findOne (@Args('id', { type: () => Int }) id: number) {
-    return this.customerAssignedSpotsService.findOne(id);
+  @Query(() => CustomerAssignedSpot, { name: 'customerAssignedSpot', nullable: true })
+  findOne (
+    @Args('findOneCustomerAssignedSpotInput') findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot> {
+    return this.customerAssignedSpotsService.findOne(findOneCustomerAssignedSpotInput);
+  }
+
+  @Mutation(() => CustomerAssignedSpot, { name: 'updateCustomerAssignedSpot' })
+  updateCustomerAssignedSpot (
+    @Args('findOneCustomerAssignedSpotInput') findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput,
+    @Args('updateCustomerAssignedSpotInput') updateCustomerAssignedSpotInput: UpdateCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot> {
+    return this.customerAssignedSpotsService.update(findOneCustomerAssignedSpotInput, updateCustomerAssignedSpotInput);
   }
 
   @Mutation(() => CustomerAssignedSpot)
-  updateCustomerAssignedSpot (@Args('updateCustomerAssignedSpotInput') updateCustomerAssignedSpotInput: UpdateCustomerAssignedSpotInput) {
-    return this.customerAssignedSpotsService.update(updateCustomerAssignedSpotInput.id, updateCustomerAssignedSpotInput);
+  removeCustomerAssignedSpot (
+    @Args('findOneCustomerAssignedSpotInput') findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot> {
+    return this.customerAssignedSpotsService.remove(findOneCustomerAssignedSpotInput);
   }
 
-  @Mutation(() => CustomerAssignedSpot)
-  removeCustomerAssignedSpot (@Args('id', { type: () => Int }) id: number) {
-    return this.customerAssignedSpotsService.remove(id);
+  @ResolveField(() => Person, { name: 'person' })
+  person (@Parent() customerAssignedSpot: CustomerAssignedSpot): Promise<Person> {
+    const value: any = customerAssignedSpot.person;
+
+    let id = value;
+
+    if (typeof id !== 'number') id = value.id;
+
+    return this.customerAssignedSpotsLoaders.batchPersons.load(id);
+  }
+
+  @ResolveField(() => Spot, { name: 'spot' })
+  spot (@Parent() customerAssignedSpot: CustomerAssignedSpot): Promise<Spot> {
+    const value: any = customerAssignedSpot.spot;
+
+    let id = value;
+
+    if (typeof id !== 'number') id = value.id;
+
+    return this.customerAssignedSpotsLoaders.batchSpots.load(id);
   }
 }

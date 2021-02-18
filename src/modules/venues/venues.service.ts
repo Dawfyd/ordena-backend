@@ -3,9 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Venue } from './entities/venue.entity';
-import { Menu } from '../menus/entities/menu.entity';
-import { Spot } from '../spots/entities/spot.entity';
-import { AssignedVenue } from '../assigned-venues/entities/assigned-venue.entity';
 
 import { CompaniesService } from '../companies/companies.service';
 
@@ -21,6 +18,8 @@ export class VenuesService {
     private readonly venueRepository: Repository<Venue>,
     private readonly companiesService: CompaniesService
   ) {}
+
+  /* CRUD RELATED OPERATIONS */
 
   public async create (
     createVenueInput: CreateVenueInput
@@ -47,13 +46,15 @@ export class VenuesService {
   }
 
   public async findAll (findAllVenuesInput: FindAllVenuesInput): Promise<Venue[]> {
-    const { limit, skip, search } = findAllVenuesInput;
+    const { companyUuid, limit, skip, search } = findAllVenuesInput;
 
     const query = this.venueRepository.createQueryBuilder('v')
-      .loadAllRelationIds();
+      .loadAllRelationIds()
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid });
 
     if (search) {
-      query.where('v.name ilike :search', { search: `%${search}%` })
+      query.andWhere('v.name ilike :search', { search: `%${search}%` })
         .orWhere('v.address ilike :search', { search: `%${search}%` })
         .orWhere('v.phone ilike :search', { search: `%${search}%` });
     }
@@ -94,13 +95,13 @@ export class VenuesService {
       throw new NotFoundException(`can't get the venue ${id} for the company with uuid ${companyUuid}.`);
     }
 
-    const preloaded = await this.venueRepository.preload({
-      id: existing.id,
+    const merged = {
+      ...existing,
       company,
       ...updateVenueInput
-    });
+    };
 
-    const saved = await this.venueRepository.save(preloaded);
+    const saved = await this.venueRepository.save(merged);
 
     return saved;
   }
@@ -121,36 +122,70 @@ export class VenuesService {
     return clone;
   }
 
-  public async menus (venue: Venue): Promise<Menu[]> {
+  /* CRUD RELATED OPERATIONS */
+
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
+  public async getByIds (ids: number[]): Promise<Venue[]> {
+    return this.venueRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
+  }
+
+  /* OPERATIONS BECAUSE OF THE MASTER STATUS */
+
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
+
+  public async menus (venue: Venue): Promise<any[]> {
     const { id } = venue;
 
-    const item = await this.venueRepository.createQueryBuilder('v')
+    const master = await this.venueRepository.createQueryBuilder('v')
       .leftJoinAndSelect('v.menus', 'm')
       .where('v.id = :id', { id })
       .getOne();
 
-    return item ? item.menus : [];
+    const items = master ? master.menus : [];
+
+    return items.map(item => ({ ...item, venue: master.id }));
   }
 
-  public async spots (venue: Venue): Promise<Spot[]> {
+  public async spots (venue: Venue): Promise<any[]> {
     const { id } = venue;
 
-    const item = await this.venueRepository.createQueryBuilder('v')
+    const master = await this.venueRepository.createQueryBuilder('v')
       .leftJoinAndSelect('v.spots', 's')
       .where('v.id = :id', { id })
       .getOne();
 
-    return item ? item.spots : [];
+    const items = master ? master.spots : [];
+
+    return items.map(item => ({ ...item, venue: master.id }));
   }
 
-  public async assignedVenues (venue: Venue): Promise<AssignedVenue[]> {
+  public async assignedVenues (venue: Venue): Promise<any[]> {
     const { id } = venue;
 
-    const item = await this.venueRepository.createQueryBuilder('v')
+    const master = await this.venueRepository.createQueryBuilder('v')
       .leftJoinAndSelect('v.assignedVenues', 'av')
       .where('v.id = :id', { id })
       .getOne();
 
-    return item ? item.assignedVenues : [];
+    const items = master ? master.assignedVenues : [];
+
+    return items.map(item => ({ ...item, venue: master.id }));
   }
+
+  public async productsInVenues (venue: Venue): Promise<any[]> {
+    const { id } = venue;
+
+    const master = await this.venueRepository.createQueryBuilder('v')
+      .leftJoinAndSelect('v.productsInVenues', 'av')
+      .where('v.id = :id', { id })
+      .getOne();
+
+    const items = master ? master.productsInVenues : [];
+
+    return items.map(item => ({ ...item, venue: master.id }));
+  }
+  /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 }

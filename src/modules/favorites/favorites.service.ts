@@ -1,80 +1,126 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { Favorite } from './entities/favorite.entity';
+
 import { PersonsService } from '../persons/persons.service';
 import { ProductsService } from '../products/products.service';
-import { CreateFavoriteInput } from './dto/create-favorite.input';
-import { UpdateFavoriteInput } from './dto/update-favorite.input';
-import { Favorite } from './entities/favorite.entity';
+
+import { CreateFavoriteInput } from './dto/create-favorite.input.dto';
+import { UpdateFavoriteInput } from './dto/update-favorite.input.dto';
+import { FindAllFavoritesInput } from './dto/find-all-favorites-input.dto';
+import { FindOneFavoriteInput } from './dto/find-one-favorite-input.dto';
 
 @Injectable()
 export class FavoritesService {
   constructor (
     @InjectRepository(Favorite)
-    private readonly FavoriteRepository: Repository<Favorite>,
+    private readonly favoriteRepository: Repository<Favorite>,
     private readonly personsService: PersonsService,
     private readonly productsService: ProductsService
   ) {}
 
+  /* CRUD RELATED OPERATIONS */
+
   async create (createFavoriteInput: CreateFavoriteInput): Promise<Favorite> {
-    const { product_id, person_id } = createFavoriteInput;
+    const { authUid, companyUuid, productId } = createFavoriteInput;
 
-    const person = await this.personsService.findOne(person_id);
-    const product = await this.productsService.findOne(product_id);
+    const person = await this.personsService.findOne({ authUid });
 
-    const newFavorite = this.FavoriteRepository.create({
+    if (!person) {
+      throw new NotFoundException(`can't get the person with authUid ${authUid}.`);
+    }
+
+    const product = await this.productsService.findOne({ companyUuid, id: productId });
+
+    if (!product) {
+      throw new NotFoundException(`can't get the product ${productId} for the company ${companyUuid}.`);
+    }
+
+    const created = this.favoriteRepository.create({
       ...createFavoriteInput,
       person,
       product
     });
 
-    return await this.FavoriteRepository.save(newFavorite);
+    const saved = await this.favoriteRepository.save(created);
+
+    return saved;
   }
 
-  async findAll (): Promise<Favorite[]> {
-    return await this.FavoriteRepository.find();
+  async findAll (findAllFavoritesInput: FindAllFavoritesInput): Promise<Favorite[]> {
+    const { companyUuid, authUid, limit, skip } = findAllFavoritesInput;
+
+    const query = this.favoriteRepository.createQueryBuilder('f')
+      .loadAllRelationIds()
+      .innerJoin('f.person', 'pe')
+      .innerJoin('f.product', 'p')
+      .innerJoin('p.productsInVenues', 'pv')
+      .innerJoin('pv.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('pe.authUid = :authUid', { authUid });
+
+    query.limit(limit || undefined)
+      .offset(skip || 0)
+      .orderBy('f.id', 'DESC');
+
+    const items = await query.getMany();
+
+    return items;
   }
 
-  async findOne (id: number): Promise<Favorite> {
-    const favorite = await this.FavoriteRepository.findOne(id);
-    if (!favorite) throw new NotFoundException('No hay un favorito con esa ID');
-    return favorite;
+  async findOne (findOneFavoriteInput: FindOneFavoriteInput): Promise<Favorite> {
+    const { companyUuid, authUid, id } = findOneFavoriteInput;
+
+    const item = await this.favoriteRepository.createQueryBuilder('f')
+      .loadAllRelationIds()
+      .innerJoin('f.person', 'pe')
+      .innerJoin('f.product', 'p')
+      .innerJoin('p.productsInVenues', 'pv')
+      .innerJoin('pv.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('pe.authUid = :authUid', { authUid })
+      .andWhere('f.id = :id', { id })
+      .getOne();
+
+    return item || null;
   }
 
-  async findFavoritesPerson (person: number): Promise<Favorite[]> {
-    return await this.FavoriteRepository.find({
-      where: {
-        person
-      }
+  async update (findOneFavoriteInput: FindOneFavoriteInput, updateFavoriteInput: UpdateFavoriteInput): Promise<Favorite> {
+    const { companyUuid, authUid, id } = findOneFavoriteInput;
+
+    const existing = await this.findOne(findOneFavoriteInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the favorite ${id} for the person with authUid ${authUid} and company with uuid ${companyUuid}.`);
+    }
+
+    const preloaded = await this.favoriteRepository.preload({
+      id: existing.id,
+      ...updateFavoriteInput
     });
+
+    const saved = await this.favoriteRepository.save(preloaded);
+
+    return saved;
   }
 
-  async findFavoritesProduct (product: number): Promise<Favorite[]> {
-    return await this.FavoriteRepository.find({
-      where: {
-        product
-      }
-    });
-  }
+  async remove (findOneFavoriteInput: FindOneFavoriteInput): Promise<Favorite> {
+    const { companyUuid, authUid, id } = findOneFavoriteInput;
 
-  async update (id: number, updateFavoriteInput: UpdateFavoriteInput): Promise<Favorite> {
-    const favorite = await this.findOne(id);
+    const existing = await this.findOne(findOneFavoriteInput);
 
-    const { product_id, person_id } = updateFavoriteInput;
+    if (!existing) {
+      throw new NotFoundException(`can't get the favorite ${id} for the person with authUid ${authUid} and company with uuid ${companyUuid}.`);
+    }
 
-    const person = await this.personsService.findOne(person_id);
-    const product = await this.productsService.findOne(product_id);
+    const clone = { ...existing };
 
-    const editedFavorite = this.FavoriteRepository.merge(favorite, {
-      ...updateFavoriteInput,
-      person,
-      product
-    });
-    return await this.FavoriteRepository.save(editedFavorite);
-  }
+    await this.favoriteRepository.remove(existing);
 
-  async remove (id: number): Promise<Favorite> {
-    const favorite = await this.findOne(id);
-    return await this.FavoriteRepository.remove(favorite);
+    return clone;
   }
 }

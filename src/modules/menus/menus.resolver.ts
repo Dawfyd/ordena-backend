@@ -3,52 +3,70 @@ import {
   Query,
   Mutation,
   Args,
-  Int,
   ResolveField,
   Parent
 } from '@nestjs/graphql';
-import { MenusService } from './menus.service';
+
 import { Menu } from './entities/menu.entity';
-import { CreateMenuInput } from './dto/create-menu.input';
-import { UpdateMenuInput } from './dto/update-menu.input';
 import { Venue } from '../venues/entities/venue.entity';
-import { VenuesService } from '../venues/venues.service';
-import { CategoriesService } from '../categories/categories.service';
+import { Category } from '../categories/entities/category.entity';
+
+import { MenusService } from './menus.service';
+import { MenusLoaders } from './menus.loaders';
+
+import { CreateMenuInput } from './dto/create-menu-input.dto';
+import { UpdateMenuInput } from './dto/update-menu.input';
+import { FindAllMenusInput } from './dto/find-all-menus-input.dto';
+import { FindOneMenuInput } from './dto/find-one-menu-input.dto';
 
 @Resolver(() => Menu)
 export class MenusResolver {
-  constructor (private readonly menusService: MenusService,
-    private readonly venuesService: VenuesService,
-    private readonly categoriesService: CategoriesService) {}
+  constructor (
+    private readonly service: MenusService,
+    private readonly menusLoaders: MenusLoaders
+  ) {}
 
-  @Mutation(() => Menu)
-  createMenu (@Args('createMenuInput') createMenuInput: CreateMenuInput) {
-    return this.menusService.create(createMenuInput);
+  @Mutation(() => Menu, { name: 'createMenu' })
+  create (@Args('createMenuInput') createMenuInput: CreateMenuInput): Promise<Menu> {
+    return this.service.create(createMenuInput);
   }
 
   @Query(() => [Menu], { name: 'menus' })
-  findAll () {
-    return this.menusService.findAll();
+  findAll (@Args('findAllMenusInput') findAllMenusInput: FindAllMenusInput): Promise<Menu[]> {
+    return this.service.findAll(findAllMenusInput);
   }
 
-  @Query(() => Menu, { name: 'menu' })
-  findOne (@Args('id', { type: () => Int }) id: number) {
-    return this.menusService.findOne(id);
+  @Query(() => Menu, { name: 'menu', nullable: true })
+  findOne (@Args('findOneMenuInput') findOneMenuInput: FindOneMenuInput): Promise<Menu> {
+    return this.service.findOne(findOneMenuInput);
   }
 
-  @Mutation(() => Menu)
-  updateMenu (@Args('updateMenuInput') updateMenuInput: UpdateMenuInput) {
-    return this.menusService.update(updateMenuInput.id, updateMenuInput);
+  @Mutation(() => Menu, { name: 'updateMenu' })
+  update (
+    @Args('findOneMenuInput') findOneMenuInput: FindOneMenuInput,
+    @Args('updateMenuInput') updateMenuInput: UpdateMenuInput
+  ): Promise<Menu> {
+    return this.service.update(findOneMenuInput, updateMenuInput);
   }
 
-  @Mutation(() => Menu)
-  removeMenu (@Args('id', { type: () => Int }) id: number) {
-    return this.menusService.remove(id);
+  @Mutation(() => Menu, { name: 'removeMenu' })
+  remove (@Args('findOneMenuInput') findOneMenuInput: FindOneMenuInput): Promise<Menu> {
+    return this.service.remove(findOneMenuInput);
   }
 
-  @ResolveField()
-  async categories (@Parent() menu: Menu) {
-    const { id } = menu;
-    return this.categoriesService.findCategories(id);
+  @ResolveField(() => Venue, { name: 'venue' })
+  venue (@Parent() menu: Menu): Promise<Venue> {
+    const venueValue: any = menu.venue;
+
+    let venueId = venueValue;
+
+    if (typeof venueId !== 'number') venueId = venueValue.id;
+
+    return this.menusLoaders.batchVenues.load(venueId);
+  }
+
+  @ResolveField(() => [Category], { name: 'categories' })
+  categories (@Parent() menu: Menu): Promise<Category[]> {
+    return this.service.categories(menu);
   }
 }
