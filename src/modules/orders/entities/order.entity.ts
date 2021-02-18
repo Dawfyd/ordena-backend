@@ -9,12 +9,11 @@ import { Spot } from '../../spots/entities/spot.entity';
 @Entity('orders')
 @ObjectType()
 export class Order {
-  @PrimaryGeneratedColumn()
-  @Field()
-
   /*
    * ID de la orden
    */
+  @PrimaryGeneratedColumn()
+  @Field()
   id: number;
 
   /*
@@ -32,14 +31,14 @@ export class Order {
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({name: 'created_at'})
+  createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({name: 'updated_at'})
+  updatedAt: Date;
 
   @ManyToOne(
     () => Person,
@@ -60,10 +59,7 @@ export class Order {
   spot: Spot;
 
   @ManyToOne(
-    (type) => OrderStatus, (orderStatus: OrderStatus) => orderStatus.orders, {
-      eager: true,
-      cascade: true
-    })
+    (type) => OrderStatus, (orderStatus: OrderStatus) => orderStatus.orders)
 
   @JoinColumn({ name: 'order_status_id' })
   orderStatus: OrderStatus;

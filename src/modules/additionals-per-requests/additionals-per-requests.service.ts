@@ -21,7 +21,7 @@ export class AdditionalsPerRequestsService {
     const { product_id, request_id } = createAdditionalsPerRequestInput;
 
     const product = await this.productsService.findOne(product_id);
-    const request = await this.requestsService.findOne(request_id);
+    const request = await this.requestsService.findOne(request_id as any);
 
     const newAdditionalsPerRequest = this.AdditionalsPerRequestRepository.create({ product, request });
     return await this.AdditionalsPerRequestRepository.save(newAdditionalsPerRequest);
@@ -43,7 +43,7 @@ export class AdditionalsPerRequestsService {
     const { product_id, request_id } = updateAdditionalsPerRequestInput;
 
     const product = await this.productsService.findOne(product_id);
-    const request = await this.requestsService.findOne(request_id);
+    const request = await this.requestsService.findOne(request_id as any);
 
     const editedadditionalsPerRequest = this.AdditionalsPerRequestRepository.merge(additionalsPerRequest, {
       product,

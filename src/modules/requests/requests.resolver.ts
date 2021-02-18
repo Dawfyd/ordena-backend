@@ -1,49 +1,58 @@
 import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+
 import { RequestsService } from './requests.service';
 import { Request } from './entities/request.entity';
-import { CreateRequestInput } from './dto/create-request.input';
-import { UpdateRequestInput } from './dto/update-request.input';
 import { ModifiersPerRequestService } from '../modifiers-per-request/modifiers-per-request.service';
+
+import { CreateRequestInput } from './dto/create-request.input.dto';
+import { UpdateRequestInput } from './dto/update-request.input.dto';
+import { FindAllRequestsInput } from './dto/find-all-request.input.dto';
+import { FindOneRequestInput } from './dto/find-one-request.input.dto';
+import { FindOneRequestStatusInput } from '../request-statuses/dto/find-one-request-status.input.dto';
+
+
 
 @Resolver(() => Request)
 export class RequestsResolver {
   constructor (
-    private readonly RequestsService: RequestsService,
+    private readonly Service: RequestsService,
     private readonly modifiersPerRequestsService: ModifiersPerRequestService
   ) {}
 
-  @Mutation(() => Request)
-  createRequest (
-    @Args('createRequestInput')
-      createRequestInput: CreateRequestInput
-  ) {
-    return this.RequestsService.create(createRequestInput);
+  @Mutation(() => Request, {name: 'createRequest'})
+  create (
+    @Args('createRequestInput') createRequestInput: CreateRequestInput
+  ): Promise<Request> {
+    return this.Service.create(createRequestInput);
   }
 
   @Query(() => [Request], { name: 'requests' })
-  findAll () {
-    return this.RequestsService.findAll();
+  findAll (@Args('findAllRequestsInput') findAllRequestsInput: FindAllRequestsInput
+  ): Promise<Request[]> {
+    return this.Service.findAll(findAllRequestsInput);
   }
 
   @Query(() => Request, { name: 'request' })
-  findOne (@Args('id', { type: () => Int }) id: number) {
-    return this.RequestsService.findOne(id);
+  findOne (@Args('findOneRequestInput') findOneRequestInput: FindOneRequestInput
+  ): Promise<Request> {
+    return this.Service.findOne(findOneRequestInput);
   }
 
-  @Mutation(() => Request)
-  updateRequest (
-    @Args('updateRequestInput')
-      updateRequestInput: UpdateRequestInput
-  ) {
-    return this.RequestsService.update(
-      updateRequestInput.id_request,
+  @Mutation(() => Request, {name: 'updateRequest'})
+  update (
+    @Args('findOneRequestInput') findOneRequestInput: FindOneRequestStatusInput,
+    @Args('updateRequestInput')updateRequestInput: UpdateRequestInput
+  ): Promise<Request> {
+    return this.Service.update(
+      findOneRequestInput,
       updateRequestInput
     );
   }
 
   @Mutation(() => Request)
-  removeRequest (@Args('id', { type: () => Int }) id: number) {
-    return this.RequestsService.remove(id);
+  removeRequest (@Args('findOneRequestInput')  findOneRequestInput: FindOneRequestStatusInput
+  ): Promise<Request> {
+    return this.Service.remove(findOneRequestInput);
   }
 
   @ResolveField()

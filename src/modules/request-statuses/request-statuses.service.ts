@@ -1,9 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateRequestStatusInput } from './dto/create-request-status.input';
-import { UpdateRequestStatusInput } from './dto/update-request-status.input';
+
 import { RequestStatus } from './entities/request-status.entity';
+
+import { CreateRequestStatusInput } from './dto/create-request-status.input.dto';
+import { UpdateRequestStatusInput } from './dto/update-request-status.input.dto';
+import { FindAllRequestStatusesInput } from './dto/find-all-request-statuses.input.dto';
+import { FindOneRequestStatusInput } from './dto/find-one-request-status.input.dto';
+import { Request } from '../requests/entities/request.entity';
+
 
 @Injectable()
 export class RequestStatusesService {
@@ -12,30 +18,84 @@ export class RequestStatusesService {
     private readonly RequestStatusRepository: Repository<RequestStatus>
   ) {}
 
-  async create (createRequestStatusInput: CreateRequestStatusInput) {
-    const newRequestStatus = this.RequestStatusRepository.create(createRequestStatusInput);
-    return await this.RequestStatusRepository.save(newRequestStatus);
+  public async create (createRequestStatusInput: CreateRequestStatusInput): Promise<RequestStatus> {
+    const created = this.RequestStatusRepository.create(createRequestStatusInput);
+    const saved = await this.RequestStatusRepository.save(created);
+    return saved;
   }
 
-  async findAll () {
-    return await this.RequestStatusRepository.find();
-  }
+  public async findAll (findAllRequestStatusesInput: FindAllRequestStatusesInput): Promise<RequestStatus[]> {
+    const { limit, skip, search = ''} = findAllRequestStatusesInput;
 
-  async findOne (id: number) {
-    const requestStatus = await this.RequestStatusRepository.findOne(id);
-    if (!requestStatus) throw new NotFoundException('no hay registro con este id');
+    const query = this.RequestStatusRepository.createQueryBuilder('rs');
+
+    if(search){
+      query.where('rs.name ilike :search', { search: `%${search}%` });
+    }
+
+    query.limit(limit || undefined)
+      .offset(skip || 0)
+      .orderBy('c.id', 'DESC');
+
+    const requestStatus = await query.getMany();
+
     return requestStatus;
   }
 
-  async update (id: number, updateRequestStatusInput: UpdateRequestStatusInput) {
-    const requestStatus = await this.findOne(id);
+  public async findOne (findOneRequestStatus: FindOneRequestStatusInput): Promise<RequestStatus> | null {
+    const {id} = findOneRequestStatus;
 
-    const editedrequestStatus = this.RequestStatusRepository.merge(requestStatus, updateRequestStatusInput);
-    return await this.RequestStatusRepository.save(editedrequestStatus);
+    const requestStatus = await this.RequestStatusRepository.createQueryBuilder('rs')
+    .where('rs.id = :id',{id})
+    .getOne();
+
+    return requestStatus || null;
   }
 
-  async remove (id: number) {
-    const requestStatus = await this.findOne(id);
-    return await this.RequestStatusRepository.remove(requestStatus);
+  public async update (findOneRequestStatusInput: FindOneRequestStatusInput, updateRequestStatusInput: UpdateRequestStatusInput): Promise<RequestStatus> {
+    const { id } = findOneRequestStatusInput;
+    const requestStatus = await this.findOne({ id });
+
+    if (!requestStatus) {
+      throw new NotFoundException(`can't get the requestStatu with id ${id}.`);
+    }
+
+    const preloaded = await this.RequestStatusRepository.preload({
+      id: requestStatus.id,
+      ...updateRequestStatusInput
+    })
+
+    const saved = await this.RequestStatusRepository.save(preloaded);
+    return saved;
+  }
+
+  public async remove (findOneRequestStatusInput: FindOneRequestStatusInput) {
+    const { id } = findOneRequestStatusInput;
+    const existing = await this.findOne({id});
+
+    if(!existing){
+      throw new NotFoundException(`can't get the requestStatu with id ${id}.`);
+    }
+
+    const clone = { ...existing };
+
+    await this.RequestStatusRepository.remove(existing);
+
+    return clone;
+  }
+
+  public async getByIds(ids: number[]): Promise<RequestStatus[]> {
+    return this.RequestStatusRepository.findByIds(ids);
+  }
+
+  public async requests(requestStatus: RequestStatus): Promise<Request[]> {
+    const { id } = requestStatus;
+
+    const item = await this.RequestStatusRepository.createQueryBuilder('rs')
+    .leftJoinAndSelect('rs.request', 'r')
+    .where('rs.id = :id', {id})
+    .getOne();
+
+    return  item ? item.requests : [];
   }
 }

@@ -6,18 +6,17 @@ import { Request } from '../../requests/entities/request.entity';
 @Entity('request_statuses')
 @ObjectType()
 export class RequestStatus {
-  @PrimaryGeneratedColumn()
-  @Field()
-
   /*
   *ID del estado de la solicitud
   */
+  @PrimaryGeneratedColumn()
+  @Field()
   id: number;
 
   /*
   *nombre del estado de la solicitud
   */
-  @Column()
+  @Column({type: 'varchar', length: 45})
   name: string;
 
   @OneToMany(

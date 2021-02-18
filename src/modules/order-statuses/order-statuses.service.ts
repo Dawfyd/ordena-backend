@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateOrderStatusInput } from './dto/create-order-status.input';
-import { UpdateOrderStatusInput } from './dto/update-order-status.input';
+
 import { OrderStatus } from './entities/order-status.entity';
 
+import { CreateOrderStatusInput } from './dto/create-order-status.input.dto';
+import { FindAllOrderStatusesInput } from './dto/find-all-order-statuses.input.dto';
+import { FindOneOrderStatusInput } from './dto/find-one-order-status.input.dto';
+import { UpdateOrderStatusInput } from './dto/update-order-status.input.dto';
+import { Order } from '../orders/entities/order.entity';
 @Injectable()
 export class OrderStatusesService {
   constructor (
@@ -12,30 +16,78 @@ export class OrderStatusesService {
     private readonly OrderStatusRepository: Repository<OrderStatus>
   ) {}
 
-  async create (createOrderStatusInput: CreateOrderStatusInput) {
+  public async create (createOrderStatusInput: CreateOrderStatusInput): Promise<OrderStatus> {
     const newOrderStatus = this.OrderStatusRepository.create(createOrderStatusInput);
-    return await this.OrderStatusRepository.save(newOrderStatus);
+    const saved = await this.OrderStatusRepository.save(newOrderStatus);
+    return saved;
   }
 
-  async findAll () {
-    return await this.OrderStatusRepository.find();
-  }
+  public async findAll (findAllOrderStatusesInput: FindAllOrderStatusesInput): Promise<OrderStatus[]> {
+    const { limit, skip, search = '' } = findAllOrderStatusesInput;
 
-  async findOne (id: number) {
-    const orderStatus = await this.OrderStatusRepository.findOne(id);
-    if (!orderStatus) throw new NotFoundException('no hay registro con este id');
+    const query = this.OrderStatusRepository.createQueryBuilder('os')
+
+    if(search){
+      query.where('os.name ilike :search', { search: `%${search}%` });
+    }
+
+    query.limit(limit || undefined)
+    .offset(skip || 0)
+    .orderBy('os.id', 'DESC');
+
+    const orderStatus  = await query.getMany();
+
     return orderStatus;
   }
 
-  async update (id: number, updateOrderStatusInput: UpdateOrderStatusInput) {
-    const orderStatus = await this.findOne(id);
+  public async findOne (findOneOrderStatusInput: FindOneOrderStatusInput): Promise<OrderStatus> | null {
+    const { id } = findOneOrderStatusInput;
 
-    const editedOrderStatus = this.OrderStatusRepository.merge(orderStatus, updateOrderStatusInput);
-    return await this.OrderStatusRepository.save(editedOrderStatus);
+    const orderStatus = this.OrderStatusRepository.createQueryBuilder('os')
+    .where('os.id = :id', { id })
+    .getOne();
+
+    return orderStatus || null;
   }
 
-  async remove (id: number) {
-    const orderStatus = await this.findOne(id);
-    return await this.OrderStatusRepository.remove(orderStatus);
+  public async update (findOneOrderStatusInput: FindOneOrderStatusInput, updateOrderStatusInput: UpdateOrderStatusInput): Promise<OrderStatus> {
+    const { id } = findOneOrderStatusInput;
+
+    const orderStatus = await this.findOne({ id });
+
+    if (!orderStatus) {
+      throw new NotFoundException(`can't get the orderStatus with id ${id}.`);
+    }
+
+    const preloaded =  await this.OrderStatusRepository.preload({
+      id: orderStatus.id,
+      ...updateOrderStatusInput
+    })
+
+    const saved = await this.OrderStatusRepository.save(preloaded);
+    return saved;
+  }
+
+  public async remove (findOneOrderStatusInput: FindOneOrderStatusInput) {
+    const { id } = findOneOrderStatusInput;
+    const existing = await this.findOne({ id });
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the orderStatus with id ${id}.`);
+    }
+
+    const clone = { ...existing };
+
+    await this.OrderStatusRepository.remove(existing);
+
+    return clone;
+  }
+
+  public async getByIds(ids: number[]): Promise<OrderStatus[]> {
+    return await this.OrderStatusRepository.findByIds(ids)
+  }
+
+  public async orders(order: Order): Promise<Order[]> {
+    return
   }
 }

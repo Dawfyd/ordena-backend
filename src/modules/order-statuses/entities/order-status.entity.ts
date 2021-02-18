@@ -17,8 +17,8 @@ export class OrderStatus {
   /*
   *Name del estado del pedido
   */
-  @Column()
-  name: string;
+  @Column({type: 'varchar', length: 45})
+  readonly name: string;
 
   @OneToMany(
     (type) => Order, (orders: Order) => orders.orderStatus)
