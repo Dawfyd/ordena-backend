@@ -96,13 +96,13 @@ export class SpotsService {
       }
     }
 
-    const merged = {
-      ...existing,
+    const preloaded = await this.spotRepository.preload({
+      id: existing.id,
       ...updateSpotInput,
       venue
-    };
+    });
 
-    const saved = await this.spotRepository.save(merged);
+    const saved = await this.spotRepository.save(preloaded);
 
     return saved;
   }

@@ -66,12 +66,12 @@ export class CompaniesService {
       throw new NotFoundException(`can't get the company with uuid ${companyUuid}.`);
     }
 
-    const merged = {
-      ...existing,
+    const preloaded = await this.companyRepository.preload({
+      id: existing.id,
       ...updateCompanyInput
-    };
+    });
 
-    const saved = await this.companyRepository.save(merged);
+    const saved = await this.companyRepository.save(preloaded);
 
     return saved;
   }
