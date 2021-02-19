@@ -52,8 +52,6 @@ export class SpotsResolver {
 
   @ResolveField(() => Venue, { name: 'venue' })
   venue (@Parent() spot: Spot): Promise<Venue> {
-    console.log('spot loading a venue', spot);
-
     const venueValue: any = spot.venue;
 
     let venueId = venueValue;

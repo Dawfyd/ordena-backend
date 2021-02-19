@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Price } from './entities/price.entity';
 
 import { PricesService } from './prices.service';
+import { PricesLoaders } from './prices.loaders';
 import { PricesResolver } from './prices.resolver';
 
 import { ProductsModule } from '../products/products.module';
@@ -14,7 +15,7 @@ import { VenuesModule } from '../venues/venues.module';
     ProductsModule,
     VenuesModule
   ],
-  providers: [PricesResolver, PricesService],
+  providers: [PricesService, PricesLoaders, PricesResolver],
   exports: [PricesService]
 })
 export class PricesModule {}
