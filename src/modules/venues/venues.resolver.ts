@@ -4,6 +4,7 @@ import { Venue } from './entities/venue.entity';
 import { Menu } from '../menus/entities/menu.entity';
 import { Spot } from '../spots/entities/spot.entity';
 import { AssignedVenue } from '../assigned-venues/entities/assigned-venue.entity';
+import { Price } from '../prices/entities/price.entity';
 
 import { VenuesService } from './venues.service';
 import { VenuesLoaders } from './venues.loaders';
@@ -82,5 +83,10 @@ export class VenuesResolver {
   @ResolveField(() => [ProductsInVenue], { name: 'productsInVenues' })
   async productsInVenues (@Parent() venue: Venue): Promise<ProductsInVenue[]> {
     return this.service.productsInVenues(venue);
+  }
+
+  @ResolveField(() => [Price], { name: 'prices' })
+  async prices (@Parent() venue: Venue): Promise<Price[]> {
+    return this.service.prices(venue);
   }
 }
