@@ -12,6 +12,7 @@ import { CreateProductInput } from './dto/create-product.input.dto';
 import { FindAllProductInput } from './dto/find-all-product-input.dto';
 import { FindOneProductInput } from './dto/find-one-product-input.dto';
 import { UpdateProductInput } from './dto/update-product.input.dto';
+import { GetByIdInput } from './dto/get-by-id-input.dto';
 
 @Injectable()
 export class ProductsService {
@@ -230,9 +231,12 @@ export class ProductsService {
     return clone;
   }
 
-  public async getProduct (id: number): Promise<Product> {
-    const product = await this.productRepository.findOne(id);
-    return product || null;
+  public async getById (getByIdInput: GetByIdInput): Promise<Product | null> {
+    const { id } = getByIdInput;
+
+    const existing = await this.productRepository.findOne(id);
+
+    return existing || null;
   }
 
   /* CRUD RELATED OPERATIONS */

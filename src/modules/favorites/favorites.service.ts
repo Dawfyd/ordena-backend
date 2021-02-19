@@ -71,7 +71,7 @@ export class FavoritesService {
     return items;
   }
 
-  async findOne (findOneFavoriteInput: FindOneFavoriteInput): Promise<Favorite> {
+  async findOne (findOneFavoriteInput: FindOneFavoriteInput): Promise<Favorite | null> {
     const { companyUuid, authUid, id } = findOneFavoriteInput;
 
     const item = await this.favoriteRepository.createQueryBuilder('f')

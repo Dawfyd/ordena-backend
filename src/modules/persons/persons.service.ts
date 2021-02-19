@@ -152,9 +152,10 @@ export class PersonsService {
   public async findOne (findOnePersonInput: FindOnePersonInput): Promise<Person | null> {
     const { authUid } = findOnePersonInput;
 
-    // FIXME: Kevin this code doesn't work
     const person = await this.personRepository.findOne({
-      authUid
+      where: {
+        authUid
+      }
     });
 
     return person || null;

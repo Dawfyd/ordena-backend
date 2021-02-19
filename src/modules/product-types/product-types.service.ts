@@ -39,7 +39,7 @@ export class ProductTypesService {
     return productType;
   }
 
-  public async findOne (findOneProductTypeInput: FindOneProductTypeInput): Promise<ProductType> {
+  public async findOne (findOneProductTypeInput: FindOneProductTypeInput): Promise<ProductType | null> {
     const { id } = findOneProductTypeInput;
     const productType = await this.productTypeRepository.findOne(id);
     return productType || null;
