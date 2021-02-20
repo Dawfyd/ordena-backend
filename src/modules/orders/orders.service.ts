@@ -1,12 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { OrderStatusesService } from '../order-statuses/order-statuses.service';
 import { PersonsService } from '../persons/persons.service';
 import { SpotsService } from '../spots/spots.service';
-import { CreateOrderInput } from './dto/create-order.input';
-import { UpdateOrderInput } from './dto/update-order.input';
 import { Order } from './entities/order.entity';
+
+import { CreateOrderInput } from './dto/create-order.input.dto';
+import { UpdateOrderInput } from './dto/update-order.input.dto';
+import { FindAllOrderInput } from './dto/find-all-order.input.dto';
+import { FindOneOrderInput } from './dto/find-one-order.input.dto';
 
 @Injectable()
 export class OrdersService {
@@ -18,61 +22,131 @@ export class OrdersService {
     private readonly orderStatusesService: OrderStatusesService
   ) {}
 
-  async create (createOrderInput: CreateOrderInput): Promise<Order> {
-    const { person_id, spot_id, order_status_id } = createOrderInput;
+  public async create (createOrderInput: CreateOrderInput): Promise<Order> {
+    const { spotId, orderStatusId, companyUuid, authUid } = createOrderInput;
 
-    // TODO: fix this
-    const person = {};
-    const spot = {};
-    const orderStatus = await this.orderStatusesService.findOne(order_status_id);
+    const person = await this.personasService.findOne({ authUid });
+    if (!authUid) {
+      throw new NotFoundException(`can't get the person with id ${authUid}.`);
+    }
 
-    const newOrder = this.OrderRepository.create({ ...createOrderInput, person, spot, orderStatus });
-    return await this.OrderRepository.save(newOrder);
+    const spot = await this.spotsService.findOne({ id: spotId, companyUuid });
+    if (!spot) {
+      throw new NotFoundException(`can't get the spot ${spotId} for the company with uuid ${companyUuid}.`);
+    }
+
+    const orderStatus = await this.orderStatusesService.findOne({ id: orderStatusId });
+    if (!orderStatus) {
+      throw new NotFoundException(`can't get the orderStatus with id ${orderStatusId}.`);
+    }
+
+    const created = this.OrderRepository.create({ ...createOrderInput, person, spot, orderStatus });
+    const saved = await this.OrderRepository.save(created);
+    return saved;
   }
 
-  async findAll (): Promise<Order[]> {
-    return await this.OrderRepository.find();
+  public async findAll (findAllOrderInput: FindAllOrderInput): Promise<Order[]> {
+    const { companyUuid, limit, skip, search = '' } = findAllOrderInput;
+
+    const query = this.OrderRepository.createQueryBuilder('o')
+      .loadAllRelationIds()
+      .innerJoin('o.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid });
+
+    if (search) {
+      query.where('o.price ilike :search', { search: `%${search}%` });
+    }
+
+    const items = await query.limit(limit || undefined)
+      .offset(skip || 0)
+      .orderBy('o.id', 'DESC')
+      .getMany();
+
+    return items;
   }
 
-  async findOne (id: number): Promise<Order> {
-    const order = await this.OrderRepository.findOne(id);
-    if (!order) throw new NotFoundException('No hay una orden con esa ID');
-    return order;
+  public async findOne (findOneOrderInput: FindOneOrderInput): Promise<Order> | null {
+    const { id, companyUuid } = findOneOrderInput;
+
+    const item = await this.OrderRepository.createQueryBuilder('o')
+      .loadAllRelationIds()
+      .innerJoin('o.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('o.id = :id', { id })
+      .getOne();
+
+    return item || null;
   }
 
-  async findOrderStatusOrder (orderStatus: number): Promise<Order[]> {
-    return await this.OrderRepository.find({
-      where: {
-        orderStatus
+  public async update (findOneOrderInput: FindOneOrderInput, updateOrderInput: UpdateOrderInput): Promise<Order> {
+    const { id, companyUuid } = findOneOrderInput;
+    const existing = await this.findOne(findOneOrderInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the order ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const { personId, spotId, orderStatusId, authUid } = updateOrderInput;
+
+    let person;
+    if (personId) {
+      person = await this.personasService.findOne({ authUid });
+
+      if (!person) {
+        throw new NotFoundException(`can't get the person ${authUid}.`);
       }
-    });
-  }
+    }
 
-  async findSpotOrder (spot: number): Promise<Order[]> {
-    return await this.OrderRepository.find({
-      where: {
-        spot
+    let spot;
+    if (spotId) {
+      spot = await this.spotsService.findOne({ id: spotId, companyUuid });
+
+      if (!existing) {
+        throw new NotFoundException(`can't get the spot ${spotId} for the company with uuid ${companyUuid}.`);
       }
+    }
+
+    let orderStatus;
+    if (orderStatusId) {
+      orderStatus = await this.orderStatusesService.findOne({ id: orderStatusId });
+
+      if (!orderStatus) {
+        throw new NotFoundException(`can't get the orderStatus with id ${orderStatusId}.`);
+      }
+    }
+
+    const preloaded = await this.OrderRepository.preload({
+      id: existing.id,
+      ...updateOrderInput,
+      person,
+      spot,
+      orderStatus
     });
+
+    const saved = await this.OrderRepository.save(preloaded);
+    return saved;
   }
 
-  async update (id: number, updateOrderInput: UpdateOrderInput) {
-    const order = await this.findOne(id);
+  public async remove (findOneOrderInput: FindOneOrderInput): Promise<Order> {
+    const { id, companyUuid } = findOneOrderInput;
+    const existing = await this.findOne(findOneOrderInput);
 
-    const { person_id, spot_id, order_status_id } = updateOrderInput;
+    if (!existing) {
+      throw new NotFoundException(`can't get the order ${id} for the company with uuid ${companyUuid}.`);
+    }
 
-    // FIXME:
-    const person = {};
-    // FIXME:
-    const spot = {};
-    const orderStatus = await this.orderStatusesService.findOne(order_status_id);
+    const clone = { ...existing };
 
-    const editedOrder = this.OrderRepository.merge(order, { ...updateOrderInput, person, spot, orderStatus });
-    return await this.OrderRepository.save(editedOrder);
+    await this.OrderRepository.remove(existing);
+
+    return clone;
   }
 
-  async remove (id: number) {
-    const order = await this.findOne(id);
-    return await this.OrderRepository.remove(order);
+  public async getByIds (ids: number[]): Promise<Order[]> {
+    return this.OrderRepository.findByIds(ids);
   }
 }

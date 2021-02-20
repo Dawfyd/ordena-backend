@@ -19,10 +19,9 @@ export class AdditionalsPerRequestsService {
 
   async create (createAdditionalsPerRequestInput: CreateAdditionalsPerRequestInput) {
     const { product_id, request_id } = createAdditionalsPerRequestInput;
-
-    // TODO: fix
+    // FIXME
     const product = {};
-    const request = await this.requestsService.findOne(request_id);
+    const request = await this.requestsService.findOne(request_id as any);
 
     const newAdditionalsPerRequest = this.AdditionalsPerRequestRepository.create({ product, request });
     return await this.AdditionalsPerRequestRepository.save(newAdditionalsPerRequest);
@@ -43,9 +42,9 @@ export class AdditionalsPerRequestsService {
 
     const { product_id, request_id } = updateAdditionalsPerRequestInput;
 
-    // TODO: fix
+    // FIXME
     const product = {};
-    const request = await this.requestsService.findOne(request_id);
+    const request = await this.requestsService.findOne(request_id as any);
 
     const editedadditionalsPerRequest = this.AdditionalsPerRequestRepository.merge(additionalsPerRequest, {
       product,

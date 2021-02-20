@@ -1,43 +1,54 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
+
 import { RequestStatusesService } from './request-statuses.service';
 import { RequestStatus } from './entities/request-status.entity';
-import { CreateRequestStatusInput } from './dto/create-request-status.input';
-import { UpdateRequestStatusInput } from './dto/update-request-status.input';
-import { RequestsService } from '../requests/requests.service';
+import { Request } from '../requests/entities/request.entity';
+
+import { CreateRequestStatusInput } from './dto/create-request-status.input.dto';
+import { UpdateRequestStatusInput } from './dto/update-request-status.input.dto';
+import { FindAllRequestStatusesInput } from './dto/find-all-request-statuses.input.dto';
+import { FindOneRequestStatusInput } from './dto/find-one-request-status.input.dto';
 
 @Resolver(() => RequestStatus)
 export class RequestStatusesResolver {
-  constructor (private readonly requestStatusesService: RequestStatusesService,
-              private readonly requestsService: RequestsService) {}
+  constructor (private readonly service: RequestStatusesService) {}
 
-  @Mutation(() => RequestStatus)
-  createRequestStatus (@Args('createRequestStatusInput') createRequestStatusInput: CreateRequestStatusInput) {
-    return this.requestStatusesService.create(createRequestStatusInput);
+  @Mutation(() => RequestStatus, { name: 'createRequestStatus' })
+  create (
+    @Args('createRequestStatusInput') createRequestStatusInput: CreateRequestStatusInput
+  ): Promise<RequestStatus> {
+    return this.service.create(createRequestStatusInput);
   }
 
   @Query(() => [RequestStatus], { name: 'requestStatuses' })
-  findAll () {
-    return this.requestStatusesService.findAll();
+  findAll (
+    @Args('findAllRequestStatusesInput') findAllRequestStatusesInput: FindAllRequestStatusesInput
+  ): Promise<RequestStatus[]> {
+    return this.service.findAll(findAllRequestStatusesInput);
   }
 
   @Query(() => RequestStatus, { name: 'requestStatus' })
-  findOne (@Args('id', { type: () => Int }) id: number) {
-    return this.requestStatusesService.findOne(id);
+  findOne (@Args('findOneRequestStatusInput') findOneRequestStatusInput: FindOneRequestStatusInput
+  ): Promise<RequestStatus> | null {
+    return this.service.findOne(findOneRequestStatusInput);
+  }
+
+  @Mutation(() => RequestStatus, { name: 'updateRequestStatus' })
+  update (
+    @Args('findOneRequestStatusInput') findOneRequestStatusInput: FindOneRequestStatusInput,
+    @Args('updateRequestStatusInput') updateRequestStatusInput: UpdateRequestStatusInput
+  ): Promise<RequestStatus> {
+    return this.service.update(findOneRequestStatusInput, updateRequestStatusInput);
   }
 
   @Mutation(() => RequestStatus)
-  updateRequestStatus (@Args('updateRequestStatusInput') updateRequestStatusInput: UpdateRequestStatusInput) {
-    return this.requestStatusesService.update(updateRequestStatusInput.id, updateRequestStatusInput);
-  }
-
-  @Mutation(() => RequestStatus)
-  removeRequestStatus (@Args('id', { type: () => Int }) id: number) {
-    return this.requestStatusesService.remove(id);
+  removeRequestStatus (@Args('findOneRequestStatus') findOneRequestStatusInput: FindOneRequestStatusInput
+  ): Promise<RequestStatus> {
+    return this.service.remove(findOneRequestStatusInput);
   }
 
   @ResolveField()
-  async requests (@Parent() RequestStatus: RequestStatus) {
-    const { id } = RequestStatus;
-    return this.requestsService.findRequestStatusRequest(id);
+  async requests (@Parent() RequestStatus: RequestStatus): Promise<Request[]> {
+    return this.service.requests(RequestStatus);
   }
 }

@@ -11,83 +11,68 @@ import { Spot } from '../../spots/entities/spot.entity';
 @Entity('requests')
 @ObjectType()
 export class Request {
-  @PrimaryGeneratedColumn()
-  @Field()
-
   /*
    * ID del producto solicitado
    */
+  @PrimaryGeneratedColumn()
+  @Field()
   id: number;
 
   /*
    * Numero de unidades del solicitado
    */
-  @Column()
+  @Column({ type: 'varchar', length: 10 })
   unit: number;
 
   /*
    * Comentario del solicitado
    */
-  @Column()
-  comentary: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  comentary?: string;
 
   /*
    * Asociacion con producto si es una adicion
    */
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   addition: string;
 
   /*
    * Modificadores del solicitado
    */
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   modifier: string;
 
   /*
-  *fecha cuando se realizo el registro
+  * fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   /*
-  *fecha cuando se actualiza el registro
+  * fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @ManyToOne(
-    () => Product,
-    (product: Product) => product.requests)
-
+  @ManyToOne((type) => Product, (product: Product) => product.requests)
   @JoinColumn({ name: 'product_id' })
-    product: Product;
+  product: Product;
 
-  @ManyToOne(
-    () => Order,
-    (order: Order) => order.requests)
-
+  @ManyToOne((type) => Order, (order: Order) => order.requests)
   @JoinColumn({ name: 'order_id' })
   order: Order;
 
-  @ManyToOne(
-    () => Spot,
-    (spot: Spot) => spot.requests)
-
+  @ManyToOne((type) => Spot, (spot: Spot) => spot.requests)
   @JoinColumn({ name: 'spot_id' })
   spot: Spot;
 
-  @ManyToOne(
-    () => RequestStatus,
-    (requestStatus: RequestStatus) => requestStatus.requests)
-
+  @ManyToOne((type) => RequestStatus, (requestStatus: RequestStatus) => requestStatus.requests)
   @JoinColumn({ name: 'request_status_id' })
   requestStatus: RequestStatus;
 
-  @OneToMany(
-    (type) => AdditionalsPerRequest, (additionalsPerRequests: AdditionalsPerRequest) => additionalsPerRequests.request)
-    additionalsPerRequests?: AdditionalsPerRequest[];
+  @OneToMany((type) => AdditionalsPerRequest, (additionalsPerRequests: AdditionalsPerRequest) => additionalsPerRequests.request)
+  additionalsPerRequests: AdditionalsPerRequest[];
 
-  @OneToMany(
-    (type) => ModifiersPerRequest, (modifiersPerRequests: ModifiersPerRequest) => modifiersPerRequests.request)
-    modifiersPerRequests?: ModifiersPerRequest[];
+  @OneToMany((type) => ModifiersPerRequest, (modifiersPerRequests: ModifiersPerRequest) => modifiersPerRequests.request)
+  modifiersPerRequests: ModifiersPerRequest[];
 }
