@@ -1,8 +1,11 @@
-import { Resolver, Query, Mutation, Args,  ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 
 import { OrdersService } from './orders.service';
 import { Order } from './entities/order.entity';
-import { RequestsService } from '../requests/requests.service';
+import { OrderLoaders } from './orders.loaders';
+import { OrderStatus } from '../order-statuses/entities/order-status.entity';
+import { Spot } from '../spots/entities/spot.entity';
+import { Person } from '../persons/entities/person.entity';
 
 import { CreateOrderInput } from './dto/create-order.input.dto';
 import { UpdateOrderInput } from './dto/update-order.input.dto';
@@ -12,9 +15,9 @@ import { FindOneOrderInput } from './dto/find-one-order.input.dto';
 @Resolver(() => Order)
 export class OrdersResolver {
   constructor (private readonly ordersService: OrdersService,
-              private readonly requestsService: RequestsService) {}
+              private readonly ordersLoaders: OrderLoaders) {}
 
-  @Mutation(() => Order,{name: 'createOrder'})
+  @Mutation(() => Order, { name: 'createOrder' })
   create (@Args('createOrderInput') createOrderInput: CreateOrderInput): Promise<Order> {
     return this.ordersService.create(createOrderInput);
   }
@@ -29,9 +32,9 @@ export class OrdersResolver {
     return this.ordersService.findOne(findOneOrderInput);
   }
 
-  @Mutation(() => Order, {name: 'updateOrder'})
+  @Mutation(() => Order, { name: 'updateOrder' })
   update (
-    @Args('findOneOrderInput')  findOneOrderInput: FindOneOrderInput,
+    @Args('findOneOrderInput') findOneOrderInput: FindOneOrderInput,
     @Args('updateOrderInput') updateOrderInput: UpdateOrderInput): Promise<Order> {
     return this.ordersService.update(
       findOneOrderInput,
@@ -39,14 +42,38 @@ export class OrdersResolver {
     );
   }
 
-  @Mutation(() => Order, {name: 'removeOrder'})
+  @Mutation(() => Order, { name: 'removeOrder' })
   removeOrder (@Args('findOneOrderInput') findOneOrderInput: FindOneOrderInput): Promise<Order> {
     return this.ordersService.remove(findOneOrderInput);
   }
 
-  @ResolveField()
-  async requests (@Parent() Order: Order) {
-    const { id } = Order;
-    return this.requestsService.findOrderRequest(id);
+  @ResolveField(() => OrderStatus, { name: 'orderStatus' })
+  async orderStatus (@Parent() order: Order): Promise<OrderStatus> {
+    const orderStatusValue: any = order.orderStatus;
+
+    let orderStatusId = orderStatusValue;
+
+    if (typeof orderStatusValue !== 'number') orderStatusId = orderStatusValue.id;
+    return this.ordersLoaders.batchOrderStatus.load(orderStatusId);
+  }
+
+  @ResolveField(() => Spot, { name: 'spot' })
+  async spot (@Parent() order: Order): Promise<Spot> {
+    const spotValue: any = order.spot;
+
+    let spotId = spotValue;
+
+    if (typeof spotValue !== 'number') spotId = spotValue.id;
+    return this.ordersLoaders.batchSpot.load(spotId);
+  }
+
+  @ResolveField(() => Person, { name: 'person' })
+  async person (@Parent() order: Order): Promise<Person> {
+    const personValue: any = order.person;
+
+    let persontId = personValue;
+
+    if (typeof personValue !== 'number') persontId = personValue.id;
+    return this.ordersLoaders.batchPerson.load(persontId);
   }
 }

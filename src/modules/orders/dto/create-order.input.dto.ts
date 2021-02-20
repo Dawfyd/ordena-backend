@@ -1,5 +1,5 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsBoolean, IsNumber } from 'class-validator';
+import { Field, Float, InputType, Int } from '@nestjs/graphql';
+import { IsNumber, IsString } from 'class-validator';
 
 @InputType()
 export class CreateOrderInput {
@@ -7,34 +7,41 @@ export class CreateOrderInput {
     *Valor de la orden
     */
     @IsNumber()
-    @Field(() =>Int)
+    @Field(() => Float)
     price: number;
 
     /*
-    *Estado de la orden
+    *companyUuid de la compañia
     */
-    @IsBoolean()
-    @Field(() => Boolean)
-    state: boolean;
+    @IsString()
+    @Field(() => String)
+    readonly companyUuid: string;
+
+    /*
+    *authUid de la persona
+    */
+    @IsString()
+    @Field(() => String)
+    readonly authUid: string;
 
     /*
     *ID de la persona
     */
     @IsNumber()
-    @Field(() =>Int)
-    person_id: number;
+    @Field(() => Int)
+    personId: number;
 
     /*
     *ID de la mesa
     */
     @IsNumber()
-    @Field(() =>Int)
-    spot_id: number;
+    @Field(() => Int)
+    spotId: number;
 
     /*
     *ID del estado del pedido
     */
     @IsNumber()
-    @Field(() =>Int)
-    order_status_id: number;
+    @Field(() => Int)
+    orderStatusId: number;
 }

@@ -17,4 +17,8 @@ export class FindAllRequestsInput {
     @IsString()
     @Field(() => String, { nullable: true })
     readonly search?: string;
+
+    @IsString()
+    @Field(() => String)
+    readonly companyUuid: string;
 }

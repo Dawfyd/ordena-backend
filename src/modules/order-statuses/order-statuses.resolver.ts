@@ -1,26 +1,24 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 
 import { OrderStatusesService } from './order-statuses.service';
 import { OrderStatus } from './entities/order-status.entity';
-import { OrdersService } from '../orders/orders.service';
+import { Order } from '../orders/entities/order.entity';
 
 import { CreateOrderStatusInput } from './dto/create-order-status.input.dto';
 import { UpdateOrderStatusInput } from './dto/update-order-status.input.dto';
 import { FindOneOrderStatusInput } from './dto/find-one-order-status.input.dto';
 import { FindAllOrderStatusesInput } from './dto/find-all-order-statuses.input.dto';
-import { Order } from '../orders/entities/order.entity';
-
 
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 @Resolver(() => OrderStatus)
 export class OrderStatusesResolver {
   constructor (private readonly service: OrderStatusesService) {}
 
-  @Mutation(() => OrderStatus, {name: 'createOrderStatus'})
-  create(
+  @Mutation(() => OrderStatus, { name: 'createOrderStatus' })
+  create (
     @Args('createOrderStatusInput') createOrderStatusInput: CreateOrderStatusInput
-    ): Promise<OrderStatus> {
+  ): Promise<OrderStatus> {
     return this.service.create(createOrderStatusInput);
   }
 
@@ -34,15 +32,15 @@ export class OrderStatusesResolver {
   @Query(() => OrderStatus, { name: 'orderStatus' })
   findOne (
     @Args('findOneOrderstatusInput') FindOneOrderStatusInput: FindOneOrderStatusInput
-    ): Promise<OrderStatus> {
+  ): Promise<OrderStatus> {
     return this.service.findOne(FindOneOrderStatusInput);
   }
 
-  @Mutation(() => OrderStatus, { name: 'updateOrderStatus'})
+  @Mutation(() => OrderStatus, { name: 'updateOrderStatus' })
   update (
     @Args('findOneOrderStatusInput') findOneOrderStatusInput: FindOneOrderStatusInput,
     @Args('updateOrderStatusInput') updateOrderStatusInput: UpdateOrderStatusInput
-    ): Promise<OrderStatus> {
+  ): Promise<OrderStatus> {
     return this.service.update(findOneOrderStatusInput, updateOrderStatusInput);
   }
 
@@ -51,10 +49,8 @@ export class OrderStatusesResolver {
     return this.service.remove(findOneOrderStatusInput);
   }
 
-  /*@ResolveField(() => [Order], {name: 'orders'})
-  async orders (@Parent() OrderStatus: OrderStatus) {
-    return this.ordersService.orders(OrderStatus);
-  }*/
-
-
+  @ResolveField(() => [Order], { name: 'orders' })
+  async orders (@Parent() OrderStatus: OrderStatus): Promise<Order[]> {
+    return this.service.orders(OrderStatus);
+  }
 }

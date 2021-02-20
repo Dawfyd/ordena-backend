@@ -1,5 +1,5 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class FindAllOrderInput {
@@ -17,4 +17,8 @@ export class FindAllOrderInput {
     @IsString()
     @Field(() => String, { nullable: true })
     readonly search?: string;
+
+    @IsString()
+    @Field(() => String)
+    readonly companyUuid: string;
 }

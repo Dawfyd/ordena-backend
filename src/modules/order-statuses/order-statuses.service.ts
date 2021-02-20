@@ -8,44 +8,44 @@ import { CreateOrderStatusInput } from './dto/create-order-status.input.dto';
 import { FindAllOrderStatusesInput } from './dto/find-all-order-statuses.input.dto';
 import { FindOneOrderStatusInput } from './dto/find-one-order-status.input.dto';
 import { UpdateOrderStatusInput } from './dto/update-order-status.input.dto';
-import { Order } from '../orders/entities/order.entity';
+
 @Injectable()
 export class OrderStatusesService {
   constructor (
     @InjectRepository(OrderStatus)
-    private readonly OrderStatusRepository: Repository<OrderStatus>
+    private readonly orderStatusRepository: Repository<OrderStatus>
   ) {}
 
   public async create (createOrderStatusInput: CreateOrderStatusInput): Promise<OrderStatus> {
-    const newOrderStatus = this.OrderStatusRepository.create(createOrderStatusInput);
-    const saved = await this.OrderStatusRepository.save(newOrderStatus);
+    const newOrderStatus = this.orderStatusRepository.create(createOrderStatusInput);
+    const saved = await this.orderStatusRepository.save(newOrderStatus);
     return saved;
   }
 
   public async findAll (findAllOrderStatusesInput: FindAllOrderStatusesInput): Promise<OrderStatus[]> {
     const { limit, skip, search = '' } = findAllOrderStatusesInput;
 
-    const query = this.OrderStatusRepository.createQueryBuilder('os')
+    const query = this.orderStatusRepository.createQueryBuilder('os');
 
-    if(search){
+    if (search) {
       query.where('os.name ilike :search', { search: `%${search}%` });
     }
 
     query.limit(limit || undefined)
-    .offset(skip || 0)
-    .orderBy('os.id', 'DESC');
+      .offset(skip || 0)
+      .orderBy('os.id', 'DESC');
 
-    const orderStatus  = await query.getMany();
+    const orderStatus = await query.getMany();
 
     return orderStatus;
   }
 
-  public async findOne (findOneOrderStatusInput: FindOneOrderStatusInput): Promise<OrderStatus> | null {
+  public async findOne (findOneOrderStatusInput: FindOneOrderStatusInput): Promise<OrderStatus | null> {
     const { id } = findOneOrderStatusInput;
 
-    const orderStatus = this.OrderStatusRepository.createQueryBuilder('os')
-    .where('os.id = :id', { id })
-    .getOne();
+    const orderStatus = this.orderStatusRepository.createQueryBuilder('os')
+      .where('os.id = :id', { id })
+      .getOne();
 
     return orderStatus || null;
   }
@@ -59,16 +59,16 @@ export class OrderStatusesService {
       throw new NotFoundException(`can't get the orderStatus with id ${id}.`);
     }
 
-    const preloaded =  await this.OrderStatusRepository.preload({
+    const preloaded = await this.orderStatusRepository.preload({
       id: orderStatus.id,
       ...updateOrderStatusInput
-    })
+    });
 
-    const saved = await this.OrderStatusRepository.save(preloaded);
+    const saved = await this.orderStatusRepository.save(preloaded);
     return saved;
   }
 
-  public async remove (findOneOrderStatusInput: FindOneOrderStatusInput) {
+  public async remove (findOneOrderStatusInput: FindOneOrderStatusInput): Promise<OrderStatus> {
     const { id } = findOneOrderStatusInput;
     const existing = await this.findOne({ id });
 
@@ -78,16 +78,27 @@ export class OrderStatusesService {
 
     const clone = { ...existing };
 
-    await this.OrderStatusRepository.remove(existing);
+    await this.orderStatusRepository.remove(existing);
 
     return clone;
   }
 
-  public async getByIds(ids: number[]): Promise<OrderStatus[]> {
-    return await this.OrderStatusRepository.findByIds(ids)
+  public async getByIds (ids: number[]): Promise<OrderStatus[]> {
+    return await this.orderStatusRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
   }
 
-  public async orders(order: Order): Promise<Order[]> {
-    return
+  public async orders (orderStatus: OrderStatus): Promise<any[]> {
+    const { id } = orderStatus;
+
+    const master = await this.orderStatusRepository.createQueryBuilder('os')
+      .leftJoinAndSelect('os.orders', 'o')
+      .where('os.id = :id', { id })
+      .getOne();
+
+    const items = master ? master.orders : [];
+
+    return items.map(item => ({ ...item, orderStatus: master.id }));
   }
 }

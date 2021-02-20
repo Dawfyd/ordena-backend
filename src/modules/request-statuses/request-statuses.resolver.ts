@@ -1,7 +1,8 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 
 import { RequestStatusesService } from './request-statuses.service';
 import { RequestStatus } from './entities/request-status.entity';
+import { Request } from '../requests/entities/request.entity';
 
 import { CreateRequestStatusInput } from './dto/create-request-status.input.dto';
 import { UpdateRequestStatusInput } from './dto/update-request-status.input.dto';
@@ -12,10 +13,10 @@ import { FindOneRequestStatusInput } from './dto/find-one-request-status.input.d
 export class RequestStatusesResolver {
   constructor (private readonly service: RequestStatusesService) {}
 
-  @Mutation(() => RequestStatus, {name: 'createRequestStatus'})
+  @Mutation(() => RequestStatus, { name: 'createRequestStatus' })
   create (
     @Args('createRequestStatusInput') createRequestStatusInput: CreateRequestStatusInput
-    ): Promise<RequestStatus> {
+  ): Promise<RequestStatus> {
     return this.service.create(createRequestStatusInput);
   }
 
@@ -32,11 +33,11 @@ export class RequestStatusesResolver {
     return this.service.findOne(findOneRequestStatusInput);
   }
 
-  @Mutation(() => RequestStatus, {name: 'updateRequestStatus'})
+  @Mutation(() => RequestStatus, { name: 'updateRequestStatus' })
   update (
     @Args('findOneRequestStatusInput') findOneRequestStatusInput: FindOneRequestStatusInput,
     @Args('updateRequestStatusInput') updateRequestStatusInput: UpdateRequestStatusInput
-    ): Promise<RequestStatus> {
+  ): Promise<RequestStatus> {
     return this.service.update(findOneRequestStatusInput, updateRequestStatusInput);
   }
 
@@ -47,7 +48,7 @@ export class RequestStatusesResolver {
   }
 
   @ResolveField()
-  async requests (@Parent() RequestStatus: RequestStatus) {
+  async requests (@Parent() RequestStatus: RequestStatus): Promise<Request[]> {
     return this.service.requests(RequestStatus);
   }
 }

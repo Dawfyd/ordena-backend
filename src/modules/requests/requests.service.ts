@@ -8,11 +8,9 @@ import { ProductsService } from '../products/products.service';
 import { RequestStatusesService } from '../request-statuses/request-statuses.service';
 import { SpotsService } from '../spots/spots.service';
 
-
 import { CreateRequestInput } from './dto/create-request.input.dto';
 import { UpdateRequestInput } from './dto/update-request.input.dto';
 import { FindAllRequestsInput } from './dto/find-all-request.input.dto';
-import { FindOneRequestStatusInput } from '../request-statuses/dto/find-one-request-status.input.dto';
 import { FindOneRequestInput } from './dto/find-one-request.input.dto';
 
 @Injectable()
@@ -26,30 +24,45 @@ export class RequestsService {
     private readonly requestStatusesService: RequestStatusesService
   ) {}
 
-  async create (createRequestInput: CreateRequestInput): Promise<Request> {
-    const { product_id, order_id, spot_id, request_status_id } = createRequestInput;
+  public async create (createRequestInput: CreateRequestInput): Promise<Request> {
+    const { productId, orderId, spotId, requestStatusId, companyUuid } = createRequestInput;
 
-    const product = await this.productsService.findOne(product_id);
-    const order = await this.ordersService.findOne({ id: order_id });
-    const spot = await this.spotsService.findOne(spot_id);
-    const requestStatus = await this.requestStatusesService.findOne(request_status_id as any);
+    const product = await this.productsService.findOne({ id: productId, companyUuid });
+    if (!product) {
+      throw new NotFoundException(`can't get the product ${productId} for the company with uuid ${companyUuid}.`);
+    }
 
+    const order = await this.ordersService.findOne({ id: orderId, companyUuid });
+    if (!order) {
+      throw new NotFoundException(`can't get the order ${orderId} for the company with uuid ${companyUuid}.`);
+    }
+
+    const spot = await this.spotsService.findOne({ id: spotId, companyUuid });
+    if (!spot) {
+      throw new NotFoundException(`can't get the spot ${spotId} for the company with uuid ${companyUuid}.`);
+    }
+
+    const requestStatus = await this.requestStatusesService.findOne({ id: requestStatusId });
     if (!requestStatus) {
-      throw new NotFoundException(`can't get the requestStatus with id ${request_status_id}.`);
+      throw new NotFoundException(`can't get the requestStatus with id ${requestStatusId}.`);
     }
 
     const created = this.RequestRepository.create(
       { ...createRequestInput, product, order, spot, requestStatus }
     );
-    const saved = await this.RequestRepository.save(created)
+    const saved = await this.RequestRepository.save(created);
     return saved;
   }
 
-  async findAll (findAllRequestsInput: FindAllRequestsInput): Promise<Request[]> {
-    const { limit, skip, search= ''} = findAllRequestsInput;
+  public async findAll (findAllRequestsInput: FindAllRequestsInput): Promise<Request[]> {
+    const { companyUuid, limit, skip, search = '' } = findAllRequestsInput;
 
     const query = this.RequestRepository.createQueryBuilder('r')
-    .loadAllRelationIds();
+      .loadAllRelationIds()
+      .innerJoin('r.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid });
 
     if (search) {
       query.where('r.addition ilike :search', { search: `%${search}%` })
@@ -64,77 +77,85 @@ export class RequestsService {
     return items;
   }
 
-  async findOne (findOneRequestInput: FindOneRequestStatusInput): Promise<Request | null> {
-    const { id } = findOneRequestInput;
+  public async findOne (findOneRequestInput: FindOneRequestInput): Promise<Request | null> {
+    const { id, companyUuid } = findOneRequestInput;
 
     const item = this.RequestRepository.createQueryBuilder('r')
-    .loadAllRelationIds()
-      .innerJoin('r.requestStatus', 'rs')
-      .where('rq.id = :id', { id })
+      .loadAllRelationIds()
+      .innerJoin('r.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
       .andWhere('r.id = :id', { id })
       .getOne();
 
-      return item || null;
+    return item || null;
   }
 
-  async findOrderRequest (order: number): Promise<Request[]> {
-    return await this.RequestRepository.find({
-      where: {
-        order
-      }
-    });
-  }
-
-  async findSpotRequest (spot: number): Promise<Request[]> {
-    return await this.RequestRepository.find({
-      where: {
-        spot
-      }
-    });
-  }
-
-  async findRequestStatusRequest (requestStatus: number): Promise<Request[]> {
-    return await this.RequestRepository.find({
-      where: {
-        requestStatus
-      }
-    });
-  }
-
-  async update (findOneRequestInput: FindOneRequestInput, updateRequestInput: UpdateRequestInput): Promise<Request> {
+  public async update (findOneRequestInput: FindOneRequestInput, updateRequestInput: UpdateRequestInput): Promise<Request> {
+    const { id, companyUuid } = findOneRequestInput;
     const existing = await this.findOne(findOneRequestInput);
-
-    const { id } = findOneRequestInput;
-    const { product_id, order_id, spot_id, request_status_id } = updateRequestInput;
-
-    const product = await this.productsService.findOne(product_id);
-    const order = await this.ordersService.findOne({id: order_id});
-    const spot = await this.spotsService.findOne(spot_id);
-    const requestStatus = await this.requestStatusesService.findOne(request_status_id as any);
 
     if (!existing) {
       throw new NotFoundException(`can't get the request with id ${id}.`);
     }
 
-    if (!requestStatus) {
-      throw new NotFoundException(`can't get the requestStatuses with id ${request_status_id}.`);
+    const { productId, orderId, spotId, requestStatusId } = updateRequestInput;
+
+    let product;
+    if (productId) {
+      product = await this.productsService.findOne({ id: productId, companyUuid });
+
+      if (!product) {
+        throw new NotFoundException(`can't get the product ${productId} for the company with uuid ${companyUuid}.`);
+      }
+    }
+
+    let order;
+    if (orderId) {
+      order = await this.ordersService.findOne({ id: orderId, companyUuid });
+
+      if (!order) {
+        throw new NotFoundException(`can't get the spot ${orderId} for the company with uuid ${companyUuid}.`);
+      }
+    }
+
+    let spot;
+    if (spotId) {
+      spot = await this.spotsService.findOne({ id: spotId, companyUuid });
+
+      if (!spot) {
+        throw new NotFoundException(`can't get the spot ${spotId} for the company with uuid ${companyUuid}.`);
+      }
+    }
+
+    let requestStatus;
+    if (requestStatusId) {
+      requestStatus = await this.requestStatusesService.findOne({ id: requestStatusId });
+
+      if (!requestStatus) {
+        throw new NotFoundException(`can't get the requestStatus with id ${requestStatusId}.`);
+      }
     }
 
     const preloaded = await this.RequestRepository.preload({
       id: existing.id,
-      ...updateRequestInput, product, order, spot
-    })
+      ...updateRequestInput,
+      product,
+      order,
+      spot
+    });
 
-    const saved = await this.RequestRepository.save(preloaded)
+    const saved = await this.RequestRepository.save(preloaded);
     return saved;
   }
 
-  async remove (findOneRequestInput: FindOneRequestInput) {
-    const { id } = findOneRequestInput;
+  public async remove (findOneRequestInput: FindOneRequestInput): Promise<Request> {
+    const { id, companyUuid } = findOneRequestInput;
     const existing = await this.findOne(findOneRequestInput);
 
     if (!existing) {
-      throw new NotFoundException(`can't get the request with ${id} .`);
+      throw new NotFoundException(`can't get the request with ${id} for the company with uuid ${companyUuid}.`);
     }
 
     const clone = { ...existing };
@@ -142,5 +163,22 @@ export class RequestsService {
     await this.RequestRepository.remove(existing);
 
     return clone;
+  }
+
+  public async getByIds (ids: number[]): Promise<Request[]> {
+    return this.RequestRepository.findByIds(ids);
+  }
+
+  public async modifiersPerRequests (request: Request): Promise<any[]> {
+    const { id } = request;
+
+    const master = await this.RequestRepository.createQueryBuilder('r')
+      .leftJoinAndSelect('r.modifiersPerRequests', 'mpr')
+      .where('mpr.id = :id', { id })
+      .getOne();
+
+    const items = master ? master.modifiersPerRequests : [];
+
+    return items.map(item => ({ ...item, modifiersPerRequests: master.id }));
   }
 }

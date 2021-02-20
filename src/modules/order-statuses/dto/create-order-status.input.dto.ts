@@ -6,7 +6,7 @@ export class CreateOrderStatusInput {
   /*
   *Nombre del Estado de pedido
   */
-  @IsString( )
+  @IsString()
   @Field(() => String)
   readonly name: string;
 }

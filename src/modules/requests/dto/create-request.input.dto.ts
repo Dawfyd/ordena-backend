@@ -1,33 +1,41 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsNumberString, IsString } from 'class-validator';
 
 @InputType()
 export class CreateRequestInput {
   /*
    * Numero de unidades del solicitado
    */
-  @IsNumber()
-  @Field(() => Int)
+  @IsNumberString()
+  @Field(() => String)
   unit: number;
+
+  /*
+   *  company's uuid
+   */
+  @IsString()
+  @Field(() => String)
+  readonly companyUuid: string;
 
   /*
    * Comentario del solicitado
    */
   @IsString()
-  @Field(() => Int)
+  @Field(() => String)
   comentary?: string;
+
   /*
    * Asociacion con producto si es una adicion
    */
   @IsString()
-  @Field(() => Int)
+  @Field(() => String)
   addition: string;
 
   /*
    * Modificadores del solicitado
    */
   @IsString()
-  @Field(() => Int)
+  @Field(() => String)
   modifier: string;
 
   /*
@@ -35,26 +43,26 @@ export class CreateRequestInput {
   */
   @IsNumber()
   @Field(() => Int)
-  product_id: number;
+  productId: number;
 
   /*
   *ID del pedido al que pertenece
   */
   @IsNumber()
   @Field(() => Int)
-  order_id: number;
+  orderId: number;
 
   /*
   *ID del mesa al que pertenence
   */
   @IsNumber()
   @Field(() => Int)
-  spot_id: number;
+  spotId: number;
 
   /*
   *ID del  estado de la solicitud
   */
   @IsNumber()
   @Field(() => Int)
-  request_status_id: number
+  requestStatusId: number
 }

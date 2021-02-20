@@ -19,14 +19,8 @@ export class Order {
   /*
    * Valor de la orden
    */
-  @Column()
+  @Column({type: 'decimal', precision: 12, scale: 2})
   price: number;
-
-  /*
-   *  Estado de la orden
-   */
-  @Column()
-  state: boolean;
 
   /*
   *fecha cuando se realizo el registro
@@ -40,31 +34,18 @@ export class Order {
   @UpdateDateColumn({name: 'updated_at'})
   updatedAt: Date;
 
-  @ManyToOne(
-    () => Person,
-    (person: Person) => person.orders, {
-      eager: true,
-      cascade: true
-    })
-
+  @ManyToOne((type) => Person,(person: Person) => person.orders)
   @JoinColumn({ name: 'person_id' })
-    person: Person;
+  person: Person;
 
-  @ManyToOne(
-    (type) => Spot, (spot: Spot) => spot.orders, {
-      eager: true,
-      cascade: true
-    })
+  @ManyToOne((type) => Spot, (spot: Spot) => spot.orders)
   @JoinColumn({ name: 'spot_id' })
   spot: Spot;
 
-  @ManyToOne(
-    (type) => OrderStatus, (orderStatus: OrderStatus) => orderStatus.orders)
-
+  @ManyToOne((type) => OrderStatus, (orderStatus: OrderStatus) => orderStatus.orders)
   @JoinColumn({ name: 'order_status_id' })
   orderStatus: OrderStatus;
 
-  @OneToMany(
-    (type) => Request, (requests: Request) => requests.order)
-    requests?: Request[];
+  @OneToMany((type) => Request, (requests: Request) => requests.order)
+  requests?: Request[];
 }

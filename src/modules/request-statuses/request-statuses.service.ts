@@ -8,8 +8,6 @@ import { CreateRequestStatusInput } from './dto/create-request-status.input.dto'
 import { UpdateRequestStatusInput } from './dto/update-request-status.input.dto';
 import { FindAllRequestStatusesInput } from './dto/find-all-request-statuses.input.dto';
 import { FindOneRequestStatusInput } from './dto/find-one-request-status.input.dto';
-import { Request } from '../requests/entities/request.entity';
-
 
 @Injectable()
 export class RequestStatusesService {
@@ -25,29 +23,29 @@ export class RequestStatusesService {
   }
 
   public async findAll (findAllRequestStatusesInput: FindAllRequestStatusesInput): Promise<RequestStatus[]> {
-    const { limit, skip, search = ''} = findAllRequestStatusesInput;
+    const { limit, skip, search = '' } = findAllRequestStatusesInput;
 
     const query = this.RequestStatusRepository.createQueryBuilder('rs');
 
-    if(search){
+    if (search) {
       query.where('rs.name ilike :search', { search: `%${search}%` });
     }
 
     query.limit(limit || undefined)
       .offset(skip || 0)
-      .orderBy('c.id', 'DESC');
+      .orderBy('rs.id', 'DESC');
 
     const requestStatus = await query.getMany();
 
     return requestStatus;
   }
 
-  public async findOne (findOneRequestStatus: FindOneRequestStatusInput): Promise<RequestStatus> | null {
-    const {id} = findOneRequestStatus;
+  public async findOne (findOneRequestStatus: FindOneRequestStatusInput): Promise<RequestStatus | null> {
+    const { id } = findOneRequestStatus;
 
     const requestStatus = await this.RequestStatusRepository.createQueryBuilder('rs')
-    .where('rs.id = :id',{id})
-    .getOne();
+      .where('rs.id = :id', { id })
+      .getOne();
 
     return requestStatus || null;
   }
@@ -63,17 +61,17 @@ export class RequestStatusesService {
     const preloaded = await this.RequestStatusRepository.preload({
       id: requestStatus.id,
       ...updateRequestStatusInput
-    })
+    });
 
     const saved = await this.RequestStatusRepository.save(preloaded);
     return saved;
   }
 
-  public async remove (findOneRequestStatusInput: FindOneRequestStatusInput) {
+  public async remove (findOneRequestStatusInput: FindOneRequestStatusInput): Promise<RequestStatus> {
     const { id } = findOneRequestStatusInput;
-    const existing = await this.findOne({id});
+    const existing = await this.findOne({ id });
 
-    if(!existing){
+    if (!existing) {
       throw new NotFoundException(`can't get the requestStatu with id ${id}.`);
     }
 
@@ -84,18 +82,22 @@ export class RequestStatusesService {
     return clone;
   }
 
-  public async getByIds(ids: number[]): Promise<RequestStatus[]> {
-    return this.RequestStatusRepository.findByIds(ids);
+  public async getByIds (ids: number[]): Promise<RequestStatus[]> {
+    return this.RequestStatusRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
   }
 
-  public async requests(requestStatus: RequestStatus): Promise<Request[]> {
+  public async requests (requestStatus: RequestStatus): Promise<any[]> {
     const { id } = requestStatus;
 
     const item = await this.RequestStatusRepository.createQueryBuilder('rs')
-    .leftJoinAndSelect('rs.request', 'r')
-    .where('rs.id = :id', {id})
-    .getOne();
+      .leftJoinAndSelect('rs.requests', 'r')
+      .where('rs.id = :id', { id })
+      .getOne();
 
-    return  item ? item.requests : [];
+    const items = item ? item.requests : [];
+
+    return items.map(item => ({ ...item, requestStatus: item.id }));
   }
 }
