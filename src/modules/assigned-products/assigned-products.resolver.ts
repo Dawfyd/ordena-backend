@@ -29,7 +29,7 @@ export class AssignedProductsResolver {
     return this.service.findAll(findAllAssignedProductInput);
   }
 
-  @Query(() => AssignedProduct, { name: 'assignedProduct' })
+  @Query(() => AssignedProduct, { name: 'assignedProduct', nullable: true })
   findOne (@Args('findOneAssignedProductInput') findOneAssignedProductInput: FindOneAssignedProductInput): Promise<AssignedProduct> {
     return this.service.findOne(findOneAssignedProductInput);
   }

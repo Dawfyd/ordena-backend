@@ -41,7 +41,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_MENUS".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode(productTypeMenu.value);
+    const productType = await this.ProductTypesService.findOneCode({ code: productTypeMenu.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
@@ -74,7 +74,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_CATEGORIES".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode(productTypeCategory.value);
+    const productType = await this.ProductTypesService.findOneCode({ code: productTypeCategory.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
@@ -107,7 +107,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_PURE".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode(productTypePure.value);
+    const productType = await this.ProductTypesService.findOneCode({ code: productTypePure.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
@@ -140,7 +140,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_PRODUCTS".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode(productTypeProduct.value);
+    const productType = await this.ProductTypesService.findOneCode({ code: productTypeProduct.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
