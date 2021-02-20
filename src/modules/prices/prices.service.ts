@@ -9,7 +9,7 @@ import { VenuesService } from '../venues/venues.service';
 
 import { CreatePriceInput } from './dto/create-price-input.dto';
 import { UpdatePriceInput } from './dto/update-price-input.dto';
-import { FindAllPricesInput } from './dto/find-all-proces-input.dto';
+import { FindAllPricesInput } from './dto/find-all-prices-input.dto';
 import { FindOnePriceInput } from './dto/find-one-price-input.dto';
 
 @Injectable()

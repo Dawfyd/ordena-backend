@@ -9,7 +9,7 @@ import { PricesLoaders } from './prices.loaders';
 
 import { CreatePriceInput } from './dto/create-price-input.dto';
 import { UpdatePriceInput } from './dto/update-price-input.dto';
-import { FindAllPricesInput } from './dto/find-all-proces-input.dto';
+import { FindAllPricesInput } from './dto/find-all-prices-input.dto';
 import { FindOnePriceInput } from './dto/find-one-price-input.dto';
 @Resolver(() => Price)
 export class PricesResolver {
@@ -41,8 +41,8 @@ export class PricesResolver {
     return this.pricesService.update(findOnePriceInput, updatePriceInput);
   }
 
-  @Mutation(() => Price)
-  removePrice (@Args('findOnePriceInput') findOnePriceInput: FindOnePriceInput): Promise<Price> {
+  @Mutation(() => Price, { name: 'removePrice' })
+  remove (@Args('findOnePriceInput') findOnePriceInput: FindOnePriceInput): Promise<Price> {
     return this.pricesService.remove(findOnePriceInput);
   }
 

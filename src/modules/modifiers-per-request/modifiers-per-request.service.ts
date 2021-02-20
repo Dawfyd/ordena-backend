@@ -20,7 +20,8 @@ export class ModifiersPerRequestService {
   async create (createModifiersPerRequestInput: CreateModifiersPerRequestInput) {
     const { request_id, modifier_id } = createModifiersPerRequestInput;
     const request = await this.requestService.findOne(request_id as any);
-    const modifier = await this.modifiersService.findOne(modifier_id);
+    // FIXME:
+    const modifier = await this.modifiersService.findOne({ companyUuid: '', id: 0 });
 
     const newModifiersPerRequest = this.ModifiersPerRequestRepository.create({ request, modifier });
 
@@ -57,7 +58,8 @@ export class ModifiersPerRequestService {
     const modifiersPerRequest = await this.findOne(id);
     const { request_id, modifier_id } = updateModifiersPerRequestInput;
     const request = await this.requestService.findOne(request_id as any);
-    const modifier = await this.modifiersService.findOne(modifier_id);
+    // FIXME
+    const modifier = await this.modifiersService.findOne({ companyUuid: '', id: 0 });
 
     const editedModifiersPerRequest = this.ModifiersPerRequestRepository.merge(modifiersPerRequest, { request, modifier });
     return await this.ModifiersPerRequestRepository.save(editedModifiersPerRequest);

@@ -1,16 +1,20 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ModifiersService } from './modifiers.service';
-import { ModifiersResolver } from './modifiers.resolver';
+
 import { Modifier } from './entities/modifier.entity';
+
+import { ModifiersService } from './modifiers.service';
+import { ModifiersLoaders } from './modifiers.loaders';
+import { ModifiersResolver } from './modifiers.resolver';
+
 import { ProductsModule } from '../products/products.module';
-import { ModifiersPerRequestModule } from '../modifiers-per-request/modifiers-per-request.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Modifier]),
-    forwardRef(() => ModifiersPerRequestModule),
-    forwardRef(() => ProductsModule)],
-  providers: [ModifiersResolver, ModifiersService],
+  imports: [
+    TypeOrmModule.forFeature([Modifier]),
+    ProductsModule
+  ],
+  providers: [ModifiersService, ModifiersLoaders, ModifiersResolver],
   exports: [ModifiersService]
 })
 export class ModifiersModule {}
