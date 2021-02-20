@@ -12,6 +12,7 @@ import { CreateProductInput } from './dto/create-product.input.dto';
 import { FindAllProductInput } from './dto/find-all-product-input.dto';
 import { FindOneProductInput } from './dto/find-one-product-input.dto';
 import { UpdateProductInput } from './dto/update-product.input.dto';
+import { GetByIdInput } from './dto/get-by-id-input.dto';
 
 @Injectable()
 export class ProductsService {
@@ -40,7 +41,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_MENUS".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode(productTypeMenu.value);
+    const productType = await this.ProductTypesService.findOneCode({ code: productTypeMenu.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
@@ -73,7 +74,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_CATEGORIES".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode(productTypeCategory.value);
+    const productType = await this.ProductTypesService.findOneCode({ code: productTypeCategory.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
@@ -106,7 +107,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_PURE".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode(productTypePure.value);
+    const productType = await this.ProductTypesService.findOneCode({ code: productTypePure.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
@@ -139,7 +140,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_PRODUCTS".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode(productTypeProduct.value);
+    const productType = await this.ProductTypesService.findOneCode({ code: productTypeProduct.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
@@ -230,9 +231,12 @@ export class ProductsService {
     return clone;
   }
 
-  public async getProduct (id: number): Promise<Product> {
-    const product = await this.productRepository.findOne(id);
-    return product || null;
+  public async getById (getByIdInput: GetByIdInput): Promise<Product | null> {
+    const { id } = getByIdInput;
+
+    const existing = await this.productRepository.findOne(id);
+
+    return existing || null;
   }
 
   /* CRUD RELATED OPERATIONS */

@@ -31,7 +31,7 @@ export class ProductsInVenueService {
       throw new NotFoundException(`can't get the venue ${venueId} for the company ${companyUuid}.`);
     }
 
-    const product = await this.productsService.getProduct(productId);
+    const product = await this.productsService.getById({ id: productId });
 
     if (!product) {
       throw new NotFoundException(`can't get the product ${productId}.`);

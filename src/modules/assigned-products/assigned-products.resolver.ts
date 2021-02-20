@@ -1,35 +1,71 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
+
 import { AssignedProductsService } from './assigned-products.service';
 import { AssignedProduct } from './entities/assigned-product.entity';
-import { CreateAssignedProductInput } from './dto/create-assigned-product.input';
-import { UpdateAssignedProductInput } from './dto/update-assigned-product.input';
+import { Product } from '../products/entities/product.entity';
+import { AssignedProductsLoaders } from './assigned-products.loaders';
 
+import { CreateAssignedProductInput } from './dto/create-assigned-product-input.dto';
+import { UpdateAssignedProductInput } from './dto/update-assigned-product-input.dto';
+import { FindAllAssignedProductInput } from './dto/find-all-assigned-product-input.dto';
+import { FindOneAssignedProductInput } from './dto/find-one-assigned-product-input.dto';
+
+@UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 @Resolver(() => AssignedProduct)
 export class AssignedProductsResolver {
-  constructor (private readonly assignedProductsService: AssignedProductsService) {}
+  constructor (
+    private readonly service: AssignedProductsService,
+    private readonly assignedProductsLoaders: AssignedProductsLoaders
+  ) {}
 
-  @Mutation(() => AssignedProduct)
-  assingProductToProduct (@Args('createAssignedProductInput') createAssignedProductInput: CreateAssignedProductInput) {
-    return this.assignedProductsService.assingProductToProduct(createAssignedProductInput);
+  @Mutation(() => AssignedProduct, { name: 'assingProductToProduct' })
+  assingProductToProduct (@Args('createAssignedProductInput') createAssignedProductInput: CreateAssignedProductInput): Promise<AssignedProduct> {
+    return this.service.assingProductToProduct(createAssignedProductInput);
   }
 
   @Query(() => [AssignedProduct], { name: 'assignedProducts' })
-  findAll () {
-    return this.assignedProductsService.findAll();
+  findAll (@Args('findAllAssignedProductInput') findAllAssignedProductInput: FindAllAssignedProductInput): Promise<AssignedProduct[]> {
+    return this.service.findAll(findAllAssignedProductInput);
   }
 
-  @Query(() => AssignedProduct, { name: 'assignedProduct' })
-  findOne (@Args('id', { type: () => Int }) id: number) {
-    return this.assignedProductsService.findOne(id);
+  @Query(() => AssignedProduct, { name: 'assignedProduct', nullable: true })
+  findOne (@Args('findOneAssignedProductInput') findOneAssignedProductInput: FindOneAssignedProductInput): Promise<AssignedProduct> {
+    return this.service.findOne(findOneAssignedProductInput);
+  }
+
+  @Mutation(() => AssignedProduct, { name: 'updateAssignedProduct' })
+  updateAssignedProduct (
+    @Args('findOneAssignedProductInput') findOneAssignedProductInput: FindOneAssignedProductInput,
+    @Args('updateAssignedProductInput') updateAssignedProductInput: UpdateAssignedProductInput
+  ): Promise<AssignedProduct> {
+    return this.service.update(findOneAssignedProductInput, updateAssignedProductInput);
   }
 
   @Mutation(() => AssignedProduct)
-  updateAssignedProduct (@Args('updateAssignedProductInput') updateAssignedProductInput: UpdateAssignedProductInput) {
-    return this.assignedProductsService.update(updateAssignedProductInput.id, updateAssignedProductInput);
+  removeAssignedProduct (@Args('findOneAssignedProductInput') findOneAssignedProductInput: FindOneAssignedProductInput): Promise<AssignedProduct> {
+    return this.service.remove(findOneAssignedProductInput);
   }
 
-  @Mutation(() => AssignedProduct)
-  removeAssignedProduct (@Args('id', { type: () => Int }) id: number) {
-    return this.assignedProductsService.remove(id);
+  @ResolveField(() => Product, { name: 'parent' })
+  parent (@Parent() assignedProduct: AssignedProduct): Promise<Product> {
+    const productValue: any = assignedProduct.parent;
+
+    let productId = productValue;
+
+    if (typeof productId !== 'number') productId = productValue.id;
+
+    return this.assignedProductsLoaders.batchProducts.load(productId);
+  }
+
+  @ResolveField(() => Product, { name: 'assigned' })
+  assigned (@Parent() assignedProduct: AssignedProduct): Promise<Product> {
+    const productValue: any = assignedProduct.assigned;
+
+    let productId = productValue;
+
+    if (typeof productId !== 'number') productId = productValue.id;
+
+    return this.assignedProductsLoaders.batchProducts.load(productId);
   }
 }

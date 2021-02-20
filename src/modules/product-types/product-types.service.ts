@@ -2,10 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductType } from './entities/product-type.entity';
-import { CreateProductTypeInput } from './dto/create-product-type.input.dto';
-import { UpdateProductTypeInput } from './dto/update-product-type.input.dto';
+import { CreateProductTypeInput } from './dto/create-product-type-input.dto';
+import { UpdateProductTypeInput } from './dto/update-product-type-input.dto';
 import { FindAllProductTypeInput } from './dto/find-all-product-type-input.dto';
 import { FindOneProductTypeInput } from './dto/find-one-product-type-input.dto';
+import { FindOneCodeProductTypeInput } from './dto/find-one-code-product-type-input.dto';
 
 @Injectable()
 export class ProductTypesService {
@@ -39,13 +40,15 @@ export class ProductTypesService {
     return productType;
   }
 
-  public async findOne (findOneProductTypeInput: FindOneProductTypeInput): Promise<ProductType> {
+  public async findOne (findOneProductTypeInput: FindOneProductTypeInput): Promise<ProductType | null> {
     const { id } = findOneProductTypeInput;
     const productType = await this.productTypeRepository.findOne(id);
     return productType || null;
   }
 
-  public async findOneCode (code: string): Promise<ProductType> {
+  public async findOneCode (findOneCodeProductTypeInput: FindOneCodeProductTypeInput): Promise<ProductType> {
+    const { code } = findOneCodeProductTypeInput;
+
     const productType = await this.productTypeRepository.findOne({
       where: {
         code
@@ -58,26 +61,32 @@ export class ProductTypesService {
   }
 
   public async update (findOneProductTypeInput: FindOneProductTypeInput, updateProductTypeInput: UpdateProductTypeInput): Promise<ProductType> {
-    const productType = await this.findOne(findOneProductTypeInput);
+    const existing = await this.findOne(findOneProductTypeInput);
 
-    if (!productType) {
+    if (!existing) {
       throw new NotFoundException(`can't get the product type with id ${findOneProductTypeInput.id}.`);
     }
 
-    const editedProductType = this.productTypeRepository.merge(productType, updateProductTypeInput);
-    return await this.productTypeRepository.save(editedProductType);
+    const preloaded = await this.productTypeRepository.preload({
+      id: existing.id,
+      ...updateProductTypeInput
+    });
+
+    const saved = await this.productTypeRepository.save(preloaded);
+
+    return saved;
   }
 
   public async remove (findOneProductTypeInput: FindOneProductTypeInput): Promise<ProductType> {
-    const productType = await this.findOne(findOneProductTypeInput);
+    const existing = await this.findOne(findOneProductTypeInput);
 
-    if (!productType) {
+    if (!existing) {
       throw new NotFoundException(`can't get the product type with id ${findOneProductTypeInput.id}.`);
     }
 
-    const clone = { ...productType };
+    const clone = { ...existing };
 
-    await this.productTypeRepository.remove(productType);
+    await this.productTypeRepository.remove(existing);
 
     return clone;
   }

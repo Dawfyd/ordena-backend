@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { isLeafType } from 'graphql';
 import { Repository } from 'typeorm';
 import { CreateParameterInput } from './dto/create-parameter.input';
 import { UpdateParameterInput } from './dto/update-parameter.input';
@@ -44,14 +43,14 @@ export class ParametersService {
     return parameter;
   }
 
-  async findOneName (name: string): Promise<Parameter> {
+  async findOneName (name: string): Promise<Parameter | null> {
     const parameter = await this.ParameterRepository.findOne({
       where: {
         name
       }
     });
 
-    return parameter;
+    return parameter || null;
   }
 
   async update (id: number, updateParameterInput: UpdateParameterInput): Promise<Parameter> {

@@ -38,8 +38,8 @@ export class Person {
   /*
    * URL de la foto de perfil de la persona
    */
-  @Column({ name: 'phone_url', type: 'varchar', length: 100 })
-  photoUrl: string;
+  @Column({ name: 'phone_url', type: 'varchar', length: 100, nullable: true })
+  photoUrl?: string;
 
   /*
    * Identificador unico de la persona asociado con el ACL
