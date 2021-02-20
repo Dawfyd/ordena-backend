@@ -8,5 +8,5 @@ export class FindOneOrderStatusInput {
   */
   @IsNumber()
   @Field(() => Int)
-  id: number;
+  readonly id: number;
 }

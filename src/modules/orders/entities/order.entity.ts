@@ -19,22 +19,22 @@ export class Order {
   /*
    * Valor de la orden
    */
-  @Column({type: 'decimal', precision: 12, scale: 2})
+  @Column({ type: 'decimal', precision: 12, scale: 2 })
   price: number;
 
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn({name: 'created_at'})
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn({name: 'updated_at'})
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @ManyToOne((type) => Person,(person: Person) => person.orders)
+  @ManyToOne((type) => Person, (person: Person) => person.orders)
   @JoinColumn({ name: 'person_id' })
   person: Person;
 

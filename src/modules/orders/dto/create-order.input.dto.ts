@@ -8,7 +8,7 @@ export class CreateOrderInput {
     */
     @IsNumber()
     @Field(() => Float)
-    price: number;
+    readonly price: number;
 
     /*
     *companyUuid de la compañia
@@ -29,19 +29,19 @@ export class CreateOrderInput {
     */
     @IsNumber()
     @Field(() => Int)
-    personId: number;
+    readonly personId: number;
 
     /*
     *ID de la mesa
     */
     @IsNumber()
     @Field(() => Int)
-    spotId: number;
+    readonly spotId: number;
 
     /*
     *ID del estado del pedido
     */
     @IsNumber()
     @Field(() => Int)
-    orderStatusId: number;
+    readonly orderStatusId: number;
 }

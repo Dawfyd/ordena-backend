@@ -8,5 +8,5 @@ export class FindOneRequestStatusInput {
     */
     @IsNumber()
     @Field(() => Int)
-    id: number;
+    readonly id: number;
 }

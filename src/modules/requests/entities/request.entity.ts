@@ -27,8 +27,8 @@ export class Request {
   /*
    * Comentario del solicitado
    */
-  @Column({ type: 'varchar', length: 255 })
-  comentary: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  comentary?: string;
 
   /*
    * Asociacion con producto si es una adicion
@@ -56,7 +56,7 @@ export class Request {
 
   @ManyToOne((type) => Product, (product: Product) => product.requests)
   @JoinColumn({ name: 'product_id' })
-    product: Product;
+  product: Product;
 
   @ManyToOne((type) => Order, (order: Order) => order.requests)
   @JoinColumn({ name: 'order_id' })

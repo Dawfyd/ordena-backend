@@ -8,5 +8,5 @@ export class CreateRequestStatusInput {
   */
   @IsString()
   @Field(() => String)
-  name: string;
+  readonly name: string;
 }

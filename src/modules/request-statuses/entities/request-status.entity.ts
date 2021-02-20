@@ -31,7 +31,6 @@ export class RequestStatus {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @OneToMany(
-    (type) => Request, (request: Request) => request.requestStatus)
-    requests?: Request[];
+  @OneToMany((type) => Request, (request: Request) => request.requestStatus)
+  requests: Request[];
 }
