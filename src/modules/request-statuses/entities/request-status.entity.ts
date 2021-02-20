@@ -1,26 +1,36 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 import { Request } from '../../requests/entities/request.entity';
 
 @Entity('request_statuses')
 @ObjectType()
 export class RequestStatus {
-  @PrimaryGeneratedColumn()
-  @Field()
-
   /*
   *ID del estado de la solicitud
   */
+  @PrimaryGeneratedColumn()
+  @Field()
   id: number;
 
   /*
   *nombre del estado de la solicitud
   */
-  @Column()
+  @Column({ type: 'varchar', length: 45 })
   name: string;
 
-  @OneToMany(
-    (type) => Request, (request: Request) => request.requestStatus)
-    requests?: Request[];
+  /*
+  *fecha cuando se realizo el registro
+  */
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  /*
+  *fecha cuando se actualiza el registro
+  */
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
+
+  @OneToMany((type) => Request, (request: Request) => request.requestStatus)
+  requests: Request[];
 }

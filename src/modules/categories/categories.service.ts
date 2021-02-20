@@ -108,13 +108,13 @@ export class CategoriesService {
       }
     }
 
-    const merged: Category = {
-      ...existing,
+    const preloaded = await this.categoryRepository.preload({
+      id: existing.id,
       ...updateCategoryInput,
       menu
-    };
+    });
 
-    const saved = await this.categoryRepository.save(merged);
+    const saved = await this.categoryRepository.save(preloaded);
 
     return saved;
   }
