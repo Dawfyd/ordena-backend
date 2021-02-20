@@ -6,7 +6,7 @@ import { Company } from '../../companies/entities/company.entity';
 import { Menu } from '../../menus/entities/menu.entity';
 import { Spot } from '../../spots/entities/spot.entity';
 import { ProductsInVenue } from '../../products-in-venue/entities/products-in-venue.entity';
-
+import { Price } from '../../prices/entities/price.entity';
 @Entity('venues')
 @ObjectType()
 export class Venue {
@@ -73,4 +73,7 @@ export class Venue {
 
   @OneToMany((type) => ProductsInVenue, (productsInVenues: ProductsInVenue) => productsInVenues.venue)
   productsInVenues: ProductsInVenue[];
+
+  @OneToMany((type) => Price, price => price.venue)
+  prices: Price[];
 }

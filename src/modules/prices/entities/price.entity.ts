@@ -1,55 +1,51 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
+
 import { Product } from '../../products/entities/product.entity';
+import { Venue } from '../../venues/entities/venue.entity';
 
-@Entity('prices')
 @ObjectType()
+@Entity('prices')
+@Unique('uk_prices', ['product', 'venue'])
 export class Price {
-  @PrimaryGeneratedColumn()
-  @Field()
-
   /*
    * ID del precio
    */
+  @Field()
+  @PrimaryGeneratedColumn()
   id: number;
 
   /*
    * Valor o precio
    */
-  @Column()
+  @Column({ type: 'decimal', precision: 12, scale: 2 })
   value: number;
 
   /*
    * Moneda del precio
    */
-  @Column()
+  @Column({ type: 'varchar', length: 5 })
   currency: string;
-
-  /*
-   * Numero de opcion del precio
-   */
-  @Column()
-  option: number;
 
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @ManyToOne(
-    () => Product,
-    (product: Product) => product.prices, {
-      eager: true,
-      cascade: true
-    })
+  // relations
 
+  @ManyToOne(type => Product, product => product.prices)
   @JoinColumn({ name: 'product_id' })
-    product: Product;
+  product: Product;
+
+  @ManyToOne(type => Venue, venue => venue.prices)
+  @JoinColumn({ name: 'venue_id' })
+  venue: Venue;
 }

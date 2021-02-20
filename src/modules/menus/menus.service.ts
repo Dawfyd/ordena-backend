@@ -97,13 +97,13 @@ export class MenusService {
       }
     }
 
-    const merged: Menu = {
-      ...existing,
+    const preloaded = await this.menuRepository.preload({
+      id: existing.id,
       ...updateMenuInput,
       venue
-    };
+    });
 
-    const saved = await this.menuRepository.save(merged);
+    const saved = await this.menuRepository.save(preloaded);
 
     return saved;
   }

@@ -95,13 +95,13 @@ export class VenuesService {
       throw new NotFoundException(`can't get the venue ${id} for the company with uuid ${companyUuid}.`);
     }
 
-    const merged = {
-      ...existing,
-      company,
-      ...updateVenueInput
-    };
+    const preloaded = await this.venueRepository.preload({
+      id: existing.id,
+      ...updateVenueInput,
+      company
+    });
 
-    const saved = await this.venueRepository.save(merged);
+    const saved = await this.venueRepository.save(preloaded);
 
     return saved;
   }
@@ -187,5 +187,19 @@ export class VenuesService {
 
     return items.map(item => ({ ...item, venue: master.id }));
   }
+
+  public async prices (venue: Venue): Promise<any[]> {
+    const { id } = venue;
+
+    const master = await this.venueRepository.createQueryBuilder('v')
+      .leftJoinAndSelect('v.prices', 'p')
+      .where('v.id = :id', { id })
+      .getOne();
+
+    const items = master ? master.prices : [];
+
+    return items.map(item => ({ ...item, venue: master.id }));
+  }
+
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 }
