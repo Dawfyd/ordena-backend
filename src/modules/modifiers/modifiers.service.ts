@@ -128,6 +128,12 @@ export class ModifiersService {
     return clone;
   }
 
+  public async getByIds (ids: number[]): Promise<Modifier[]> {
+    return this.modifierRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
+  }
+
   public async modifiersPerRequests (modifier: Modifier): Promise<any[]> {
     const { id } = modifier;
 
