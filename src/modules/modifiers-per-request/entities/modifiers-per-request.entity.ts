@@ -6,20 +6,15 @@ import { Request } from '../../requests/entities/request.entity';
 @Entity('modifiers_per_requests')
 @ObjectType()
 export class ModifiersPerRequest {
-  @PrimaryGeneratedColumn()
   @Field()
-
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    (type) => Modifier, (modifiers: Modifier) => modifiers.modifiersPerRequests)
+  @ManyToOne((type) => Modifier, (modifiers: Modifier) => modifiers.modifiersPerRequests)
+  @JoinColumn({ name: 'modifier_id' })
+  modifier: Modifier;
 
-    @JoinColumn({ name: 'modifier_id' })
-    modifier: Modifier;
-
-  @ManyToOne(
-    (type) => Request, (requests: Request) => requests.modifiersPerRequests)
-
-    @JoinColumn({ name: 'request_id' })
-    request: Modifier;
+  @ManyToOne((type) => Request, (requests: Request) => requests.modifiersPerRequests)
+  @JoinColumn({ name: 'request_id' })
+  request: Modifier;
 }

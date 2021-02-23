@@ -17,7 +17,7 @@ import { FindOneRequestInput } from './dto/find-one-request.input.dto';
 export class RequestsService {
   constructor (
     @InjectRepository(Request)
-    private readonly RequestRepository: Repository<Request>,
+    private readonly requestRepository: Repository<Request>,
     private readonly productsService: ProductsService,
     private readonly spotsService: SpotsService,
     private readonly ordersService: OrdersService,
@@ -47,17 +47,17 @@ export class RequestsService {
       throw new NotFoundException(`can't get the requestStatus with id ${requestStatusId}.`);
     }
 
-    const created = this.RequestRepository.create(
+    const created = this.requestRepository.create(
       { ...createRequestInput, product, order, spot, requestStatus }
     );
-    const saved = await this.RequestRepository.save(created);
+    const saved = await this.requestRepository.save(created);
     return saved;
   }
 
   public async findAll (findAllRequestsInput: FindAllRequestsInput): Promise<Request[]> {
     const { companyUuid, limit, skip, search = '' } = findAllRequestsInput;
 
-    const query = this.RequestRepository.createQueryBuilder('r')
+    const query = this.requestRepository.createQueryBuilder('r')
       .loadAllRelationIds()
       .innerJoin('r.spot', 's')
       .innerJoin('s.venue', 'v')
@@ -80,7 +80,7 @@ export class RequestsService {
   public async findOne (findOneRequestInput: FindOneRequestInput): Promise<Request | null> {
     const { id, companyUuid } = findOneRequestInput;
 
-    const item = this.RequestRepository.createQueryBuilder('r')
+    const item = this.requestRepository.createQueryBuilder('r')
       .loadAllRelationIds()
       .innerJoin('r.spot', 's')
       .innerJoin('s.venue', 'v')
@@ -138,7 +138,7 @@ export class RequestsService {
       }
     }
 
-    const preloaded = await this.RequestRepository.preload({
+    const preloaded = await this.requestRepository.preload({
       id: existing.id,
       ...updateRequestInput,
       product,
@@ -146,7 +146,7 @@ export class RequestsService {
       spot
     });
 
-    const saved = await this.RequestRepository.save(preloaded);
+    const saved = await this.requestRepository.save(preloaded);
     return saved;
   }
 
@@ -160,19 +160,21 @@ export class RequestsService {
 
     const clone = { ...existing };
 
-    await this.RequestRepository.remove(existing);
+    await this.requestRepository.remove(existing);
 
     return clone;
   }
 
   public async getByIds (ids: number[]): Promise<Request[]> {
-    return this.RequestRepository.findByIds(ids);
+    return this.requestRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
   }
 
   public async modifiersPerRequests (request: Request): Promise<any[]> {
     const { id } = request;
 
-    const master = await this.RequestRepository.createQueryBuilder('r')
+    const master = await this.requestRepository.createQueryBuilder('r')
       .leftJoinAndSelect('r.modifiersPerRequests', 'mpr')
       .where('mpr.id = :id', { id })
       .getOne();

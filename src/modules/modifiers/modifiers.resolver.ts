@@ -1,50 +1,69 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
-import { ModifiersService } from './modifiers.service';
-import { Modifier } from './entities/modifier.entity';
-import { CreateModifierInput } from './dto/create-modifier.input';
-import { UpdateModifierInput } from './dto/update-modifier.input';
-import { ModifiersPerRequestService } from '../modifiers-per-request/modifiers-per-request.service';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 
+import { Modifier } from './entities/modifier.entity';
+import { Product } from '../products/entities/product.entity';
+import { ModifiersPerRequest } from '../modifiers-per-request/entities/modifiers-per-request.entity';
+
+import { ModifiersService } from './modifiers.service';
+import { ModifiersLoaders } from './modifiers.loaders';
+
+import { CreateModifierInput } from './dto/create-modifier-input.dto';
+import { UpdateModifierInput } from './dto/update-modifier-input.dto';
+import { FindAllModifiersInput } from './dto/find-all-modifiers-input.dto';
+import { FindOneModifierInput } from './dto/find-one-modifier-input.dto';
 @Resolver(() => Modifier)
 export class ModifiersResolver {
-  constructor (private readonly modifiersService: ModifiersService,
-              private readonly modifiersPerRequestsService: ModifiersPerRequestService) {}
+  constructor (
+    private readonly modifiersService: ModifiersService,
+    private readonly modifiersLoaders: ModifiersLoaders
+  ) {}
 
-  @Mutation(() => Modifier)
-  createModifier (
+  @Mutation(() => Modifier, { name: 'createModifier' })
+  create (
     @Args('createModifierInput') createModifierInput: CreateModifierInput
-  ) {
+  ): Promise<Modifier> {
     return this.modifiersService.create(createModifierInput);
   }
 
   @Query(() => [Modifier], { name: 'modifiers' })
-  findAll () {
-    return this.modifiersService.findAll();
+  findAll (@Args('findAllModifiersInput') findAllModifiersInput: FindAllModifiersInput): Promise<Modifier[]> {
+    return this.modifiersService.findAll(findAllModifiersInput);
   }
 
-  @Query(() => Modifier, { name: 'modifier' })
-  findOne (@Args('id', { type: () => Int }) id: number) {
-    return this.modifiersService.findOne(id);
+  @Query(() => Modifier, { name: 'modifier', nullable: true })
+  findOne (@Args('findOneModifierInput') findOneModifierInput: FindOneModifierInput): Promise<Modifier | null> {
+    return this.modifiersService.findOne(findOneModifierInput);
   }
 
-  @Mutation(() => Modifier)
-  updateModifier (
+  @Mutation(() => Modifier, { name: 'updateModifier' })
+  update (
+    @Args('findOneModifierInput') findOneModifierInput: FindOneModifierInput,
     @Args('updateModifierInput') updateModifierInput: UpdateModifierInput
-  ) {
+  ): Promise<Modifier> {
     return this.modifiersService.update(
-      updateModifierInput.id,
+      findOneModifierInput,
       updateModifierInput
     );
   }
 
-  @Mutation(() => Modifier)
-  removeModifier (@Args('id', { type: () => Int }) id: number) {
-    return this.modifiersService.remove(id);
+  @Mutation(() => Modifier, { name: 'removeModifier' })
+  remove (@Args('findOneModifierInput') findOneModifierInput: FindOneModifierInput): Promise<Modifier> {
+    return this.modifiersService.remove(findOneModifierInput);
   }
 
-  @ResolveField()
-  async modifiersPerRequests (@Parent() Modifier: Modifier) {
-    const { id } = Modifier;
-    return this.modifiersPerRequestsService.findModifierModifiersPerRequest(id);
+  @ResolveField(() => Product, { name: 'product' })
+  product (@Parent() modifier: Modifier): Promise<Product> {
+    const value: any = modifier.product;
+
+    let id = value;
+
+    if (typeof id !== 'number') id = value.id;
+
+    return this.modifiersLoaders.batchProducts.load(id);
+  }
+
+  @ResolveField(() => [ModifiersPerRequest], { name: 'product' })
+  async modifiersPerRequests (@Parent() modifier: Modifier): Promise<ModifiersPerRequest[]> {
+    return this.modifiersService.modifiersPerRequests(modifier);
   }
 }
