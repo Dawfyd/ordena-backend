@@ -1,22 +1,29 @@
 import { Injectable, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { CategoriesService } from '../categories/categories.service';
 import { ParametersService } from '../parameters/parameters.service';
 import { ProductsService } from '../products/products.service';
-import { CreateAssignedCategoryMenuInput } from './dto/create-assigned-category-menu.input';
-import { CreateAssignedCategoryInput } from './dto/create-assigned-category.input';
-import { UpdateAssignedCategoryInput } from './dto/update-assigned-category.input';
+import { ProductTypesService } from '../product-types/product-types.service';
+
 import { AssignedCategory } from './entities/assigned-category.entity';
+
+import { FindAllAssignedCategoriesInput } from './dto/find-all-assigned-categories-input.dto';
+import { FindOneAssignedCategoyInput } from './dto/find-one-assigned-category-input.dto';
+import { CreateAssignedCategoryMenuInput } from './dto/create-assigned-category-menu-input.dto';
+import { CreateAssignedCategoryInput } from './dto/create-assigned-category-input.dto';
+import { UpdateAssignedCategoryInput } from './dto/update-assigned-category-input.dto';
 
 @Injectable()
 export class AssignedCategoriesService {
   constructor (
     @InjectRepository(AssignedCategory)
-    private readonly AssignedCategoryRepository: Repository<AssignedCategory>,
+    private readonly assignedCategoryRepository: Repository<AssignedCategory>,
     private readonly productsService: ProductsService,
     private readonly categoriesService: CategoriesService,
-    private readonly parametersService: ParametersService
+    private readonly parametersService: ParametersService,
+    private readonly productTypesService: ProductTypesService
   ) {}
 
   async assingCategoryToCategoryProduct (createAssignedCategoryInput: CreateAssignedCategoryInput): Promise<AssignedCategory> {
@@ -26,24 +33,34 @@ export class AssignedCategoriesService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_CATEGORIES".');
     }
 
-    const { product_id, category_id } = createAssignedCategoryInput;
-    // TODO: fix
-    const product = {};
+    const { companyUuid, productId, categoryId } = createAssignedCategoryInput;
 
-    // TODO: fix
-    if (productTypeCategory.value !== 'product.productType.code') {
-      throw new PreconditionFailedException(`Solo se pueden asignar productos de tipo ${productTypeCategory.value}`);
+    const product = await this.productsService.findOne({ companyUuid, id: productId });
+
+    if (!product) {
+      throw new NotFoundException(`can't get the product ${productId} for the company ${companyUuid}.`);
     }
 
-    // FIXME:
-    const category = {};
+    const productType = await this.productTypesService.findOne({ id: +product.productType });
 
-    const newAssignedCategory = this.AssignedCategoryRepository.create({
+    if (productTypeCategory.value !== productType.code) {
+      throw new PreconditionFailedException(`solo se pueden asignar productos de tipo ${productTypeCategory.value}`);
+    }
+
+    const category = await this.categoriesService.findOne({ companyUuid, id: categoryId });
+
+    if (!category) {
+      throw new NotFoundException(`can't get the category ${categoryId} for the company ${companyUuid}.`);
+    }
+
+    const created = this.assignedCategoryRepository.create({
       product,
       category
     });
 
-    return await this.AssignedCategoryRepository.save(newAssignedCategory);
+    const saved = await this.assignedCategoryRepository.save(created);
+
+    return saved;
   }
 
   async assingCategoriesToMenuProduct (createAssignedCategoryMenuInput: CreateAssignedCategoryMenuInput): Promise<string> {
@@ -53,21 +70,25 @@ export class AssignedCategoriesService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_MENUS".');
     }
 
-    const { product_id } = createAssignedCategoryMenuInput;
-    // TODO: fix
-    const product = {};
+    const { companyUuid, productId } = createAssignedCategoryMenuInput;
 
-    // TODO: fix
-    if (productTypeMenu.value !== 'product.productType.code') {
-      throw new PreconditionFailedException(`Solo se pueden asignar productos de tipo ${productTypeMenu.value}`);
+    const product = await this.productsService.findOne({ companyUuid, id: productId });
+
+    if (!product) {
+      throw new NotFoundException(`can't get the product ${productId} for the company ${companyUuid}.`);
     }
 
-    // FIXME:
-    const categories = [];
+    const productType = await this.productTypesService.findOne({ id: +product.productType });
+
+    if (productTypeMenu.value !== productType.code) {
+      throw new PreconditionFailedException(`solo se pueden asignar productos de tipo ${productTypeMenu.value}`);
+    }
+
+    const categories = await this.categoriesService.findAll({ companyUuid });
 
     const data = categories.map(category => ({ category, product }));
 
-    await this.AssignedCategoryRepository.createQueryBuilder()
+    await this.assignedCategoryRepository.createQueryBuilder()
       .insert()
       .into(AssignedCategory)
       .values(data)
@@ -76,43 +97,100 @@ export class AssignedCategoriesService {
     return 'OK';
   }
 
-  async findAll (): Promise<AssignedCategory[]> {
-    return await this.AssignedCategoryRepository.find();
+  async findAll (findAllAssignedCategoriesInput: FindAllAssignedCategoriesInput): Promise<AssignedCategory[]> {
+    const { companyUuid, limit, skip } = findAllAssignedCategoriesInput;
+
+    const query = this.assignedCategoryRepository.createQueryBuilder('ac')
+      .loadAllRelationIds()
+      .innerJoin('ac.category', 'c')
+      .innerJoin('c.menu', 'm')
+      .innerJoin('m.venue', 'v')
+      .innerJoin('v.company', 'c1')
+      .where('c1.uuid = :companyUuid', { companyUuid });
+
+    query.limit(limit || undefined)
+      .offset(skip || 0)
+      .orderBy('ac.id', 'DESC');
+
+    const items = await query.getMany();
+
+    return items;
   }
 
-  async findOne (id: number): Promise<AssignedCategory> {
-    const assignedCategory = await this.AssignedCategoryRepository.findOne(id);
-    if (!assignedCategory) throw new NotFoundException('No hay un categoria asignada con esa ID');
-    return assignedCategory;
+  async findOne (findOneAssignedCategoyInput: FindOneAssignedCategoyInput): Promise<AssignedCategory> {
+    const { companyUuid, id } = findOneAssignedCategoyInput;
+
+    const item = await this.assignedCategoryRepository.createQueryBuilder('ac')
+      .loadAllRelationIds()
+      .innerJoin('ac.category', 'c')
+      .innerJoin('c.menu', 'm')
+      .innerJoin('m.venue', 'v')
+      .innerJoin('v.company', 'c1')
+      .where('c1.uuid = :companyUuid', { companyUuid })
+      .andWhere('ac.id = :id', { id })
+      .getOne();
+
+    return item || null;
   }
 
-  async findProductsCategory (category: number): Promise<AssignedCategory[]> {
-    return await this.AssignedCategoryRepository.find({
-      where: {
-        category
+  async update (findOneAssignedCategoyInput: FindOneAssignedCategoyInput, updateAssignedCategoryInput: UpdateAssignedCategoryInput): Promise<AssignedCategory> {
+    const { companyUuid, id } = findOneAssignedCategoyInput;
+
+    const existing = await this.findOne({ companyUuid, id });
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the assigned value ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const { productId } = updateAssignedCategoryInput;
+
+    let product;
+
+    if (productId) {
+      product = await this.productsService.findOne({ companyUuid, id: productId });
+
+      if (!product) {
+        throw new NotFoundException(`can't get the product ${productId} for the company ${companyUuid}.`);
       }
-    });
-  }
+    }
 
-  async update (id: number, updateAssignedCategoryInput: UpdateAssignedCategoryInput): Promise<AssignedCategory> {
-    const assignedCategory = await this.findOne(id);
+    const { categoryId } = updateAssignedCategoryInput;
 
-    const { product_id, category_id } = updateAssignedCategoryInput;
-    // TODO: fix
-    const product = {};
-    // FIXME:
-    const category = {};
+    let category;
 
-    const editedAssignedCategory = this.AssignedCategoryRepository.merge(assignedCategory, {
+    if (categoryId) {
+      category = await this.categoriesService.findOne({ companyUuid, id: categoryId });
+
+      if (!category) {
+        throw new NotFoundException(`can't get the category ${categoryId} for the company ${companyUuid}.`);
+      }
+    }
+
+    const preloaded = await this.assignedCategoryRepository.preload({
+      id: existing.id,
+      ...updateAssignedCategoryInput,
       product,
       category
     });
 
-    return await this.AssignedCategoryRepository.save(editedAssignedCategory);
+    const saved = await this.assignedCategoryRepository.save(preloaded);
+
+    return saved;
   }
 
-  async remove (id: number): Promise<AssignedCategory> {
-    const assignedCategory = await this.findOne(id);
-    return await this.AssignedCategoryRepository.remove(assignedCategory);
+  async remove (findOneAssignedCategoyInput: FindOneAssignedCategoyInput): Promise<AssignedCategory> {
+    const { companyUuid, id } = findOneAssignedCategoyInput;
+
+    const existing = await this.findOne(findOneAssignedCategoyInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the assigned value ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const clone = { ...existing };
+
+    await this.assignedCategoryRepository.remove(existing);
+
+    return clone;
   }
 }
