@@ -340,5 +340,18 @@ export class ProductsService {
     return items.map(item => ({ ...item, product: master.id }));
   }
 
+  public async additionalsPerRequest (product: Product): Promise<any[]> {
+    const { id } = product;
+
+    const master = await this.productRepository.createQueryBuilder('p')
+      .leftJoinAndSelect('p.additionalsPerRequests', 'apr')
+      .where('p.id = :id', { id })
+      .getOne();
+
+    const items = master ? master.additionalsPerRequests : [];
+
+    return items.map(item => ({ ...item, product: master.id }));
+  }
+
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 }

@@ -13,6 +13,7 @@ import { UpdateRequestInput } from './dto/update-request.input.dto';
 import { FindAllRequestsInput } from './dto/find-all-request.input.dto';
 import { FindOneRequestInput } from './dto/find-one-request.input.dto';
 import { ModifiersPerRequest } from '../modifiers-per-request/entities/modifiers-per-request.entity';
+import { AdditionalsPerRequest } from '../additionals-per-requests/entities/additionals-per-request.entity';
 
 @Resolver(() => Request)
 export class RequestsResolver {
@@ -60,6 +61,11 @@ export class RequestsResolver {
   @ResolveField()
   async modifiersPerRequests (@Parent() request: Request): Promise<ModifiersPerRequest[]> {
     return this.service.modifiersPerRequests(request);
+  }
+
+  @ResolveField()
+  async additionalsPerRequests (@Parent() request: Request): Promise<AdditionalsPerRequest[]> {
+    return this.service.additionalsPerRequest(request);
   }
 
   @ResolveField(() => Spot, { name: 'spot' })

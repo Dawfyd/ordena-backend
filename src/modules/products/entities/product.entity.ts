@@ -91,7 +91,7 @@ export class Product {
   favorites: Favorite[];
 
   @OneToMany((type) => AdditionalsPerRequest, (additionalsPerRequests: AdditionalsPerRequest) => additionalsPerRequests.product)
-  additionalsPerRequests?: AdditionalsPerRequest
+  additionalsPerRequests: AdditionalsPerRequest[]
 
   @OneToMany((type) => ProductsInVenue, (productsInVenues: ProductsInVenue) => productsInVenues.product)
   productsInVenues: ProductsInVenue[];

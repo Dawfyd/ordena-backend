@@ -55,7 +55,7 @@ export class RequestsService {
   }
 
   public async findAll (findAllRequestsInput: FindAllRequestsInput): Promise<Request[]> {
-    const { companyUuid, limit, skip, search = '' } = findAllRequestsInput;
+    const { companyUuid, limit, skip, search } = findAllRequestsInput;
 
     const query = this.RequestRepository.createQueryBuilder('r')
       .loadAllRelationIds()
@@ -174,11 +174,24 @@ export class RequestsService {
 
     const master = await this.RequestRepository.createQueryBuilder('r')
       .leftJoinAndSelect('r.modifiersPerRequests', 'mpr')
-      .where('mpr.id = :id', { id })
+      .where('r.id = :id', { id })
       .getOne();
 
     const items = master ? master.modifiersPerRequests : [];
 
-    return items.map(item => ({ ...item, modifiersPerRequests: master.id }));
+    return items.map(item => ({ ...item, request: master.id }));
+  }
+
+  public async additionalsPerRequest (request: Request): Promise<any[]> {
+    const { id } = request;
+
+    const master = await this.RequestRepository.createQueryBuilder('r')
+      .leftJoinAndSelect('r.additionalsPerRequests', 'apr')
+      .where('r.id = :id', { id })
+      .getOne();
+
+    const items = master ? master.additionalsPerRequests : [];
+
+    return items.map(item => ({ ...item, request: master.id }));
   }
 }
