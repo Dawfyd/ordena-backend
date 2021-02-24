@@ -187,7 +187,7 @@ export class RequestsService {
   public async additionalsPerRequest (request: Request): Promise<any[]> {
     const { id } = request;
 
-    const master = await this.RequestRepository.createQueryBuilder('r')
+    const master = await this.requestRepository.createQueryBuilder('r')
       .leftJoinAndSelect('r.additionalsPerRequests', 'apr')
       .where('r.id = :id', { id })
       .getOne();
