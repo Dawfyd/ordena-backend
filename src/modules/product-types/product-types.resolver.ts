@@ -6,8 +6,8 @@ import { Product } from '../products/entities/product.entity';
 
 import { ProductTypesService } from './product-types.service';
 
-import { CreateProductTypeInput } from './dto/create-product-type.input.dto';
-import { UpdateProductTypeInput } from './dto/update-product-type.input.dto';
+import { CreateProductTypeInput } from './dto/create-product-type-input.dto';
+import { UpdateProductTypeInput } from './dto/update-product-type-input.dto';
 import { FindAllProductTypeInput } from './dto/find-all-product-type-input.dto';
 import { FindOneProductTypeInput } from './dto/find-one-product-type-input.dto';
 

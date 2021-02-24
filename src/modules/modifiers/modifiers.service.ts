@@ -1,53 +1,149 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ProductsService } from '../products/products.service';
-import { CreateModifierInput } from './dto/create-modifier.input';
-import { UpdateModifierInput } from './dto/update-modifier.input';
+
 import { Modifier } from './entities/modifier.entity';
 
+import { ProductsService } from '../products/products.service';
+
+import { CreateModifierInput } from './dto/create-modifier-input.dto';
+import { FindAllModifiersInput } from './dto/find-all-modifiers-input.dto';
+import { UpdateModifierInput } from './dto/update-modifier-input.dto';
+import { FindOneModifierInput } from './dto/find-one-modifier-input.dto';
 @Injectable()
 export class ModifiersService {
   constructor (
     @InjectRepository(Modifier)
-    private readonly ModifierRepository: Repository<Modifier>,
+    private readonly modifierRepository: Repository<Modifier>,
     private readonly productsSerice: ProductsService
   ) {}
 
   async create (createModifierInput: CreateModifierInput): Promise<Modifier> {
-    const { product_id } = createModifierInput;
+    const { companyUuid, productId } = createModifierInput;
 
-    // TODO: fix
-    const product = {};
+    const product = await this.productsSerice.findOne({ companyUuid, id: productId });
 
-    const newModifier = this.ModifierRepository.create({ ...createModifierInput, product });
-    return await this.ModifierRepository.save(newModifier);
+    if (!product) {
+      throw new NotFoundException(`can't get the product ${productId} for the company with uuid ${companyUuid}.`);
+    }
+
+    const created = this.modifierRepository.create({
+      ...createModifierInput,
+      product
+    });
+
+    const saved = await this.modifierRepository.save(created);
+
+    return saved;
   }
 
-  async findAll (): Promise<Modifier[]> {
-    return await this.ModifierRepository.find();
+  async findAll (findAllModifiersInput: FindAllModifiersInput): Promise<Modifier[]> {
+    const { companyUuid, limit, skip, search } = findAllModifiersInput;
+
+    const query = this.modifierRepository.createQueryBuilder('m')
+      .loadAllRelationIds()
+      .innerJoin('m.product', 'p')
+      .innerJoin('p.productsInVenues', 'piv')
+      .innerJoin('piv.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid });
+
+    if (search) {
+      query.andWhere('m.name ilike :search', { search: `%${search}%` });
+    }
+
+    query.limit(limit || undefined)
+      .offset(skip || 0)
+      .orderBy('m.id', 'DESC');
+
+    const items = await query.getMany();
+
+    return items;
   }
 
-  async findOne (id: number): Promise<Modifier> {
-    const modifier = await this.ModifierRepository.findOne(id);
-    if (!modifier) { throw new NotFoundException('No hay un modificador con esa ID'); }
-    return modifier;
+  async findOne (findOneModifierInput: FindOneModifierInput): Promise<Modifier | null> {
+    const { companyUuid, id } = findOneModifierInput;
+
+    const item = await this.modifierRepository.createQueryBuilder('m')
+      .loadAllRelationIds()
+      .innerJoin('m.product', 'p')
+      .innerJoin('p.productsInVenues', 'piv')
+      .innerJoin('piv.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('m.id = :id', { id })
+      .getOne();
+
+    return item || null;
   }
 
-  async update (id: number, updateModifierInput: UpdateModifierInput) {
-    const modifier = await this.findOne(id);
+  async update (
+    findOneModifierInput: FindOneModifierInput,
+    updateModifierInput: UpdateModifierInput
+  ): Promise<Modifier> {
+    const { companyUuid, id } = findOneModifierInput;
 
-    const { product_id } = updateModifierInput;
+    const existing = await this.findOne(findOneModifierInput);
 
-    // TODO: fix
-    const product = {};
+    if (!existing) {
+      throw new NotFoundException(`can't get the modifier ${id} for the company with uuid ${companyUuid}`);
+    }
 
-    const editedModifier = this.ModifierRepository.merge(modifier, { ...updateModifierInput, product });
-    return await this.ModifierRepository.save(editedModifier);
+    const { productId } = updateModifierInput;
+
+    let product;
+
+    if (productId) {
+      product = await this.productsSerice.findOne({ companyUuid, id: productId });
+
+      if (!product) {
+        throw new NotFoundException(`can't get the product ${productId} for the company with uuid ${companyUuid}.`);
+      }
+    }
+
+    const preloaded = await this.modifierRepository.preload({
+      id: existing.id,
+      ...updateModifierInput,
+      product
+    });
+
+    const saved = await this.modifierRepository.save(preloaded);
+
+    return saved;
   }
 
-  async remove (id: number) {
-    const modifier = await this.findOne(id);
-    return await this.ModifierRepository.remove(modifier);
+  async remove (findOneModifierInput: FindOneModifierInput): Promise<Modifier> {
+    const { companyUuid, id } = findOneModifierInput;
+
+    const existing = await this.findOne(findOneModifierInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the modifier ${id} for the company with uuid ${companyUuid}`);
+    }
+
+    const clone = { ...existing };
+
+    await this.modifierRepository.remove(existing);
+
+    return clone;
+  }
+
+  public async getByIds (ids: number[]): Promise<Modifier[]> {
+    return this.modifierRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
+  }
+
+  public async modifiersPerRequests (modifier: Modifier): Promise<any[]> {
+    const { id } = modifier;
+
+    const master = await this.modifierRepository.createQueryBuilder('p')
+      .leftJoinAndSelect('p.modifiersPerRequests', 'mpr')
+      .where('mpr.id = :id', { id })
+      .getOne();
+
+    const items = master ? master.modifiersPerRequests : [];
+
+    return items.map(item => ({ ...item, product: master.id }));
   }
 }

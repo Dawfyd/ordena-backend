@@ -7,73 +7,57 @@ import { Product } from '../../products/entities/product.entity';
 @Entity('modifiers')
 @ObjectType()
 export class Modifier {
-  @PrimaryGeneratedColumn()
-  @Field()
-
   /*
    * ID del modificador
    */
+  @PrimaryGeneratedColumn()
   id: number;
 
   /*
    * Nombre del modificador
    */
-  @Column()
+  @Field()
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
   /*
    *  Estado del modificador
    */
-  @Column()
-  state: string;
+  @Column({ type: 'boolean' })
+  avaliable: boolean;
 
   /*
    * Opcion del modificador, es opcional(true) o excluyente(false)
    */
-  @Column()
+  @Column({ type: 'boolean' })
   optional: boolean;
+
+  // TODO: create the correct table to handle this data modifer_types
 
   /*
    * tipo del modificador, A (todos) , C(categoria) , P(producto)
    */
-  @Column()
+  @Column({ name: 'type', length: 1, enum: ['A', 'C', 'P'] })
   type: string;
-
-  /*
-   * Codigo del modificador, IDs de la categoria o productos
-   */
-  @Column()
-  code: string;
-
-  /*
-   * Opciones del modificador excluyente, si optional_modifier es (false)
-   */
-  @Column()
-  option: number;
 
   /*
   *fecha cuando se realizo el registro
   */
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @ManyToOne(
-    () => Product,
-    (product: Product) => product.modifiers, {
-      eager: true,
-      cascade: true
-    })
+  // relations
 
+  @ManyToOne(type => Product, (product: Product) => product.modifiers)
   @JoinColumn({ name: 'product_id' })
-    product: Product;
+  product: Product;
 
-  @OneToMany(
-    (type) => ModifiersPerRequest, (modifiersPerRequests: ModifiersPerRequest) => modifiersPerRequests.modifier)
-    modifiersPerRequests?: ModifiersPerRequest[];
+  @OneToMany(type => ModifiersPerRequest, (modifiersPerRequests: ModifiersPerRequest) => modifiersPerRequests.modifier)
+  modifiersPerRequests: ModifiersPerRequest[];
 }

@@ -2,7 +2,7 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
-export class FindAllPricesInput {
+export class FindAllModifiersPerRequestInput {
   @IsString()
   @Field(() => String)
   readonly companyUuid: string;

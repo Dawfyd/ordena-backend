@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
 
@@ -6,42 +6,32 @@ import { Product } from '../../products/entities/product.entity';
 @Unique('uk_assigned_products', ['parent', 'assigned'])
 @ObjectType()
 export class AssignedProduct {
-  @PrimaryGeneratedColumn()
-  @Field()
   /*
    * ID de la asignación del producto
    */
+  @PrimaryGeneratedColumn()
+  @Field()
   id: number;
 
   /*
-    *fecha cuando se realizo el registro
-    */
-  @CreateDateColumn()
-  created_at: Date;
+  *fecha cuando se realizo el registro
+  */
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   /*
   *fecha cuando se actualiza el registro
   */
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @ManyToOne(
-    () => Product,
-    (product: Product) => product.assignedProducts, {
-      eager: true,
-      cascade: true
-    })
+  // relations
 
+  @ManyToOne(type => Product, (product: Product) => product.assignedProducts)
   @JoinColumn({ name: 'parent_id' })
   parent: Product;
 
-  @ManyToOne(
-    () => Product,
-    (product: Product) => product.assignedProducts, {
-      eager: true,
-      cascade: true
-    })
-
+  @ManyToOne(type => Product, (product: Product) => product.assignedProducts)
   @JoinColumn({ name: 'assigned_id' })
   assigned: Product;
 }
