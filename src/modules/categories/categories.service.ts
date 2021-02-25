@@ -10,6 +10,7 @@ import { CreateCategoryInput } from './dto/create-category-input.dto';
 import { FindAllCategoriesInput } from './dto/find-all-categories-input.dto';
 import { UpdateCategoryInput } from './dto/update-category.input';
 import { FindOneCategoryInput } from './dto/find-one-category-input.dto';
+import { FileUpload } from 'graphql-upload';
 
 @Injectable()
 export class CategoriesService {
@@ -65,7 +66,7 @@ export class CategoriesService {
   }
 
   async findOne (findOneCategoryInput: FindOneCategoryInput): Promise<Category | null> {
-    const { companyUuid, id } = findOneCategoryInput;
+    const { companyUuid, id, checkExisting = false } = findOneCategoryInput;
 
     const item = await this.categoryRepository.createQueryBuilder('c')
       .loadAllRelationIds()
@@ -75,6 +76,10 @@ export class CategoriesService {
       .where('c1.uuid = :companyUuid', { companyUuid })
       .andWhere('c.id = :id', { id })
       .getOne();
+
+    if (checkExisting && !item) {
+      throw new NotFoundException(`can't get the category ${id} for the company with uuid ${companyUuid}.`);
+    }
 
     return item || null;
   }
@@ -163,4 +168,20 @@ export class CategoriesService {
   }
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
+
+  public async uploadImage(
+    findOneCategoryInput: FindOneCategoryInput,
+    fileUpload: FileUpload
+  ): Promise<Category> {
+    const existing = await this.findOne({
+      ...findOneCategoryInput,
+      checkExisting: true
+    });
+
+    const { createReadStream, filename, mimetype } = fileUpload;
+
+    console.log('filename', filename, 'mimetype', mimetype);
+
+    return existing;
+  }
 }

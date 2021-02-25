@@ -1,4 +1,6 @@
 import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
+import { GraphQLUpload } from 'apollo-server-express';
+import { FileUpload } from 'graphql-upload';
 
 import { Category } from './entities/category.entity';
 import { Menu } from '../menus/entities/menu.entity';
@@ -64,5 +66,14 @@ export class CategoriesResolver {
   @ResolveField(() => AssignedCategory, { name: 'assignedCategories' })
   assignedCategories (@Parent() category: Category): Promise<AssignedCategory[]> {
     return this.categoriesService.assignedCategories(category);
+  }
+
+  @Mutation(() => Category, { name: 'uploadCategoryImage' })
+  uploadImage (
+    @Args('findOneCategoryInput') findOneCategoryInput: FindOneCategoryInput,
+    @Args({ name: 'file', type: () => GraphQLUpload }) fileUpload: FileUpload
+  ): Promise<Category> {
+    console.log('findOneCategoryInput', findOneCategoryInput);
+    return this.categoriesService.uploadImage(findOneCategoryInput, fileUpload);
   }
 }
