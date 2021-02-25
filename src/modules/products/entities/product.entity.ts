@@ -10,6 +10,7 @@ import { Modifier } from '../../modifiers/entities/modifier.entity';
 import { Price } from '../../prices/entities/price.entity';
 import { ProductType } from '../../product-types/entities/product-type.entity';
 import { Request } from '../../requests/entities/request.entity';
+import { Category } from '../../categories/entities/category.entity';
 
 @Entity('products')
 @ObjectType()
@@ -91,8 +92,12 @@ export class Product {
   favorites: Favorite[];
 
   @OneToMany((type) => AdditionalsPerRequest, (additionalsPerRequests: AdditionalsPerRequest) => additionalsPerRequests.product)
-  additionalsPerRequests?: AdditionalsPerRequest
+  additionalsPerRequests: AdditionalsPerRequest[]
 
   @OneToMany((type) => ProductsInVenue, (productsInVenues: ProductsInVenue) => productsInVenues.product)
   productsInVenues: ProductsInVenue[];
+
+  @ManyToOne(() => Category, (category: Category) => category.products)
+  @JoinColumn({ name: 'category_id' })
+  category: Category;
 }

@@ -1,61 +1,130 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { ProductsService } from '../products/products.service';
 import { RequestsService } from '../requests/requests.service';
-import { CreateAdditionalsPerRequestInput } from './dto/create-additionals-per-request.input';
-import { UpdateAdditionalsPerRequestInput } from './dto/update-additionals-per-request.input';
 import { AdditionalsPerRequest } from './entities/additionals-per-request.entity';
+
+import { CreateAdditionalsPerRequestInput } from './dto/create-additionals-per-request.input.dto';
+import { FindAllAdditionalsPerRequestInput } from './dto/find-all-additionals-per-request.inputs.dto';
+import { FindOneAdditionalsPerRequestInput } from './dto/find-one-additionals-per-request.input.dto';
+import { UpdateAdditionalsPerRequestInput } from './dto/update-additionals-per-request.input.dto';
 
 @Injectable()
 export class AdditionalsPerRequestsService {
   constructor (
     @InjectRepository(AdditionalsPerRequest)
-    private readonly AdditionalsPerRequestRepository: Repository<AdditionalsPerRequest>,
+    private readonly additionalsPerRequestRepository: Repository<AdditionalsPerRequest>,
     private readonly productsService: ProductsService,
     private readonly requestsService: RequestsService
-
   ) {}
 
-  async create (createAdditionalsPerRequestInput: CreateAdditionalsPerRequestInput) {
-    const { product_id, request_id } = createAdditionalsPerRequestInput;
-    // FIXME
-    const product = {};
-    const request = await this.requestsService.findOne(request_id as any);
+  public async create (createAdditionalsPerRequestInput: CreateAdditionalsPerRequestInput): Promise<AdditionalsPerRequest> {
+    const { productId, requestId, companyUuid } = createAdditionalsPerRequestInput;
 
-    const newAdditionalsPerRequest = this.AdditionalsPerRequestRepository.create({ product, request });
-    return await this.AdditionalsPerRequestRepository.save(newAdditionalsPerRequest);
+    const product = await this.productsService.findOne({ id: productId, companyUuid });
+    if (!product) {
+      throw new NotFoundException(`can't get product with id ${productId} for the company with uuid ${companyUuid}.`);
+    }
+
+    const request = await this.requestsService.findOne({ id: requestId, companyUuid });
+    if (!request) {
+      throw new NotFoundException(`can't get product with id ${requestId}`);
+    }
+
+    const created = this.additionalsPerRequestRepository.create({ product, request });
+    const saved = await this.additionalsPerRequestRepository.save(created);
+
+    return saved;
   }
 
-  async findAll () {
-    return await this.AdditionalsPerRequestRepository.find();
+  public async findAll (findAllAdditionalPerRequest: FindAllAdditionalsPerRequestInput): Promise<AdditionalsPerRequest[]> {
+    const { companyUuid, limit, skip } = findAllAdditionalPerRequest;
+
+    const query = this.additionalsPerRequestRepository.createQueryBuilder('apr')
+      .loadAllRelationIds()
+      .innerJoin('apr.product', 'p')
+      .innerJoin('apr.request', 'r')
+      .innerJoin('r.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid });
+
+    query.limit(limit || undefined)
+      .offset(skip || 0)
+      .orderBy('apr.id', 'DESC');
+
+    const items = await query.getMany();
+
+    return items;
   }
 
-  async findOne (id: number) {
-    const additionalsPerRequest = await this.AdditionalsPerRequestRepository.findOne(id);
-    if (!additionalsPerRequest) throw new NotFoundException('No hay un solicitud por adicional con esa ID');
-    return additionalsPerRequest;
+  public async findOne (findOneAdditionalsPerRequestinput: FindOneAdditionalsPerRequestInput): Promise<AdditionalsPerRequest | null> {
+    const { id, companyUuid } = findOneAdditionalsPerRequestinput;
+
+    const item = this.additionalsPerRequestRepository.createQueryBuilder('apr')
+      .loadAllRelationIds()
+      .innerJoin('apr.produt', 'p')
+      .innerJoin('apr.request', 'r')
+      .innerJoin('r.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('apr.id = :id', { id })
+      .getOne();
+
+    return item || null;
   }
 
-  async update (id: number, updateAdditionalsPerRequestInput: UpdateAdditionalsPerRequestInput) {
-    const additionalsPerRequest = await this.findOne(id);
+  public async update (findOneAdditionalsPerRequestinput: FindOneAdditionalsPerRequestInput, updateAdditionalsPerRequestInput: UpdateAdditionalsPerRequestInput): Promise<AdditionalsPerRequest> {
+    const { productId, requestId } = updateAdditionalsPerRequestInput;
+    const { id, companyUuid } = findOneAdditionalsPerRequestinput;
 
-    const { product_id, request_id } = updateAdditionalsPerRequestInput;
+    const existing = await this.findOne({ id, companyUuid });
+    if (!existing) throw new NotFoundException(`can't get additionalPerRequest with id ${id} for the companu with uuid ${companyUuid}`);
 
-    // FIXME
-    const product = {};
-    const request = await this.requestsService.findOne(request_id as any);
+    let product;
+    if (productId) {
+      product = await this.productsService.findOne({ id: productId, companyUuid });
 
-    const editedadditionalsPerRequest = this.AdditionalsPerRequestRepository.merge(additionalsPerRequest, {
-      product,
-      request
+      if (!product) {
+        throw new NotFoundException(`can't get product with id ${productId} for the company with uuid ${companyUuid}`);
+      }
+    }
+
+    let request;
+    if (requestId) {
+      request = await this.requestsService.findOne({ id: requestId, companyUuid });
+
+      if (!request) {
+        throw new NotFoundException(`can't get product with id ${requestId} for the company with uuid ${companyUuid}`);
+      }
+    }
+
+    const preloaded = await this.additionalsPerRequestRepository.preload({
+      id: existing.id,
+      request,
+      product
     });
 
-    return await this.AdditionalsPerRequestRepository.save(editedadditionalsPerRequest);
+    const saved = await this.additionalsPerRequestRepository.save(preloaded);
+
+    return saved;
   }
 
-  async remove (id: number) {
-    const additionalsPerRequest = await this.findOne(id);
-    return await this.AdditionalsPerRequestRepository.remove(additionalsPerRequest);
+  async remove (findOneAdditionalsPerRequestinput: FindOneAdditionalsPerRequestInput): Promise<AdditionalsPerRequest> {
+    const { id, companyUuid } = findOneAdditionalsPerRequestinput;
+
+    const existing = await this.findOne({ id, companyUuid });
+    if (!existing) {
+      throw new NotFoundException(`can't get additionalPerRequest with id ${id} for the company with uuid ${companyUuid}`);
+    }
+
+    const clone = { ...existing };
+
+    await this.additionalsPerRequestRepository.remove(existing);
+
+    return clone;
   }
 }
