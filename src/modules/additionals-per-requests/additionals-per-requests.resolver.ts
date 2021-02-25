@@ -4,12 +4,13 @@ import { AdditionalsPerRequestsService } from './additionals-per-requests.servic
 import { AdditionalsPerRequest } from './entities/additionals-per-request.entity';
 import { AdditionalsPerRequestLoaders } from './additionals-per-requests.loaders';
 
+import { Product } from '../products/entities/product.entity';
+import { Request } from '../requests/entities/request.entity';
+
 import { CreateAdditionalsPerRequestInput } from './dto/create-additionals-per-request.input.dto';
 import { UpdateAdditionalsPerRequestInput } from './dto/update-additionals-per-request.input.dto';
 import { FindAllAdditionalsPerRequestInput } from './dto/find-all-additionals-per-request.inputs.dto';
 import { FindOneAdditionalsPerRequestInput } from './dto/find-one-additionals-per-request.input.dto';
-import { Product } from '../products/entities/product.entity';
-import { Request } from '../requests/entities/request.entity';
 
 @Resolver(() => AdditionalsPerRequest)
 export class AdditionalsPerRequestsResolver {
@@ -28,7 +29,7 @@ export class AdditionalsPerRequestsResolver {
     return this.service.findAll(findAllAdditionalsPerRequestInput);
   }
 
-  @Query(() => AdditionalsPerRequest, { name: 'additionalsPerRequest' })
+  @Query(() => AdditionalsPerRequest, { name: 'additionalsPerRequest', nullable: true })
   findOne (@Args('findOneAdditionalPerRequest') findOneAdditionalsPerRequestInput: FindOneAdditionalsPerRequestInput
   ): Promise<AdditionalsPerRequest> {
     return this.service.findOne(findOneAdditionalsPerRequestInput);
@@ -43,7 +44,7 @@ export class AdditionalsPerRequestsResolver {
   }
 
   @Mutation(() => AdditionalsPerRequest, { name: 'removeAdditionalsPerRequest' })
-  removeAdditionalsPerRequest (@Args('findOneAdditionalPerRequest') findOneAdditionalsPerRequestInput: FindOneAdditionalsPerRequestInput
+  remove (@Args('findOneAdditionalPerRequest') findOneAdditionalsPerRequestInput: FindOneAdditionalsPerRequestInput
   ): Promise<AdditionalsPerRequest> {
     return this.service.remove(findOneAdditionalsPerRequestInput);
   }

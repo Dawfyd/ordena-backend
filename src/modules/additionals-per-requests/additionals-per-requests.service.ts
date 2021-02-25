@@ -15,10 +15,9 @@ import { UpdateAdditionalsPerRequestInput } from './dto/update-additionals-per-r
 export class AdditionalsPerRequestsService {
   constructor (
     @InjectRepository(AdditionalsPerRequest)
-    private readonly AdditionalsPerRequestRepository: Repository<AdditionalsPerRequest>,
+    private readonly additionalsPerRequestRepository: Repository<AdditionalsPerRequest>,
     private readonly productsService: ProductsService,
     private readonly requestsService: RequestsService
-
   ) {}
 
   public async create (createAdditionalsPerRequestInput: CreateAdditionalsPerRequestInput): Promise<AdditionalsPerRequest> {
@@ -34,8 +33,8 @@ export class AdditionalsPerRequestsService {
       throw new NotFoundException(`can't get product with id ${requestId}`);
     }
 
-    const created = this.AdditionalsPerRequestRepository.create({ product, request });
-    const saved = await this.AdditionalsPerRequestRepository.save(created);
+    const created = this.additionalsPerRequestRepository.create({ product, request });
+    const saved = await this.additionalsPerRequestRepository.save(created);
 
     return saved;
   }
@@ -43,7 +42,7 @@ export class AdditionalsPerRequestsService {
   public async findAll (findAllAdditionalPerRequest: FindAllAdditionalsPerRequestInput): Promise<AdditionalsPerRequest[]> {
     const { companyUuid, limit, skip } = findAllAdditionalPerRequest;
 
-    const query = this.AdditionalsPerRequestRepository.createQueryBuilder('apr')
+    const query = this.additionalsPerRequestRepository.createQueryBuilder('apr')
       .loadAllRelationIds()
       .innerJoin('apr.product', 'p')
       .innerJoin('apr.request', 'r')
@@ -64,7 +63,7 @@ export class AdditionalsPerRequestsService {
   public async findOne (findOneAdditionalsPerRequestinput: FindOneAdditionalsPerRequestInput): Promise<AdditionalsPerRequest | null> {
     const { id, companyUuid } = findOneAdditionalsPerRequestinput;
 
-    const item = this.AdditionalsPerRequestRepository.createQueryBuilder('apr')
+    const item = this.additionalsPerRequestRepository.createQueryBuilder('apr')
       .loadAllRelationIds()
       .innerJoin('apr.produt', 'p')
       .innerJoin('apr.request', 'r')
@@ -103,13 +102,13 @@ export class AdditionalsPerRequestsService {
       }
     }
 
-    const preloaded = await this.AdditionalsPerRequestRepository.preload({
+    const preloaded = await this.additionalsPerRequestRepository.preload({
       id: existing.id,
       request,
       product
     });
 
-    const saved = await this.AdditionalsPerRequestRepository.save(preloaded);
+    const saved = await this.additionalsPerRequestRepository.save(preloaded);
 
     return saved;
   }
@@ -124,7 +123,7 @@ export class AdditionalsPerRequestsService {
 
     const clone = { ...existing };
 
-    await this.AdditionalsPerRequestRepository.remove(existing);
+    await this.additionalsPerRequestRepository.remove(existing);
 
     return clone;
   }

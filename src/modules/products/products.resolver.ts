@@ -9,6 +9,7 @@ import { Price } from '../prices/entities/price.entity';
 import { Modifier } from '../modifiers/entities/modifier.entity';
 import { AssignedProduct } from '../assigned-products/entities/assigned-product.entity';
 import { Request } from '../requests/entities/request.entity';
+import { AdditionalsPerRequest } from '../additionals-per-requests/entities/additionals-per-request.entity';
 
 import { ProductsLoaders } from './products.loaders';
 
@@ -18,7 +19,6 @@ import { CreateProductInput } from './dto/create-product.input.dto';
 import { UpdateProductInput } from './dto/update-product.input.dto';
 import { FindAllProductInput } from './dto/find-all-product-input.dto';
 import { FindOneProductInput } from './dto/find-one-product-input.dto';
-import { AdditionalsPerRequest } from '../additionals-per-requests/entities/additionals-per-request.entity';
 
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 @Resolver(() => Product)
