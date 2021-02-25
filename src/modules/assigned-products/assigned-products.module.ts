@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AssignedProductsService } from './assigned-products.service';
 import { AssignedProductsResolver } from './assigned-products.resolver';
