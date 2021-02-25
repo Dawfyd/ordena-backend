@@ -12,6 +12,7 @@ import {
 
 import { AssignedCategory } from '../../assigned-categories/entities/assigned-category.entity';
 import { Menu } from '../../menus/entities/menu.entity';
+import { Product } from '../../products/entities/product.entity';
 
 @Entity('categories')
 @ObjectType()
@@ -59,4 +60,7 @@ export class Category {
 
   @OneToMany(type => AssignedCategory, (assignedCategory: AssignedCategory) => assignedCategory.category)
   assignedCategories: AssignedCategory[];
+
+  @OneToMany((type) => Product, (products: Product) => products.category)
+  products: Product[];
 }
