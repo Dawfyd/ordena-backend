@@ -42,6 +42,12 @@ export class Category {
   @Column({ type: 'boolean', default: true })
   avaliable: boolean;
 
+  @Column({ name: 'cloud_id', type: 'varchar', length: 50, nullable: true })
+  cloudId?: string;
+
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  url?: string;
+
   /*
   *fecha cuando se realizo el registro
   */

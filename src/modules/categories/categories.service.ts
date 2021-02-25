@@ -1,6 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+
+import * as fs from 'fs';
+import * as path from 'path';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ConfigType } from '@nestjs/config';
+import { v2 as cloudinary } from 'cloudinary';
+
+import appConfig from '../../config/app.config';
+
+import { createFileFromReadStream } from '../../utils';
 
 import { Category } from './entities/category.entity';
 
@@ -10,15 +19,22 @@ import { CreateCategoryInput } from './dto/create-category-input.dto';
 import { FindAllCategoriesInput } from './dto/find-all-categories-input.dto';
 import { UpdateCategoryInput } from './dto/update-category.input';
 import { FindOneCategoryInput } from './dto/find-one-category-input.dto';
-import { FileUpload } from 'graphql-upload';
 
 @Injectable()
 export class CategoriesService {
   constructor (
+    @Inject(appConfig.KEY)
+    private readonly appConfiguration: ConfigType<typeof appConfig>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
     private readonly menusService: MenusService
-  ) {}
+  ) {
+    cloudinary.config({
+      cloud_name: this.appConfiguration.cloudinary.cloudName,
+      api_key: this.appConfiguration.cloudinary.apiKey,
+      api_secret: this.appConfiguration.cloudinary.apiSecret
+    });
+  }
 
   /* CRUD RELATED OPERATIONS */
 
@@ -169,19 +185,68 @@ export class CategoriesService {
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
 
-  public async uploadImage(
+  public async uploadImage (
     findOneCategoryInput: FindOneCategoryInput,
-    fileUpload: FileUpload
+    fileUpload: any
   ): Promise<Category> {
     const existing = await this.findOne({
       ...findOneCategoryInput,
       checkExisting: true
     });
 
-    const { createReadStream, filename, mimetype } = fileUpload;
+    let filePath = '';
 
-    console.log('filename', filename, 'mimetype', mimetype);
+    try {
+      const { filename, mimetype } = fileUpload;
 
-    return existing;
+      if (!mimetype.startsWith('image')) {
+        throw new BadRequestException('mimetype not allowed.');
+      }
+
+      const basePath = path.resolve(__dirname);
+
+      const fileExt = filename.split('.').pop();
+
+      filePath = `${basePath}/${existing.id}.${fileExt}`;
+
+      const { createReadStream } = fileUpload;
+
+      const stream = createReadStream();
+
+      await createFileFromReadStream(stream, filePath);
+
+      let cloudinaryResponse;
+
+      try {
+        cloudinaryResponse = await cloudinary.uploader.upload(filePath, {
+          folder: 'categories',
+          public_id: '' + existing.id,
+          use_filename: true,
+          eager: [
+            { width: 300, height: 300 }
+          ]
+        });
+      } catch (error) {
+        throw new InternalServerErrorException(error.message);
+      }
+
+      const { public_id: publicId, eager } = cloudinaryResponse;
+
+      const eagerItem = eager[0];
+
+      const preloaded = await this.categoryRepository.preload({
+        id: existing.id,
+        cloudId: publicId,
+        url: eagerItem.secure_url
+      });
+
+      const saved = await this.categoryRepository.save(preloaded);
+
+      return saved;
+    } finally {
+      if (filePath && fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
   }
 }
