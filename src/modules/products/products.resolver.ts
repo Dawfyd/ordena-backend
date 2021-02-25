@@ -9,6 +9,7 @@ import { Price } from '../prices/entities/price.entity';
 import { Modifier } from '../modifiers/entities/modifier.entity';
 import { AssignedProduct } from '../assigned-products/entities/assigned-product.entity';
 import { Request } from '../requests/entities/request.entity';
+import { AdditionalsPerRequest } from '../additionals-per-requests/entities/additionals-per-request.entity';
 
 import { ProductsLoaders } from './products.loaders';
 
@@ -114,5 +115,10 @@ export class ProductsResolver {
   @ResolveField(() => [Request], { name: 'requests' })
   async requests (@Parent() product: Product): Promise<Request[]> {
     return this.service.requests(product);
+  }
+
+  @ResolveField(() => [AdditionalsPerRequest], { name: 'additionalsPerRequests' })
+  async additionalsPerRequests (@Parent() product: Product): Promise<AdditionalsPerRequest[]> {
+    return this.service.additionalsPerRequest(product);
   }
 }
