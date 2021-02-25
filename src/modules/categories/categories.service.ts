@@ -218,8 +218,12 @@ export class CategoriesService {
       let cloudinaryResponse;
 
       try {
+        const folderName = this.appConfiguration.environment === 'production'
+          ? 'categories'
+          : `${this.appConfiguration.environment}_categories`;
+
         cloudinaryResponse = await cloudinary.uploader.upload(filePath, {
-          folder: 'categories',
+          folder: folderName,
           public_id: '' + existing.id,
           use_filename: true,
           eager: [
