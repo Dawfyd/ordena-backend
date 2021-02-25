@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -11,6 +11,8 @@ import { CreateFavoriteInput } from './dto/create-favorite.input.dto';
 import { UpdateFavoriteInput } from './dto/update-favorite.input.dto';
 import { FindAllFavoritesInput } from './dto/find-all-favorites-input.dto';
 import { FindOneFavoriteInput } from './dto/find-one-favorite-input.dto';
+import { ParametersService } from '../parameters/parameters.service';
+import { ProductTypesService } from '../product-types/product-types.service';
 
 @Injectable()
 export class FavoritesService {
@@ -18,12 +20,20 @@ export class FavoritesService {
     @InjectRepository(Favorite)
     private readonly favoriteRepository: Repository<Favorite>,
     private readonly personsService: PersonsService,
-    private readonly productsService: ProductsService
+    private readonly productsService: ProductsService,
+    private readonly parametersService: ParametersService,
+    private readonly productTypesService: ProductTypesService
   ) {}
 
   /* CRUD RELATED OPERATIONS */
 
   async create (createFavoriteInput: CreateFavoriteInput): Promise<Favorite> {
+    const productTypePure = await this.parametersService.findOneName('PRODUCT_TYPE_PURE');
+
+    if (!productTypePure) {
+      throw new PreconditionFailedException('The parameter to identify the code of the product type must exist and be configured correctly "PRODUCT_TYPE_PURE".');
+    }
+
     const { authUid, companyUuid, productId } = createFavoriteInput;
 
     const person = await this.personsService.findOne({ authUid });
@@ -36,6 +46,12 @@ export class FavoritesService {
 
     if (!product) {
       throw new NotFoundException(`can't get the product ${productId} for the company ${companyUuid}.`);
+    }
+
+    const productType = await this.productTypesService.findOne({ id: +product.productType });
+
+    if (productTypePure.value !== productType.code) {
+      throw new PreconditionFailedException('only a pure product type can be favorite');
     }
 
     const created = this.favoriteRepository.create({
