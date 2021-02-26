@@ -22,6 +22,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "cz": "git-cz",
+    "seed:local": "npx cross-env NODE_ENV=local ts-node ./src/seeds",
+    "seed:local:dev": "npx cross-env NODE_ENV=development.local ts-node ./src/seeds",
     "postinstall": "husky install"
   },
   "dependencies": {
