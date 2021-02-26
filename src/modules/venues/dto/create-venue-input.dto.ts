@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsInt, IsNumberString, IsString } from 'class-validator';
+import { IsInt, IsNumberString, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateVenueInput {
@@ -38,6 +38,7 @@ export class CreateVenueInput {
   @Field(() => String)
   readonly phone: string;
 
+  @IsOptional()
   @IsInt()
   @Field(() => Int)
   readonly capacity?: number;
