@@ -41,6 +41,9 @@ export class Venue {
   @Column({ type: 'varchar', length: 150 })
   address: string;
 
+  @Column({ type: 'int', nullable: true })
+  capacity?: number;
+
   /*
   *fecha cuando se realizo el registro
   */

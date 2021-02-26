@@ -1,6 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+
+import * as fs from 'fs';
+import * as path from 'path';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ConfigType } from '@nestjs/config';
+import { v2 as cloudinary } from 'cloudinary';
+
+import appConfig from '../../config/app.config';
+
+import { createFileFromReadStream } from '../../utils';
 
 import { Category } from './entities/category.entity';
 
@@ -14,10 +23,18 @@ import { FindOneCategoryInput } from './dto/find-one-category-input.dto';
 @Injectable()
 export class CategoriesService {
   constructor (
+    @Inject(appConfig.KEY)
+    private readonly appConfiguration: ConfigType<typeof appConfig>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
     private readonly menusService: MenusService
-  ) {}
+  ) {
+    cloudinary.config({
+      cloud_name: this.appConfiguration.cloudinary.cloudName,
+      api_key: this.appConfiguration.cloudinary.apiKey,
+      api_secret: this.appConfiguration.cloudinary.apiSecret
+    });
+  }
 
   /* CRUD RELATED OPERATIONS */
 
@@ -65,7 +82,7 @@ export class CategoriesService {
   }
 
   async findOne (findOneCategoryInput: FindOneCategoryInput): Promise<Category | null> {
-    const { companyUuid, id } = findOneCategoryInput;
+    const { companyUuid, id, checkExisting = false } = findOneCategoryInput;
 
     const item = await this.categoryRepository.createQueryBuilder('c')
       .loadAllRelationIds()
@@ -75,6 +92,10 @@ export class CategoriesService {
       .where('c1.uuid = :companyUuid', { companyUuid })
       .andWhere('c.id = :id', { id })
       .getOne();
+
+    if (checkExisting && !item) {
+      throw new NotFoundException(`can't get the category ${id} for the company with uuid ${companyUuid}.`);
+    }
 
     return item || null;
   }
@@ -163,4 +184,73 @@ export class CategoriesService {
   }
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
+
+  public async uploadImage (
+    findOneCategoryInput: FindOneCategoryInput,
+    fileUpload: any
+  ): Promise<Category> {
+    const existing = await this.findOne({
+      ...findOneCategoryInput,
+      checkExisting: true
+    });
+
+    let filePath = '';
+
+    try {
+      const { filename, mimetype } = fileUpload;
+
+      if (!mimetype.startsWith('image')) {
+        throw new BadRequestException('mimetype not allowed.');
+      }
+
+      const basePath = path.resolve(__dirname);
+
+      const fileExt = filename.split('.').pop();
+
+      filePath = `${basePath}/${existing.id}.${fileExt}`;
+
+      const { createReadStream } = fileUpload;
+
+      const stream = createReadStream();
+
+      await createFileFromReadStream(stream, filePath);
+
+      let cloudinaryResponse;
+
+      try {
+        const folderName = this.appConfiguration.environment === 'production'
+          ? 'categories'
+          : `${this.appConfiguration.environment}_categories`;
+
+        cloudinaryResponse = await cloudinary.uploader.upload(filePath, {
+          folder: folderName,
+          public_id: '' + existing.id,
+          use_filename: true,
+          eager: [
+            { width: 300, height: 300 }
+          ]
+        });
+      } catch (error) {
+        throw new InternalServerErrorException(error.message);
+      }
+
+      const { public_id: publicId, eager } = cloudinaryResponse;
+
+      const eagerItem = eager[0];
+
+      const preloaded = await this.categoryRepository.preload({
+        id: existing.id,
+        cloudId: publicId,
+        url: eagerItem.secure_url
+      });
+
+      const saved = await this.categoryRepository.save(preloaded);
+
+      return saved;
+    } finally {
+      if (filePath && fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+  }
 }
