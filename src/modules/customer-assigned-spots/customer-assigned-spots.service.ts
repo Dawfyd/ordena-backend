@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -11,6 +11,7 @@ import { CreateCustomerAssignedSpotInput } from './dto/create-customer-assigned-
 import { FindAllCustomerAssignedSpotsInput } from './dto/find-all-customer-assigned-spots-input.dto';
 import { UpdateCustomerAssignedSpotInput } from './dto/update-customer-assigned-spot-input.dto';
 import { FindOneCustomerAssignedSpotInput } from './dto/find-one-customer-assigned-spot-input.dto';
+import { StartCustomerAssignedSpotInput } from './dto/start-customer-assigned-spot.input.dto';
 @Injectable()
 export class CustomerAssignedSpotsService {
   constructor (
@@ -145,5 +146,48 @@ export class CustomerAssignedSpotsService {
     await this.customerAssignedSpotRepository.remove(existing);
 
     return clone;
+  }
+
+  async start (
+    startCustomerAssignedSpotInput: StartCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot> {
+    const { companyUuid, personId, spotId } = startCustomerAssignedSpotInput;
+
+    const alreadyAssignedItem = await this.customerAssignedSpotRepository.createQueryBuilder('cas')
+      .innerJoin('cas.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('cas.person_id = :personId', { personId })
+      .andWhere('cas.end is null')
+      .getOne();
+
+    if (alreadyAssignedItem) {
+      throw new PreconditionFailedException(`the person ${personId} already has assigned a spot for the company with uuid ${companyUuid}.`);
+    }
+
+    const person = await this.personsService.getById({ id: personId });
+
+    if (!person) {
+      throw new NotFoundException('can\'t get person.');
+    }
+
+    // TODO: check if the person is a customer
+
+    const spot = await this.spotsService.findOne({ companyUuid, id: spotId });
+
+    if (!spot) {
+      throw new NotFoundException(`can't get the spot ${spotId} for the company with uuid ${companyUuid}.`);
+    }
+
+    const created = this.customerAssignedSpotRepository.create({
+      person,
+      spot,
+      start: new Date()
+    });
+
+    const saved = await this.customerAssignedSpotRepository.save(created);
+
+    return saved;
   }
 }
