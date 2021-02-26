@@ -1,5 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { IsInt, IsString } from 'class-validator';
 
 @InputType()
 export class CreateModifiersPerRequestInput {
@@ -10,14 +10,14 @@ export class CreateModifiersPerRequestInput {
   /*
   *Id de la solicitud al que pertenece
   */
-  @IsNumber()
+  @IsInt()
   @Field(() => Int)
   readonly requestId: number;
 
   /*
   *ID del modificafor al que pertenece
   */
-  @IsNumber()
+  @IsInt()
   @Field(() => Int)
   readonly modifierId: number;
 }
