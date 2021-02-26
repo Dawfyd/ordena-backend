@@ -10,6 +10,7 @@ import { Modifier } from '../modifiers/entities/modifier.entity';
 import { AssignedProduct } from '../assigned-products/entities/assigned-product.entity';
 import { Request } from '../requests/entities/request.entity';
 import { AdditionalsPerRequest } from '../additionals-per-requests/entities/additionals-per-request.entity';
+import { Category } from '../categories/entities/category.entity';
 
 import { ProductsLoaders } from './products.loaders';
 
@@ -19,6 +20,7 @@ import { CreateProductInput } from './dto/create-product.input.dto';
 import { UpdateProductInput } from './dto/update-product.input.dto';
 import { FindAllProductInput } from './dto/find-all-product-input.dto';
 import { FindOneProductInput } from './dto/find-one-product-input.dto';
+import { CreateProductPureInput } from './dto/create-product-pure-input.dto';
 
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 @Resolver(() => Product)
@@ -39,8 +41,8 @@ export class ProductsResolver {
   }
 
   @Mutation(() => Product, { name: 'createPureProduct' })
-  createPureProduct (@Args('createProductInput') createProductInput: CreateProductInput): Promise<Product> {
-    return this.service.createPureProduct(createProductInput);
+  createPureProduct (@Args('createProductPureInput') createProductPureInput: CreateProductPureInput): Promise<Product> {
+    return this.service.createPureProduct(createProductPureInput);
   }
 
   @Mutation(() => Product, { name: 'createProductAssignedProduct' })
@@ -79,7 +81,20 @@ export class ProductsResolver {
 
     if (typeof productTypeId !== 'number') productTypeId = productTypeValue.id;
 
-    return this.productsLoaders.batchVenues.load(productTypeId);
+    return this.productsLoaders.batchProductTypes.load(productTypeId);
+  }
+
+  @ResolveField(() => Category, { name: 'category' })
+  category (@Parent() product: Product): Promise<Category> {
+    const categoryValue: any = product.category;
+
+    let categoryId = categoryValue;
+
+    if (!categoryId) return null;
+
+    if (typeof categoryId !== 'number') categoryId = categoryValue.id;
+
+    return this.productsLoaders.batchCategories.load(categoryId);
   }
 
   @ResolveField(() => [Favorite], { name: 'favorites' })

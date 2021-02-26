@@ -7,12 +7,14 @@ import { ParametersService } from '../parameters/parameters.service';
 import { ProductTypesService } from '../product-types/product-types.service';
 import { ProductsInVenueService } from '../products-in-venue/products-in-venue.service';
 import { VenuesService } from '../venues/venues.service';
+import { CategoriesService } from '../categories/categories.service';
 
 import { CreateProductInput } from './dto/create-product.input.dto';
 import { FindAllProductInput } from './dto/find-all-product-input.dto';
 import { FindOneProductInput } from './dto/find-one-product-input.dto';
 import { UpdateProductInput } from './dto/update-product.input.dto';
 import { GetByIdInput } from './dto/get-by-id-input.dto';
+import { CreateProductPureInput } from './dto/create-product-pure-input.dto';
 
 @Injectable()
 export class ProductsService {
@@ -23,7 +25,8 @@ export class ProductsService {
     private readonly parametersService: ParametersService,
     private readonly venuesService: VenuesService,
     @Inject(forwardRef(() => ProductsInVenueService))
-    private readonly productsInVenueService: ProductsInVenueService
+    private readonly productsInVenueService: ProductsInVenueService,
+    private readonly categoriesService: CategoriesService
   ) {}
 
   public async createMenuProduct (createProductInput: CreateProductInput): Promise<Product> {
@@ -45,6 +48,7 @@ export class ProductsService {
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
+      canBeAditional: true,
       productType
     });
 
@@ -78,6 +82,7 @@ export class ProductsService {
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
+      canBeAditional: true,
       productType
     });
 
@@ -92,13 +97,19 @@ export class ProductsService {
     return product;
   }
 
-  public async createPureProduct (createProductInput: CreateProductInput): Promise<Product> {
-    const { companyUuid, venueId } = createProductInput;
+  public async createPureProduct (createProductPureInput: CreateProductPureInput): Promise<Product> {
+    const { companyUuid, venueId, categoryId } = createProductPureInput;
 
     const venue = await this.venuesService.findOne({ companyUuid, id: venueId });
 
     if (!venue) {
       throw new NotFoundException(`can't get the venue ${venueId} for the company ${companyUuid}.`);
+    }
+
+    const category = await this.categoriesService.findOne({ companyUuid, id: categoryId });
+
+    if (!category) {
+      throw new NotFoundException(`can't get the category ${categoryId} for the company ${companyUuid}.`);
     }
 
     const productTypePure = await this.parametersService.findOneName('PRODUCT_TYPE_PURE');
@@ -110,8 +121,10 @@ export class ProductsService {
     const productType = await this.ProductTypesService.findOneCode({ code: productTypePure.value });
 
     const newProduct = this.productRepository.create({
-      ...createProductInput,
-      productType
+      ...createProductPureInput,
+      canBeAditional: false,
+      productType,
+      category
     });
 
     const product = await this.productRepository.save(newProduct);
@@ -144,6 +157,7 @@ export class ProductsService {
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
+      canBeAditional: true,
       productType
     });
 
