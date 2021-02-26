@@ -12,6 +12,7 @@ import { FindAllCustomerAssignedSpotsInput } from './dto/find-all-customer-assig
 import { UpdateCustomerAssignedSpotInput } from './dto/update-customer-assigned-spot-input.dto';
 import { FindOneCustomerAssignedSpotInput } from './dto/find-one-customer-assigned-spot-input.dto';
 import { StartCustomerAssignedSpotInput } from './dto/start-customer-assigned-spot.input.dto';
+import { GetCurrentCustomerAssignedSpotInput } from './dto/get-current-customer-assigned-spot-input.dto';
 @Injectable()
 export class CustomerAssignedSpotsService {
   constructor (
@@ -70,7 +71,7 @@ export class CustomerAssignedSpotsService {
   }
 
   async findOne (findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput): Promise<CustomerAssignedSpot> {
-    const { companyUuid, id } = findOneCustomerAssignedSpotInput;
+    const { companyUuid, id, checkExisting = false } = findOneCustomerAssignedSpotInput;
 
     const item = await this.customerAssignedSpotRepository.createQueryBuilder('cas')
       .loadAllRelationIds()
@@ -80,6 +81,10 @@ export class CustomerAssignedSpotsService {
       .where('c.uuid = :companyUuid', { companyUuid })
       .andWhere('cas.id = :id', { id })
       .getOne();
+
+    if (checkExisting && !item) {
+      throw new NotFoundException(`can't get the customer assigned spot ${id} for the company uuid ${companyUuid}.`);
+    }
 
     return item || null;
   }
@@ -132,7 +137,7 @@ export class CustomerAssignedSpotsService {
     return saved;
   }
 
-  async remove (findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput): Promise<CustomerAssignedSpot> {
+  public async remove (findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput): Promise<CustomerAssignedSpot> {
     const { companyUuid, id } = findOneCustomerAssignedSpotInput;
 
     const existing = await this.findOne(findOneCustomerAssignedSpotInput);
@@ -148,7 +153,7 @@ export class CustomerAssignedSpotsService {
     return clone;
   }
 
-  async start (
+  public async start (
     startCustomerAssignedSpotInput: StartCustomerAssignedSpotInput
   ): Promise<CustomerAssignedSpot> {
     const { companyUuid, personId, spotId } = startCustomerAssignedSpotInput;
@@ -189,5 +194,49 @@ export class CustomerAssignedSpotsService {
     const saved = await this.customerAssignedSpotRepository.save(created);
 
     return saved;
+  }
+
+  public async getCurrent (
+    getCurrentCustomerAssignedSpotInput: GetCurrentCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot> {
+    const { companyUuid, personId } = getCurrentCustomerAssignedSpotInput;
+
+    const current = await this.customerAssignedSpotRepository.createQueryBuilder('cas')
+      .loadAllRelationIds()
+      .innerJoin('cas.spot', 's')
+      .innerJoin('cas.person', 'p')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('p.id = :personId', { personId })
+      .andWhere('cas.end is null')
+      .getOne();
+
+    return current || null;
+  }
+
+  public async end (
+    findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot> {
+    const existing = await this.findOne({
+      ...findOneCustomerAssignedSpotInput,
+      checkExisting: true
+    });
+
+    if (existing.end) {
+      throw new PreconditionFailedException(`the customer assigned spot ${existing.id} was already ended.`);
+    }
+
+    const preloaded = await this.customerAssignedSpotRepository.preload({
+      id: existing.id,
+      end: new Date()
+    });
+
+    const saved = await this.customerAssignedSpotRepository.save(preloaded);
+
+    return {
+      ...existing,
+      ...saved
+    };
   }
 }
