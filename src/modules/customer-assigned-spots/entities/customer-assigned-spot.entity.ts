@@ -23,8 +23,8 @@ export class CustomerAssignedSpot {
   /*
   * fecha y hora cuando la mesa es desocupada
   */
-  @Column({ type: 'timestamp' })
-  end: Date
+  @Column({ type: 'timestamp', nullable: true })
+  end?: Date
 
   /*
    *fecha cuando se realizo el registro
