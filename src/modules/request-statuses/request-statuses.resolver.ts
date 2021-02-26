@@ -29,7 +29,7 @@ export class RequestStatusesResolver {
 
   @Query(() => RequestStatus, { name: 'requestStatus' })
   findOne (@Args('findOneRequestStatusInput') findOneRequestStatusInput: FindOneRequestStatusInput
-  ): Promise<RequestStatus> | null {
+  ): Promise<RequestStatus | null> {
     return this.service.findOne(findOneRequestStatusInput);
   }
 
