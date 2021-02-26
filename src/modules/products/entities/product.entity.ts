@@ -97,7 +97,9 @@ export class Product {
   @OneToMany((type) => ProductsInVenue, (productsInVenues: ProductsInVenue) => productsInVenues.product)
   productsInVenues: ProductsInVenue[];
 
-  @ManyToOne(() => Category, (category: Category) => category.products)
+  @ManyToOne(() => Category, (category: Category) => category.products, {
+    nullable: true
+  })
   @JoinColumn({ name: 'category_id' })
   category?: Category;
 }
