@@ -43,14 +43,14 @@ export class Product {
   /*
    * Estado del producto
    */
-  @Column({ nullable: true, default: true })
-  state?: boolean;
+  @Column({ type: 'boolean', default: true })
+  avaliable: boolean;
 
   /*
-   * Tipo: producto o adicion
+   * Define si el producto puede ser adicional
    */
-  @Column({ type: 'varchar', length: 100 })
-  type: string;
+  @Column({ name: 'can_be_aditional', type: 'boolean' })
+  canBeAditional: boolean;
 
   /*
   *fecha cuando se realizo el registro
@@ -99,5 +99,5 @@ export class Product {
 
   @ManyToOne(() => Category, (category: Category) => category.products)
   @JoinColumn({ name: 'category_id' })
-  category: Category;
+  category?: Category;
 }
