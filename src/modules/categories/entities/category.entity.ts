@@ -12,6 +12,7 @@ import {
 
 import { AssignedCategory } from '../../assigned-categories/entities/assigned-category.entity';
 import { Menu } from '../../menus/entities/menu.entity';
+import { Product } from '../../products/entities/product.entity';
 
 @Entity('categories')
 @ObjectType()
@@ -41,6 +42,12 @@ export class Category {
   @Column({ type: 'boolean', default: true })
   avaliable: boolean;
 
+  @Column({ name: 'cloud_id', type: 'varchar', length: 50, nullable: true })
+  cloudId?: string;
+
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  url?: string;
+
   /*
   *fecha cuando se realizo el registro
   */
@@ -59,4 +66,7 @@ export class Category {
 
   @OneToMany(type => AssignedCategory, (assignedCategory: AssignedCategory) => assignedCategory.category)
   assignedCategories: AssignedCategory[];
+
+  @OneToMany((type) => Product, (products: Product) => products.category)
+  products: Product[];
 }

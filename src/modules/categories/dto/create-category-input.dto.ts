@@ -23,7 +23,7 @@ export class CreateCategoryInput {
   @IsOptional()
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
-  state: boolean;
+  avaliable: boolean;
 
   @IsString()
   @Field(() => String)

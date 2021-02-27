@@ -50,7 +50,9 @@ class Permission {
       modifiersPerRequests: this.isAllowed,
       modifiersPerRequest: this.isAllowed,
       requestStatuses: this.isAllowed,
-      requestStatus: this.isAllowed
+      requestStatus: this.isAllowed,
+      modifierType: this.isAllowed,
+      modifierTypes: this.isAllowed
     },
     Mutation: {
       createCompany: this.isAllowed,
@@ -126,7 +128,10 @@ class Permission {
       removeModifiersPerRequest: this.isAllowed,
       createRequestStatus: this.isAllowed,
       updateRequestStatus: this.isAllowed,
-      removeRequestStatus: this.isAllowed
+      removeRequestStatus: this.isAllowed,
+      createModifierType: this.isAllowed,
+      updateModifierType: this.isAllowed,
+      removeModifierType: this.isAllowed
     }
   },
   {
