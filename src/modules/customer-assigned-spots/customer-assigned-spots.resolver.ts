@@ -11,6 +11,8 @@ import { CreateCustomerAssignedSpotInput } from './dto/create-customer-assigned-
 import { UpdateCustomerAssignedSpotInput } from './dto/update-customer-assigned-spot-input.dto';
 import { FindAllCustomerAssignedSpotsInput } from './dto/find-all-customer-assigned-spots-input.dto';
 import { FindOneCustomerAssignedSpotInput } from './dto/find-one-customer-assigned-spot-input.dto';
+import { StartCustomerAssignedSpotInput } from './dto/start-customer-assigned-spot.input.dto';
+import { GetCurrentCustomerAssignedSpotInput } from './dto/get-current-customer-assigned-spot-input.dto';
 
 @Resolver(() => CustomerAssignedSpot)
 export class CustomerAssignedSpotsResolver {
@@ -75,5 +77,26 @@ export class CustomerAssignedSpotsResolver {
     if (typeof id !== 'number') id = value.id;
 
     return this.customerAssignedSpotsLoaders.batchSpots.load(id);
+  }
+
+  @Mutation(() => CustomerAssignedSpot, { name: 'startCustomerAssignedSpot' })
+  start (
+    @Args('startCustomerAssignedSpotInput') startCustomerAssignedSpotInput: StartCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot> {
+    return this.customerAssignedSpotsService.start(startCustomerAssignedSpotInput);
+  }
+
+  @Query(() => CustomerAssignedSpot, { name: 'getCurrentCustomerAssignedSpot', nullable: true })
+  getCurrent (
+    @Args('getCurrentCustomerAssignedSpotInput') getCurrentCustomerAssignedSpotInput: GetCurrentCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot | null> {
+    return this.customerAssignedSpotsService.getCurrent(getCurrentCustomerAssignedSpotInput);
+  }
+
+  @Mutation(() => CustomerAssignedSpot, { name: 'endCustomerAssignedSpot' })
+  end (
+    @Args('findOneCustomerAssignedSpotInput') findOneCustomerAssignedSpotInput: FindOneCustomerAssignedSpotInput
+  ): Promise<CustomerAssignedSpot> {
+    return this.customerAssignedSpotsService.end(findOneCustomerAssignedSpotInput);
   }
 }

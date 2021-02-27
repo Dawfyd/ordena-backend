@@ -2,7 +2,7 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
-export class CreateProductInput {
+export class CreateProductPureInput {
   /*
    * Nombre del producto
    */
@@ -45,4 +45,11 @@ export class CreateProductInput {
   @IsNumber()
   @Field(() => Int)
   readonly venueId: number;
+
+  /*
+   * ID de la categoria
+   */
+  @IsNumber()
+  @Field(() => Int)
+  readonly categoryId: number;
 }

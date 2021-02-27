@@ -8,6 +8,7 @@ import { ParametersModule } from '../parameters/parameters.module';
 import { ProductsLoaders } from './products.loaders';
 import { ProductsInVenueModule } from '../products-in-venue/products-in-venue.module';
 import { VenuesModule } from '../venues/venues.module';
+import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { VenuesModule } from '../venues/venues.module';
     forwardRef(() => ProductsInVenueModule),
     ProductTypesModule,
     ParametersModule,
-    VenuesModule
+    VenuesModule,
+    CategoriesModule
   ],
   providers: [ProductsResolver, ProductsLoaders, ProductsService],
   exports: [ProductsService]
