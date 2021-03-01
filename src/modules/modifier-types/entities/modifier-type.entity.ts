@@ -1,5 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Modifier } from '../../modifiers/entities/modifier.entity';
 
 @Entity('modifier_types')
 @ObjectType()
@@ -24,4 +25,8 @@ export class ModifierType {
   @Field()
   @Column({ type: 'varchar', length: 100 })
   name: string;
+
+  @OneToMany(type => Modifier, (modifier: Modifier) => modifier.modifierType)
+  modifiers
+  : Modifier[];
 }

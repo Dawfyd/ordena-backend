@@ -7,6 +7,7 @@ import { ModifierType } from './entities/modifier-type.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ModifierType])],
-  providers: [ModifierTypesResolver, ModifierTypesService]
+  providers: [ModifierTypesResolver, ModifierTypesService],
+  exports: [ModifierTypesService]
 })
 export class ModifierTypesModule {}

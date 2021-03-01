@@ -6,20 +6,24 @@ import { Modifier } from './entities/modifier.entity';
 
 import { ProductsService } from '../products/products.service';
 
+import { ModifierTypesService } from '../modifier-types/modifier-types.service';
+
 import { CreateModifierInput } from './dto/create-modifier-input.dto';
 import { FindAllModifiersInput } from './dto/find-all-modifiers-input.dto';
 import { UpdateModifierInput } from './dto/update-modifier-input.dto';
 import { FindOneModifierInput } from './dto/find-one-modifier-input.dto';
+
 @Injectable()
 export class ModifiersService {
   constructor (
     @InjectRepository(Modifier)
     private readonly modifierRepository: Repository<Modifier>,
-    private readonly productsSerice: ProductsService
+    private readonly productsSerice: ProductsService,
+    private readonly modifierTypesService: ModifierTypesService
   ) {}
 
   async create (createModifierInput: CreateModifierInput): Promise<Modifier> {
-    const { companyUuid, productId } = createModifierInput;
+    const { companyUuid, productId, modifierTypeId } = createModifierInput;
 
     const product = await this.productsSerice.findOne({ companyUuid, id: productId });
 
@@ -27,9 +31,15 @@ export class ModifiersService {
       throw new NotFoundException(`can't get the product ${productId} for the company with uuid ${companyUuid}.`);
     }
 
+    const modifierType = await this.modifierTypesService.findOne({ id: modifierTypeId });
+    if (!modifierType) {
+      throw new NotFoundException(`can't get the product ${modifierTypeId}.`);
+    }
+
     const created = this.modifierRepository.create({
       ...createModifierInput,
-      product
+      product,
+      modifierType
     });
 
     const saved = await this.modifierRepository.save(created);
@@ -42,6 +52,7 @@ export class ModifiersService {
 
     const query = this.modifierRepository.createQueryBuilder('m')
       .loadAllRelationIds()
+      .innerJoin('m.modifierType', 'mt')
       .innerJoin('m.product', 'p')
       .innerJoin('p.productsInVenues', 'piv')
       .innerJoin('piv.venue', 'v')
@@ -66,6 +77,7 @@ export class ModifiersService {
 
     const item = await this.modifierRepository.createQueryBuilder('m')
       .loadAllRelationIds()
+      .innerJoin('m.modifierType', 'mt')
       .innerJoin('m.product', 'p')
       .innerJoin('p.productsInVenues', 'piv')
       .innerJoin('piv.venue', 'v')
@@ -89,7 +101,7 @@ export class ModifiersService {
       throw new NotFoundException(`can't get the modifier ${id} for the company with uuid ${companyUuid}`);
     }
 
-    const { productId } = updateModifierInput;
+    const { productId, modifierTypeId } = updateModifierInput;
 
     let product;
 
@@ -101,10 +113,21 @@ export class ModifiersService {
       }
     }
 
+    let modifierType;
+
+    if (modifierTypeId) {
+      modifierType = await this.modifierTypesService.findOne({ id: modifierTypeId });
+
+      if (!modifierType) {
+        throw new NotFoundException(`can't get the product ${modifierTypeId}.`);
+      }
+    }
+
     const preloaded = await this.modifierRepository.preload({
       id: existing.id,
       ...updateModifierInput,
-      product
+      product,
+      modifierType
     });
 
     const saved = await this.modifierRepository.save(preloaded);

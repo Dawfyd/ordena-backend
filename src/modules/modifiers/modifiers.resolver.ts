@@ -11,6 +11,7 @@ import { CreateModifierInput } from './dto/create-modifier-input.dto';
 import { UpdateModifierInput } from './dto/update-modifier-input.dto';
 import { FindAllModifiersInput } from './dto/find-all-modifiers-input.dto';
 import { FindOneModifierInput } from './dto/find-one-modifier-input.dto';
+import { ModifierType } from '../modifier-types/entities/modifier-type.entity';
 @Resolver(() => Modifier)
 export class ModifiersResolver {
   constructor (
@@ -60,6 +61,17 @@ export class ModifiersResolver {
     if (typeof id !== 'number') id = value.id;
 
     return this.modifiersLoaders.batchProducts.load(id);
+  }
+
+  @ResolveField(() => ModifierType, { name: 'modifierType' })
+  modifierType (@Parent() modifier: Modifier): Promise<ModifierType> {
+    const value: any = modifier.modifierType;
+
+    let id = value;
+
+    if (typeof id !== 'number') id = value.id;
+
+    return this.modifiersLoaders.batchModifierTypes.load(id);
   }
 
   @ResolveField(() => [ModifiersPerRequest], { name: 'product' })

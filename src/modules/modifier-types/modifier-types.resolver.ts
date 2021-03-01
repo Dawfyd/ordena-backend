@@ -1,7 +1,8 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 
 import { ModifierTypesService } from './modifier-types.service';
 import { ModifierType } from './entities/modifier-type.entity';
+import { Modifier } from '../modifiers/entities/modifier.entity';
 
 import { CreateModifierTypeInput } from './dto/create-modifier-type.input.dto';
 import { UpdateModifierTypeInput } from './dto/update-modifier-type.input.dto';
@@ -40,5 +41,10 @@ export class ModifierTypesResolver {
   remove (@Args('findOneModifierTypeInput') findOneModifierTypeInput: FindOneModifierTypeInput
   ): Promise<ModifierType> {
     return this.service.remove(findOneModifierTypeInput);
+  }
+
+  @ResolveField(() => [Modifier], { name: 'modifiers' })
+  async modifiers (@Parent() modifierType: ModifierType): Promise<Modifier[]> {
+    return this.service.modifiers(modifierType);
   }
 }

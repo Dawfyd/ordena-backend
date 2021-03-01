@@ -38,4 +38,11 @@ export class CreateModifierInput {
   @IsInt()
   @Field(() => Int)
   readonly productId: number;
+
+  /*
+  *id del tipo de modificador al que pertenece
+  */
+  @IsInt()
+  @Field(() => Int)
+  readonly modifierTypeId: number;
 }
