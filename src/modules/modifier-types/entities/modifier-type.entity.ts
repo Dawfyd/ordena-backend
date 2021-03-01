@@ -27,6 +27,5 @@ export class ModifierType {
   name: string;
 
   @OneToMany(type => Modifier, (modifier: Modifier) => modifier.modifierType)
-  modifiers
-  : Modifier[];
+  modifiers: Modifier[];
 }
