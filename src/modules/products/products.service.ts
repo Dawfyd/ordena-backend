@@ -15,13 +15,14 @@ import { FindOneProductInput } from './dto/find-one-product-input.dto';
 import { UpdateProductInput } from './dto/update-product.input.dto';
 import { GetByIdInput } from './dto/get-by-id-input.dto';
 import { CreateProductPureInput } from './dto/create-product-pure-input.dto';
+import { UpdateCategoryPureProductInput } from './dto/update-category-pure-product-input.dto';
 
 @Injectable()
 export class ProductsService {
   constructor (
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
-    private readonly ProductTypesService: ProductTypesService,
+    private readonly productTypesService: ProductTypesService,
     private readonly parametersService: ParametersService,
     private readonly venuesService: VenuesService,
     @Inject(forwardRef(() => ProductsInVenueService))
@@ -44,7 +45,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_MENUS".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode({ code: productTypeMenu.value });
+    const productType = await this.productTypesService.findOneCode({ code: productTypeMenu.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
@@ -78,7 +79,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_CATEGORIES".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode({ code: productTypeCategory.value });
+    const productType = await this.productTypesService.findOneCode({ code: productTypeCategory.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
@@ -118,7 +119,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_PURE".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode({ code: productTypePure.value });
+    const productType = await this.productTypesService.findOneCode({ code: productTypePure.value });
 
     const newProduct = this.productRepository.create({
       ...createProductPureInput,
@@ -153,7 +154,7 @@ export class ProductsService {
       throw new PreconditionFailedException('El parametro para identificar el código del (tipo de producto) debe existir y estar configurado correctamente "PRODUCT_TYPE_ASSIGNED_PRODUCTS".');
     }
 
-    const productType = await this.ProductTypesService.findOneCode({ code: productTypeProduct.value });
+    const productType = await this.productTypesService.findOneCode({ code: productTypeProduct.value });
 
     const newProduct = this.productRepository.create({
       ...createProductInput,
@@ -222,6 +223,45 @@ export class ProductsService {
     const preloaded = await this.productRepository.preload({
       id: existing.id,
       ...updateProductInput
+    });
+
+    const saved = await this.productRepository.save(preloaded);
+
+    return saved;
+  }
+
+  public async updateCategoryPureProduct (findOneProductInput: FindOneProductInput, updateCategoryPureProductInput: UpdateCategoryPureProductInput): Promise<Product> {
+    const productTypePure = await this.parametersService.findOneName('PRODUCT_TYPE_PURE');
+
+    if (!productTypePure) {
+      throw new PreconditionFailedException('The parameter to identify the code of the product type must exist and be configured correctly "PRODUCT_TYPE_PURE".');
+    }
+
+    const { companyUuid, id } = findOneProductInput;
+
+    const existing = await this.findOne(findOneProductInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the product ${id} for the company with uuid ${companyUuid}.`);
+    }
+
+    const productType = await this.productTypesService.findOne({ id: +existing.productType });
+
+    if (productTypePure.value !== productType.code) {
+      throw new PreconditionFailedException('can only update the category to a pure product.');
+    }
+
+    const { categoryId } = updateCategoryPureProductInput;
+
+    const category = await this.categoriesService.findOne({ companyUuid, id: categoryId });
+
+    if (!category) {
+      throw new NotFoundException(`can't get the category ${categoryId} for the company ${companyUuid}.`);
+    }
+
+    const preloaded = await this.productRepository.preload({
+      id: existing.id,
+      category
     });
 
     const saved = await this.productRepository.save(preloaded);
