@@ -21,6 +21,7 @@ import { UpdateProductInput } from './dto/update-product.input.dto';
 import { FindAllProductInput } from './dto/find-all-product-input.dto';
 import { FindOneProductInput } from './dto/find-one-product-input.dto';
 import { CreateProductPureInput } from './dto/create-product-pure-input.dto';
+import { UpdateCategoryPureProductInput } from './dto/update-category-pure-product-input.dto';
 
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 @Resolver(() => Product)
@@ -60,12 +61,20 @@ export class ProductsResolver {
     return this.service.findOne(findOneProductInput);
   }
 
-  @Mutation(() => Product)
-  updateProduct (
+  @Mutation(() => Product, { name: 'updateProduct' })
+  update (
     @Args('findOneProductInput') findOneProductInput: FindOneProductInput,
     @Args('updateProductInput') updateProductInput: UpdateProductInput
   ): Promise<Product> {
     return this.service.update(findOneProductInput, updateProductInput);
+  }
+
+  @Mutation(() => Product, { name: 'updateCategoryPureProduct' })
+  updateCategoryPureProduct (
+    @Args('findOneProductInput') findOneProductInput: FindOneProductInput,
+    @Args('updateCategoryPureProductInput') updateCategoryPureProductInput: UpdateCategoryPureProductInput
+  ): Promise<Product> {
+    return this.service.updateCategoryPureProduct(findOneProductInput, updateCategoryPureProductInput);
   }
 
   @Mutation(() => Product, { name: 'removeProduct' })

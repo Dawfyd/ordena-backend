@@ -1,5 +1,29 @@
-import { InputType, PartialType } from '@nestjs/graphql';
-import { CreateProductInput } from './create-product.input.dto';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 @InputType()
-export class UpdateProductInput extends PartialType(CreateProductInput) {}
+export class UpdateProductInput {
+  /*
+   * Nombre del producto
+   */
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  readonly name?: string;
+
+  /*
+   * Descripcion del producto
+   */
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  readonly description?: string;
+
+  /*
+   * Estado del producto
+   */
+  @IsOptional()
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  readonly avaliable?: boolean;
+}
