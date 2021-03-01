@@ -52,7 +52,6 @@ export class ModifiersService {
 
     const query = this.modifierRepository.createQueryBuilder('m')
       .loadAllRelationIds()
-      .innerJoin('m.modifierType', 'mt')
       .innerJoin('m.product', 'p')
       .innerJoin('p.productsInVenues', 'piv')
       .innerJoin('piv.venue', 'v')
@@ -77,7 +76,6 @@ export class ModifiersService {
 
     const item = await this.modifierRepository.createQueryBuilder('m')
       .loadAllRelationIds()
-      .innerJoin('m.modifierType', 'mt')
       .innerJoin('m.product', 'p')
       .innerJoin('p.productsInVenues', 'piv')
       .innerJoin('piv.venue', 'v')
