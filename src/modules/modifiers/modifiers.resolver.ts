@@ -6,12 +6,13 @@ import { ModifiersPerRequest } from '../modifiers-per-request/entities/modifiers
 
 import { ModifiersService } from './modifiers.service';
 import { ModifiersLoaders } from './modifiers.loaders';
+import { ModifierType } from '../modifier-types/entities/modifier-type.entity';
 
 import { CreateModifierInput } from './dto/create-modifier-input.dto';
 import { UpdateModifierInput } from './dto/update-modifier-input.dto';
 import { FindAllModifiersInput } from './dto/find-all-modifiers-input.dto';
 import { FindOneModifierInput } from './dto/find-one-modifier-input.dto';
-import { ModifierType } from '../modifier-types/entities/modifier-type.entity';
+
 @Resolver(() => Modifier)
 export class ModifiersResolver {
   constructor (
