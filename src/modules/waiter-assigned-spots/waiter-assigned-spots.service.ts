@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -11,6 +11,7 @@ import { CreateWaiterAssignedSpotInput } from './dto/create-waiter-assigned-spot
 import { FindAllWaiterAssignedSpotsInput } from './dto/find-all-waiter-assigned-spots-input.dto';
 import { FindOneWaiterAssignedSpotInput } from './dto/find-one-waiter-assigned-spot-input.dto';
 import { UpdateWaiterAssignedSpotInput } from './dto/update-waiter-assigned-spot-input.dto';
+import { StartWaiterAssignedSpotInput } from './dto/start-waiter-assigned-spot-input.dto';
 @Injectable()
 export class WaiterAssignedSpotsService {
   constructor (
@@ -145,5 +146,47 @@ export class WaiterAssignedSpotsService {
     await this.waiterAssignedSpotRepository.remove(existing);
 
     return clone;
+  }
+
+  public async start (
+    startWaiterAssignedSpotInput: StartWaiterAssignedSpotInput
+  ): Promise<WaiterAssignedSpot> {
+    const { companyUuid, personId, spotId } = startWaiterAssignedSpotInput;
+
+    const person = await this.personsService.getById({ id: personId, checkExisting: true });
+
+    // TODO: check if the person is a waiter
+
+    const spot = await this.spotsService.findOne({ companyUuid, id: spotId, checkExisting: true });
+
+    const assignations = await this.waiterAssignedSpotRepository.createQueryBuilder('was')
+      .innerJoinAndSelect('was.person', 'p')
+      .innerJoinAndSelect('was.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('s.id :spotId', { spotId })
+      .andWhere('was.end is not null')
+      .getMany();
+
+    for (const waiterAssignedSpot of assignations) {
+      if (waiterAssignedSpot.person.id !== personId) {
+        throw new PreconditionFailedException(`the spot ${spotId} for the company with uuid ${companyUuid} it's already assigned to another waiter.`);
+      }
+
+      if (waiterAssignedSpot.spot.id === spotId && waiterAssignedSpot.person.id === personId) {
+        throw new PreconditionFailedException(`the spot ${spotId} for the company with uuid ${companyUuid} it's already to the same waiter..`);
+      }
+    }
+
+    const created = this.waiterAssignedSpotRepository.create({
+      start: new Date(),
+      spot,
+      person
+    });
+
+    const saved = await this.waiterAssignedSpotRepository.save(created);
+
+    return saved;
   }
 }

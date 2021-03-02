@@ -170,9 +170,13 @@ export class PersonsService {
    * @memberof PersonsService
    */
   public async getById (getByIdInput: GetByIdInput): Promise<Person | null> {
-    const { id } = getByIdInput;
+    const { id, checkExisting = false } = getByIdInput;
 
     const existing = await this.personRepository.findOne(id);
+
+    if (checkExisting && !existing) {
+      throw new NotFoundException('can\'t get the person.');
+    }
 
     return existing || null;
   }
