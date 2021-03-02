@@ -80,4 +80,23 @@ export class ModifierTypesService {
 
     return clone;
   }
+
+  public async getByIds (ids: number[]): Promise<ModifierType[]> {
+    return this.modifierTypesRepository.findByIds(ids, {
+      loadRelationIds: true
+    });
+  }
+
+  public async modifiers (modifierType: ModifierType): Promise<any[]> {
+    const { id } = modifierType;
+
+    const master = await this.modifierTypesRepository.createQueryBuilder('mt')
+      .leftJoinAndSelect('mt.modifiers', 'm')
+      .where('mt.id = :id', { id })
+      .getOne();
+
+    const items = master ? master.modifiers : [];
+
+    return items.map(item => ({ ...item, modifierType: master.id }));
+  }
 }
