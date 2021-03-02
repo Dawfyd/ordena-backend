@@ -12,6 +12,7 @@ import { UpdateWaiterAssignedSpotInput } from './dto/update-waiter-assigned-spot
 import { FindAllWaiterAssignedSpotsInput } from './dto/find-all-waiter-assigned-spots-input.dto';
 import { FindOneWaiterAssignedSpotInput } from './dto/find-one-waiter-assigned-spot-input.dto';
 import { StartWaiterAssignedSpotInput } from './dto/start-waiter-assigned-spot-input.dto';
+import { EndWaiterAssignedSpotInput } from './dto/end-waiter-assigned-spot-input.dto';
 @Resolver(() => WaiterAssignedSpot)
 export class WaiterAssignedSpotsResolver {
   constructor (
@@ -77,10 +78,17 @@ export class WaiterAssignedSpotsResolver {
     return this.waiterAssignedSpotsLoaders.batchSpots.load(id);
   }
 
-  @Mutation(() => WaiterAssignedSpot)
+  @Mutation(() => WaiterAssignedSpot, { name: 'startWaiterAssignedSpot' })
   start (
     @Args('startWaiterAssignedSpotInput') startWaiterAssignedSpotInput: StartWaiterAssignedSpotInput
   ): Promise<WaiterAssignedSpot> {
     return this.waiterAssignedSpotsService.start(startWaiterAssignedSpotInput);
+  }
+
+  @Mutation(() => WaiterAssignedSpot, { name: 'endWaiterAssignedSpot' })
+  end (
+    @Args('endWaiterAssignedSpotInput') endWaiterAssignedSpotInput: EndWaiterAssignedSpotInput
+  ): Promise<WaiterAssignedSpot> {
+    return this.waiterAssignedSpotsService.end(endWaiterAssignedSpotInput);
   }
 }
