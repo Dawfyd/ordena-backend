@@ -62,7 +62,7 @@ export class SpotsService {
   }
 
   async findOne (findOneSpotInput: FindOneSpotInput): Promise<Spot | null> {
-    const { companyUuid, id } = findOneSpotInput;
+    const { companyUuid, id, checkExisting = false } = findOneSpotInput;
 
     const item = await this.spotRepository.createQueryBuilder('s')
       .loadAllRelationIds()
@@ -71,6 +71,10 @@ export class SpotsService {
       .where('c.uuid = :companyUuid', { companyUuid })
       .andWhere('s.id = :id', { id })
       .getOne();
+
+    if (checkExisting && !item) {
+      throw new NotFoundException(`can't get the spot ${id} for the company with uuid ${companyUuid}.`);
+    }
 
     return item || null;
   }

@@ -22,7 +22,7 @@ export class WaiterAssignedSpot {
   /*
  * fecha y hora cuando la mesa es desocupada
  */
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', nullable: true })
   end: Date
 
  /*

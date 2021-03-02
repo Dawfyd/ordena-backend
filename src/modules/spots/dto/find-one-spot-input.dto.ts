@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class FindOneSpotInput {
@@ -10,4 +10,9 @@ export class FindOneSpotInput {
   @IsNumber()
   @Field(() => Int)
   readonly id: number;
+
+  @IsOptional()
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  readonly checkExisting?: boolean;
 }
