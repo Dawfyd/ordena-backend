@@ -12,6 +12,7 @@ import { FindAllWaiterAssignedSpotsInput } from './dto/find-all-waiter-assigned-
 import { FindOneWaiterAssignedSpotInput } from './dto/find-one-waiter-assigned-spot-input.dto';
 import { UpdateWaiterAssignedSpotInput } from './dto/update-waiter-assigned-spot-input.dto';
 import { StartWaiterAssignedSpotInput } from './dto/start-waiter-assigned-spot-input.dto';
+import { EndWaiterAssignedSpotInput } from './dto/end-waiter-assigned-spot-input.dto';
 @Injectable()
 export class WaiterAssignedSpotsService {
   constructor (
@@ -165,7 +166,7 @@ export class WaiterAssignedSpotsService {
       .innerJoin('s.venue', 'v')
       .innerJoin('v.company', 'c')
       .where('c.uuid = :companyUuid', { companyUuid })
-      .andWhere('s.id :spotId', { spotId })
+      .andWhere('s.id = :spotId', { spotId })
       .andWhere('was.end is not null')
       .getMany();
 
@@ -186,6 +187,40 @@ export class WaiterAssignedSpotsService {
     });
 
     const saved = await this.waiterAssignedSpotRepository.save(created);
+
+    return saved;
+  }
+
+  public async end (
+    endWaiterAssignedSpotInput: EndWaiterAssignedSpotInput
+  ): Promise<WaiterAssignedSpot> {
+    const { companyUuid, personId, spotId } = endWaiterAssignedSpotInput;
+
+    await this.personsService.getById({ id: personId, checkExisting: true });
+
+    await this.spotsService.findOne({ companyUuid, id: spotId, checkExisting: true });
+
+    const assignation = await this.waiterAssignedSpotRepository.createQueryBuilder('was')
+      .innerJoin('was.person', 'p')
+      .innerJoin('was.spot', 's')
+      .innerJoin('s.venue', 'v')
+      .innerJoin('v.company', 'c')
+      .where('c.uuid = :companyUuid', { companyUuid })
+      .andWhere('s.id = :spotId', { spotId })
+      .andWhere('p.id = :personId', { personId })
+      .andWhere('was.end is not null')
+      .getOne();
+
+    if (!assignation) {
+      throw new NotFoundException(`can't get the assigned spot ${spotId} for the waiter ${personId} and the company with uuid ${companyUuid}.`);
+    }
+
+    const preloaded = await this.waiterAssignedSpotRepository.preload({
+      id: assignation.id,
+      end: new Date()
+    });
+
+    const saved = await this.waiterAssignedSpotRepository.save(preloaded);
 
     return saved;
   }
