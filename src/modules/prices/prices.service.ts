@@ -34,7 +34,7 @@ export class PricesService {
 
     const venue = await this.venuesService.findOne({ companyUuid, id: venueId });
 
-    if (venue) {
+    if (!venue) {
       throw new NotFoundException(`can't get the venue ${venueId} for the company with uuid ${companyUuid}.`);
     }
 
