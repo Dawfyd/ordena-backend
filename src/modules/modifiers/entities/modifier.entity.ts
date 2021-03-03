@@ -24,22 +24,14 @@ export class Modifier {
   /*
    *  Estado del modificador
    */
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: true })
   avaliable: boolean;
 
   /*
    * Opcion del modificador, es opcional(true) o excluyente(false)
    */
-  @Column({ type: 'boolean' })
-  optional: boolean;
-
-  // TODO: create the correct table to handle this data modifer_types
-
-  /*
-   * tipo del modificador, A (todos) , C(categoria) , P(producto)
-   */
-  @Column({ name: 'type', length: 1, enum: ['A', 'C', 'P'] })
-  type: string;
+  @Column({ name: 'can_be_optional', type: 'boolean' })
+  canBeOptional: boolean;
 
   /*
   *fecha cuando se realizo el registro
