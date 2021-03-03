@@ -1,5 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsBoolean, IsInt, IsString } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateModifierInput {
@@ -10,9 +10,10 @@ export class CreateModifierInput {
   @Field(() => String)
   readonly name: string;
 
+  @IsOptional()
   @IsBoolean()
-  @Field(() => Boolean)
-  readonly avaliable: boolean;
+  @Field(() => Boolean, { nullable: true })
+  readonly avaliable?: boolean;
 
   @IsString()
   @Field(() => String)

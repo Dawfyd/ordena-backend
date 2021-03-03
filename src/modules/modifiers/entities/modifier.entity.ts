@@ -24,13 +24,13 @@ export class Modifier {
   /*
    *  Estado del modificador
    */
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: true })
   avaliable: boolean;
 
   /*
    * Opcion del modificador, es opcional(true) o excluyente(false)
    */
-  @Column({ type: 'boolean' })
+  @Column({ name: 'can_be_optional', type: 'boolean' })
   canBeOptional: boolean;
 
   /*
