@@ -6,6 +6,7 @@ import { WaiterAssignedSpot } from './entities/waiter-assigned-spot.entity';
 
 import { PersonsService } from '../persons/persons.service';
 import { SpotsService } from '../spots/spots.service';
+import { ParametersService } from '../parameters/parameters.service';
 
 import { CreateWaiterAssignedSpotInput } from './dto/create-waiter-assigned-spot-input.dto';
 import { FindAllWaiterAssignedSpotsInput } from './dto/find-all-waiter-assigned-spots-input.dto';
@@ -19,7 +20,8 @@ export class WaiterAssignedSpotsService {
     @InjectRepository(WaiterAssignedSpot)
     private readonly waiterAssignedSpotRepository: Repository<WaiterAssignedSpot>,
     private readonly personsService: PersonsService,
-    private readonly spotsService: SpotsService
+    private readonly spotsService: SpotsService,
+    private readonly parametersService: ParametersService
   ) {}
 
   public async create (createWaiterAssignedSpotInput: CreateWaiterAssignedSpotInput): Promise<WaiterAssignedSpot> {
@@ -31,7 +33,16 @@ export class WaiterAssignedSpotsService {
       throw new NotFoundException('can\'t get person.');
     }
 
-    // TODO check if the person is waiter
+    const WAITER_ROLE = await this.parametersService.getValue({ name: 'WAITER_ROLE' });
+
+    const isWaiter = await this.personsService.checkRole({
+      id: person.id,
+      roleCode: WAITER_ROLE
+    });
+
+    if (!isWaiter) {
+      throw new Error(`the person ${personId} is not a waiter.`);
+    }
 
     const { companyUuid, spotId } = createWaiterAssignedSpotInput;
 
@@ -156,7 +167,16 @@ export class WaiterAssignedSpotsService {
 
     const person = await this.personsService.getById({ id: personId, checkExisting: true });
 
-    // TODO: check if the person is a waiter
+    const WAITER_ROLE = await this.parametersService.getValue({ name: 'WAITER_ROLE' });
+
+    const isWaiter = await this.personsService.checkRole({
+      id: person.id,
+      roleCode: WAITER_ROLE
+    });
+
+    if (!isWaiter) {
+      throw new Error(`the person ${personId} is not a waiter.`);
+    }
 
     const spot = await this.spotsService.findOne({ companyUuid, id: spotId, checkExisting: true });
 

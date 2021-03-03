@@ -1,15 +1,18 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateParameterInput } from './dto/create-parameter.input';
-import { UpdateParameterInput } from './dto/update-parameter.input';
+
 import { Parameter } from './entities/parameter.entity';
+
+import { CreateParameterInput } from './dto/create-parameter.input';
+import { GetParameterValueInput } from './dto/get-parameter-value-input.dto';
+import { UpdateParameterInput } from './dto/update-parameter.input';
 
 @Injectable()
 export class ParametersService {
   constructor (
     @InjectRepository(Parameter)
-    private readonly ParameterRepository: Repository<Parameter>
+    private readonly parameterRepository: Repository<Parameter>
   ) {}
 
   async create (createParameterInput: CreateParameterInput): Promise<Parameter> {
@@ -25,26 +28,26 @@ export class ParametersService {
       throw new HttpException('El parametro ingresado ya existe en el sistema', HttpStatus.PRECONDITION_FAILED);
     }
 
-    const newParameter = this.ParameterRepository.create({
+    const newParameter = this.parameterRepository.create({
       name,
       value: createParameterInput.value,
       description: createParameterInput.description
     });
-    return await this.ParameterRepository.save(newParameter);
+    return await this.parameterRepository.save(newParameter);
   }
 
   async findAll (): Promise<Parameter[]> {
-    return await this.ParameterRepository.find();
+    return await this.parameterRepository.find();
   }
 
   async findOne (id: number): Promise<Parameter> {
-    const parameter = await this.ParameterRepository.findOne(id);
+    const parameter = await this.parameterRepository.findOne(id);
     if (!parameter) throw new NotFoundException('No hay un parametro con esa ID');
     return parameter;
   }
 
   async findOneName (name: string): Promise<Parameter | null> {
-    const parameter = await this.ParameterRepository.findOne({
+    const parameter = await this.parameterRepository.findOne({
       where: {
         name
       }
@@ -72,17 +75,31 @@ export class ParametersService {
       }
     }
 
-    const editedParameter = this.ParameterRepository.merge(parameter, {
+    const editedParameter = this.parameterRepository.merge(parameter, {
       name,
       value: updateParameterInput.value,
       description: updateParameterInput.description
     });
 
-    return await this.ParameterRepository.save(editedParameter);
+    return await this.parameterRepository.save(editedParameter);
   }
 
   async remove (id: number): Promise<Parameter> {
     const parameter = await this.findOne(id);
-    return await this.ParameterRepository.remove(parameter);
+    return await this.parameterRepository.remove(parameter);
+  }
+
+  async getValue (getParameterValueInput: GetParameterValueInput): Promise<string> {
+    const { name } = getParameterValueInput;
+
+    const parameter = await this.parameterRepository.createQueryBuilder('p')
+      .where('p.name = :name', { name })
+      .getOne();
+
+    if (!parameter) {
+      throw new NotFoundException(`can't get the parameter with name ${name}.`);
+    }
+
+    return parameter.value;
   }
 }
