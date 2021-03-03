@@ -15,6 +15,7 @@ import { FindOnePersonInput } from './dto/find-person-one-input.dto';
 import { SendForgottenPasswordEmailInput } from './dto/send-forgotten-password-email-input.dto';
 import { UpdatePersonInput } from './dto/update-person.input.dto';
 import { GetByIdInput } from './dto/get-by-id-input.dto';
+import { CheckRoleInput } from './dto/chec-role-input.dto';
 
 @Injectable()
 export class PersonsService {
@@ -170,9 +171,13 @@ export class PersonsService {
    * @memberof PersonsService
    */
   public async getById (getByIdInput: GetByIdInput): Promise<Person | null> {
-    const { id } = getByIdInput;
+    const { id, checkExisting = false } = getByIdInput;
 
     const existing = await this.personRepository.findOne(id);
+
+    if (checkExisting && !existing) {
+      throw new NotFoundException('can\'t get the person.');
+    }
 
     return existing || null;
   }
@@ -340,4 +345,20 @@ export class PersonsService {
   }
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
+
+  public async checkRole (checkRoleInput: CheckRoleInput): Promise<boolean> {
+    const { id } = checkRoleInput;
+
+    const person = await this.getById({ id, checkExisting: true });
+
+    const roles = await this.basicAclService.getUserAssignedRoles({
+      authUid: person.authUid
+    });
+
+    const { roleCode } = checkRoleInput;
+
+    const role = roles.find(item => item.code === roleCode);
+
+    return !!role;
+  }
 }
