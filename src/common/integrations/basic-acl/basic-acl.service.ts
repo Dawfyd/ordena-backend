@@ -1,13 +1,18 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
 import axios from 'axios';
+import { HttpException, HttpService, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+
 import appConfig from '../../../config/app.config';
+
+import { GetUserAssignedRolesInput } from './dto/get-user-assigned-roles-input.dto';
+import { GetUserAssignedRolesOutput } from './dto/get-user-assigned-roles-output.dto';
 
 @Injectable()
 export class BasicAclService {
   constructor (
         @Inject(appConfig.KEY)
-        private readonly appConfiguration: ConfigType<typeof appConfig>
+        private readonly appConfiguration: ConfigType<typeof appConfig>,
+        private readonly httpService: HttpService
   ) {}
 
   async getToken (): Promise<string> {
@@ -330,5 +335,32 @@ export class BasicAclService {
         error.response.data.message
       );
     }
+  }
+
+  public async getUserAssignedRoles (
+    getUserAssignedRoles: GetUserAssignedRolesInput
+  ): Promise<GetUserAssignedRolesOutput[]> {
+    const { authUid } = getUserAssignedRoles;
+
+    const {
+      acl: { baseUrl, companyUuid }
+    } = this.appConfiguration;
+
+    const response = await this.httpService.axiosRef({
+      url: `${baseUrl}assigned-roles/user/${companyUuid}/${authUid}`
+    });
+
+    const { data } = response;
+
+    if (!Array.isArray(data)) {
+      throw new InternalServerErrorException('data is not an array.');
+    }
+
+    const result = data.map(item => ({
+      name: item?.role?.name,
+      code: item?.role?.code
+    }));
+
+    return result;
   }
 }
