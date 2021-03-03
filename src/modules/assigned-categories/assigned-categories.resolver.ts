@@ -14,6 +14,7 @@ import { UpdateAssignedCategoryInput } from './dto/update-assigned-category-inpu
 import { CreateAssignedCategoryMenuInput } from './dto/create-assigned-category-menu-input.dto';
 import { FindAllAssignedCategoriesInput } from './dto/find-all-assigned-categories-input.dto';
 import { FindOneAssignedCategoyInput } from './dto/find-one-assigned-category-input.dto';
+import { RemoveAssignedCategoriesFromMenuProductInput } from './dto/remove-assigned-categories-from-menu-product-input.dto';
 
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 @Resolver(() => AssignedCategory)
@@ -57,6 +58,11 @@ export class AssignedCategoriesResolver {
   @Mutation(() => AssignedCategory, { name: 'removeAssignedCategory' })
   remove (@Args('findOneAssignedCategoyInput') findOneAssignedCategoyInput: FindOneAssignedCategoyInput): Promise<AssignedCategory> {
     return this.service.remove(findOneAssignedCategoyInput);
+  }
+
+  @Mutation(() => String, { name: 'removeAssignedCategoriesFromMenuProduct' })
+  removeAssignedCategoriesFromMenuProduct (@Args('removeAssignedCategoriesFromMenuProductInput') removeAssignedCategoriesFromMenuProductInput: RemoveAssignedCategoriesFromMenuProductInput): Promise<string> {
+    return this.service.removeAssignedCategoriesFromMenuProduct(removeAssignedCategoriesFromMenuProductInput);
   }
 
   @ResolveField(() => Product, { name: 'product' })

@@ -14,6 +14,7 @@ import { FindOneAssignedCategoyInput } from './dto/find-one-assigned-category-in
 import { CreateAssignedCategoryMenuInput } from './dto/create-assigned-category-menu-input.dto';
 import { CreateAssignedCategoryInput } from './dto/create-assigned-category-input.dto';
 import { UpdateAssignedCategoryInput } from './dto/update-assigned-category-input.dto';
+import { RemoveAssignedCategoriesFromMenuProductInput } from './dto/remove-assigned-categories-from-menu-product-input.dto';
 
 @Injectable()
 export class AssignedCategoriesService {
@@ -192,5 +193,48 @@ export class AssignedCategoriesService {
     await this.assignedCategoryRepository.remove(existing);
 
     return clone;
+  }
+
+  async removeAssignedCategoriesFromMenuProduct (removeAssignedCategoriesFromMenuProductInput: RemoveAssignedCategoriesFromMenuProductInput): Promise<string> {
+    const productTypeMenu = await this.parametersService.findOneName('PRODUCT_TYPE_MENUS');
+
+    if (!productTypeMenu) {
+      throw new PreconditionFailedException('the parameter to identify the code of the product type must exist and be configured correctly "PRODUCT_TYPE_MENUS".');
+    }
+
+    const { companyUuid, productId } = removeAssignedCategoriesFromMenuProductInput;
+
+    const product = await this.productsService.findOne({ companyUuid, id: productId });
+
+    if (!product) {
+      throw new NotFoundException(`can't get the product ${productId} for the company ${companyUuid}.`);
+    }
+
+    const productType = await this.productTypesService.findOne({ id: +product.productType });
+
+    if (productTypeMenu.value !== productType.code) {
+      throw new PreconditionFailedException('you can only remove category assigned to menu type products.');
+    }
+
+    const assignedCategories = await this.assignedCategoryRepository.createQueryBuilder('ac')
+      .select('ac.id')
+      .innerJoin('ac.category', 'c')
+      .innerJoin('c.menu', 'm')
+      .innerJoin('m.venue', 'v')
+      .innerJoin('v.company', 'c1')
+      .where('c1.uuid = :companyUuid', { companyUuid })
+      .andWhere('ac.product_id = :productId', { productId })
+      .getMany();
+
+    const ids = assignedCategories.map(assignedCategory => (assignedCategory.id));
+
+    if (ids.length === 0) throw new NotFoundException(`there are no categories assigned for product ${productId} for the company with uuid ${companyUuid}.`);
+
+    await this.assignedCategoryRepository.createQueryBuilder()
+      .delete()
+      .whereInIds(ids)
+      .execute();
+
+    return 'OK';
   }
 }
