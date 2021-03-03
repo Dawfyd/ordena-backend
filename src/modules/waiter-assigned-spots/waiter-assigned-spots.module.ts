@@ -9,12 +9,14 @@ import { WaiterAssignedSpotsResolver } from './waiter-assigned-spots.resolver';
 
 import { PersonsModule } from '../persons/persons.module';
 import { SpotsModule } from '../spots/spots.module';
+import { ParametersModule } from '../parameters/parameters.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([WaiterAssignedSpot]),
     PersonsModule,
-    SpotsModule
+    SpotsModule,
+    ParametersModule
   ],
   providers: [WaiterAssignedSpotsService, WaiterAssignedSpotsLoaders, WaiterAssignedSpotsResolver],
   exports: [WaiterAssignedSpotsService]
