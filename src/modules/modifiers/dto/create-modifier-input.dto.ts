@@ -14,20 +14,6 @@ export class CreateModifierInput {
   @Field(() => Boolean)
   readonly avaliable: boolean;
 
-  /*
-   * Opcion del modificador, es opcional(true) o excluyente(false)
-   */
-  @IsBoolean()
-  @Field(() => Boolean)
-  optional: boolean;
-
-  /*
-   * tipo del modificador, A (todos) , C(categoria) , P(producto)
-   */
-  @IsString()
-  @Field(() => String)
-  readonly type: string;
-
   @IsString()
   @Field(() => String)
   readonly companyUuid: string;
@@ -38,11 +24,4 @@ export class CreateModifierInput {
   @IsInt()
   @Field(() => Int)
   readonly productId: number;
-
-  /*
-  *id del tipo de modificador al que pertenece
-  */
-  @IsInt()
-  @Field(() => Int)
-  readonly modifierTypeId: number;
 }

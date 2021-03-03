@@ -41,6 +41,16 @@ export class ModifierTypesService {
     return modifierType;
   }
 
+  public async findOneCode (code: string): Promise<ModifierType | null> {
+    const modifierType = await this.modifierTypesRepository.findOne({
+      where: {
+        code
+      }
+    });
+
+    return modifierType || null;
+  }
+
   public async findOne (findOneModifierTypeInput: FindOneModifierTypeInput): Promise<ModifierType | null> {
     const { id } = findOneModifierTypeInput;
 

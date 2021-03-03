@@ -16,25 +16,32 @@ import { FindOneModifierInput } from './dto/find-one-modifier-input.dto';
 @Resolver(() => Modifier)
 export class ModifiersResolver {
   constructor (
-    private readonly modifiersService: ModifiersService,
+    private readonly service: ModifiersService,
     private readonly modifiersLoaders: ModifiersLoaders
   ) {}
 
-  @Mutation(() => Modifier, { name: 'createModifier' })
-  create (
+  @Mutation(() => Modifier, { name: 'createModifierWithExclusive' })
+  createModifierWithExclusive (
     @Args('createModifierInput') createModifierInput: CreateModifierInput
   ): Promise<Modifier> {
-    return this.modifiersService.create(createModifierInput);
+    return this.service.createModifierWithExclusive(createModifierInput);
+  }
+
+  @Mutation(() => Modifier, { name: 'createModifierWithOptional' })
+  createModifierWithOptional (
+    @Args('createModifierInput') createModifierInput: CreateModifierInput
+  ): Promise<Modifier> {
+    return this.service.createModifierWithOptional(createModifierInput);
   }
 
   @Query(() => [Modifier], { name: 'modifiers' })
   findAll (@Args('findAllModifiersInput') findAllModifiersInput: FindAllModifiersInput): Promise<Modifier[]> {
-    return this.modifiersService.findAll(findAllModifiersInput);
+    return this.service.findAll(findAllModifiersInput);
   }
 
   @Query(() => Modifier, { name: 'modifier', nullable: true })
   findOne (@Args('findOneModifierInput') findOneModifierInput: FindOneModifierInput): Promise<Modifier | null> {
-    return this.modifiersService.findOne(findOneModifierInput);
+    return this.service.findOne(findOneModifierInput);
   }
 
   @Mutation(() => Modifier, { name: 'updateModifier' })
@@ -42,7 +49,7 @@ export class ModifiersResolver {
     @Args('findOneModifierInput') findOneModifierInput: FindOneModifierInput,
     @Args('updateModifierInput') updateModifierInput: UpdateModifierInput
   ): Promise<Modifier> {
-    return this.modifiersService.update(
+    return this.service.update(
       findOneModifierInput,
       updateModifierInput
     );
@@ -50,7 +57,7 @@ export class ModifiersResolver {
 
   @Mutation(() => Modifier, { name: 'removeModifier' })
   remove (@Args('findOneModifierInput') findOneModifierInput: FindOneModifierInput): Promise<Modifier> {
-    return this.modifiersService.remove(findOneModifierInput);
+    return this.service.remove(findOneModifierInput);
   }
 
   @ResolveField(() => Product, { name: 'product' })
@@ -77,6 +84,6 @@ export class ModifiersResolver {
 
   @ResolveField(() => [ModifiersPerRequest], { name: 'product' })
   async modifiersPerRequests (@Parent() modifier: Modifier): Promise<ModifiersPerRequest[]> {
-    return this.modifiersService.modifiersPerRequests(modifier);
+    return this.service.modifiersPerRequests(modifier);
   }
 }

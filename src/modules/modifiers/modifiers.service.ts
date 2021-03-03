@@ -8,6 +8,8 @@ import { ProductsService } from '../products/products.service';
 
 import { ModifierTypesService } from '../modifier-types/modifier-types.service';
 
+import { ParametersService } from '../parameters/parameters.service';
+
 import { CreateModifierInput } from './dto/create-modifier-input.dto';
 import { FindAllModifiersInput } from './dto/find-all-modifiers-input.dto';
 import { UpdateModifierInput } from './dto/update-modifier-input.dto';
@@ -18,26 +20,35 @@ export class ModifiersService {
   constructor (
     @InjectRepository(Modifier)
     private readonly modifierRepository: Repository<Modifier>,
-    private readonly productsSerice: ProductsService,
-    private readonly modifierTypesService: ModifierTypesService
+    private readonly productsService: ProductsService,
+    private readonly modifierTypesService: ModifierTypesService,
+    private readonly parametersService: ParametersService
   ) {}
 
-  async create (createModifierInput: CreateModifierInput): Promise<Modifier> {
-    const { companyUuid, productId, modifierTypeId } = createModifierInput;
+  public async createModifierWithExclusive (createModifierInput: CreateModifierInput): Promise<Modifier> {
+    const exclusiveModifierType = await this.parametersService.findOneName('EXCLUSIVE_MODIFIER_TYPE');
 
-    const product = await this.productsSerice.findOne({ companyUuid, id: productId });
+    if (!exclusiveModifierType) {
+      throw new NotFoundException('parameter to identify the modifier type code, it must exist and be configured correctly "EXCLUSIVE_MODIFIER_TYPE');
+    }
+
+    const { companyUuid, productId } = createModifierInput;
+
+    const product = await this.productsService.findOne({ companyUuid, id: productId });
 
     if (!product) {
       throw new NotFoundException(`can't get the product ${productId} for the company with uuid ${companyUuid}.`);
     }
 
-    const modifierType = await this.modifierTypesService.findOne({ id: modifierTypeId });
+    const modifierType = await this.modifierTypesService.findOneCode(exclusiveModifierType.value);
+
     if (!modifierType) {
-      throw new NotFoundException(`can't get the product ${modifierTypeId}.`);
+      throw new NotFoundException(`can't get the modifier type with code ${exclusiveModifierType.value}`);
     }
 
     const created = this.modifierRepository.create({
       ...createModifierInput,
+      canBeOptional: false,
       product,
       modifierType
     });
@@ -47,7 +58,40 @@ export class ModifiersService {
     return saved;
   }
 
-  async findAll (findAllModifiersInput: FindAllModifiersInput): Promise<Modifier[]> {
+  public async createModifierWithOptional (createModifierInput: CreateModifierInput): Promise<Modifier> {
+    const exclusiveModifierType = await this.parametersService.findOneName('OPTIONAL_MODIFIER_TYPE');
+
+    if (!exclusiveModifierType) {
+      throw new NotFoundException('parameter to identify the modifier type code, it must exist and be configured correctly "EXCLUSIVE_MODIFIER_TYPE');
+    }
+
+    const { companyUuid, productId } = createModifierInput;
+
+    const product = await this.productsService.findOne({ companyUuid, id: productId });
+
+    if (!product) {
+      throw new NotFoundException(`can't get the product ${productId} for the company with uuid ${companyUuid}.`);
+    }
+
+    const modifierType = await this.modifierTypesService.findOneCode(exclusiveModifierType.value);
+
+    if (!modifierType) {
+      throw new NotFoundException(`can't get the modifier type with code ${exclusiveModifierType.value}`);
+    }
+
+    const created = this.modifierRepository.create({
+      ...createModifierInput,
+      canBeOptional: true,
+      product,
+      modifierType
+    });
+
+    const saved = await this.modifierRepository.save(created);
+
+    return saved;
+  }
+
+  public async findAll (findAllModifiersInput: FindAllModifiersInput): Promise<Modifier[]> {
     const { companyUuid, limit, skip, search } = findAllModifiersInput;
 
     const query = this.modifierRepository.createQueryBuilder('m')
@@ -71,7 +115,7 @@ export class ModifiersService {
     return items;
   }
 
-  async findOne (findOneModifierInput: FindOneModifierInput): Promise<Modifier | null> {
+  public async findOne (findOneModifierInput: FindOneModifierInput): Promise<Modifier | null> {
     const { companyUuid, id } = findOneModifierInput;
 
     const item = await this.modifierRepository.createQueryBuilder('m')
@@ -99,33 +143,22 @@ export class ModifiersService {
       throw new NotFoundException(`can't get the modifier ${id} for the company with uuid ${companyUuid}`);
     }
 
-    const { productId, modifierTypeId } = updateModifierInput;
+    const { productId } = updateModifierInput;
 
     let product;
 
     if (productId) {
-      product = await this.productsSerice.findOne({ companyUuid, id: productId });
+      product = await this.productsService.findOne({ companyUuid, id: productId });
 
       if (!product) {
         throw new NotFoundException(`can't get the product ${productId} for the company with uuid ${companyUuid}.`);
       }
     }
 
-    let modifierType;
-
-    if (modifierTypeId) {
-      modifierType = await this.modifierTypesService.findOne({ id: modifierTypeId });
-
-      if (!modifierType) {
-        throw new NotFoundException(`can't get the product ${modifierTypeId}.`);
-      }
-    }
-
     const preloaded = await this.modifierRepository.preload({
       id: existing.id,
       ...updateModifierInput,
-      product,
-      modifierType
+      product
     });
 
     const saved = await this.modifierRepository.save(preloaded);
@@ -133,7 +166,7 @@ export class ModifiersService {
     return saved;
   }
 
-  async remove (findOneModifierInput: FindOneModifierInput): Promise<Modifier> {
+  public async remove (findOneModifierInput: FindOneModifierInput): Promise<Modifier> {
     const { companyUuid, id } = findOneModifierInput;
 
     const existing = await this.findOne(findOneModifierInput);
