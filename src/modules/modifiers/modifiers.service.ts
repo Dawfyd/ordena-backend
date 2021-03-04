@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -9,6 +9,8 @@ import { ProductsService } from '../products/products.service';
 import { ModifierTypesService } from '../modifier-types/modifier-types.service';
 
 import { ParametersService } from '../parameters/parameters.service';
+
+import { ProductTypesService } from '../product-types/product-types.service';
 
 import { CreateModifierInput } from './dto/create-modifier-input.dto';
 import { FindAllModifiersInput } from './dto/find-all-modifiers-input.dto';
@@ -22,7 +24,8 @@ export class ModifiersService {
     private readonly modifierRepository: Repository<Modifier>,
     private readonly productsService: ProductsService,
     private readonly modifierTypesService: ModifierTypesService,
-    private readonly parametersService: ParametersService
+    private readonly parametersService: ParametersService,
+    private readonly productTypesService: ProductTypesService
   ) {}
 
   public async createModifierWithExclusive (createModifierInput: CreateModifierInput): Promise<Modifier> {
@@ -30,6 +33,12 @@ export class ModifiersService {
 
     if (!exclusiveModifierType) {
       throw new NotFoundException('parameter to identify the modifier type code, it must exist and be configured correctly "EXCLUSIVE_MODIFIER_TYPE');
+    }
+
+    const pureProductType = await this.parametersService.findOneName('PRODUCT_TYPE_PURE');
+
+    if (!pureProductType) {
+      throw new NotFoundException('parameter to identify the product type code, it must exist and be configured correctly "PRODUCT_TYPE_PURE');
     }
 
     const { companyUuid, productId } = createModifierInput;
@@ -44,6 +53,16 @@ export class ModifiersService {
 
     if (!modifierType) {
       throw new NotFoundException(`can't get the modifier type with code ${exclusiveModifierType.value}`);
+    }
+
+    const productType = await this.productTypesService.findOne({ id: +product.productType });
+
+    if (!productType) {
+      throw new NotFoundException(`can't get the product type with code ${pureProductType.value}`);
+    }
+
+    if (pureProductType.value !== productType.code) {
+      throw new PreconditionFailedException('must be a pure product type');
     }
 
     const created = this.modifierRepository.create({
@@ -65,6 +84,12 @@ export class ModifiersService {
       throw new NotFoundException('parameter to identify the modifier type code, it must exist and be configured correctly "EXCLUSIVE_MODIFIER_TYPE');
     }
 
+    const pureProductType = await this.parametersService.findOneName('PRODUCT_TYPE_PURE');
+
+    if (!pureProductType) {
+      throw new NotFoundException('parameter to identify the product type code, it must exist and be configured correctly "PRODUCT_TYPE_PURE');
+    }
+
     const { companyUuid, productId } = createModifierInput;
 
     const product = await this.productsService.findOne({ companyUuid, id: productId });
@@ -77,6 +102,16 @@ export class ModifiersService {
 
     if (!modifierType) {
       throw new NotFoundException(`can't get the modifier type with code ${exclusiveModifierType.value}`);
+    }
+
+    const productType = await this.productTypesService.findOne({ id: +product.productType });
+
+    if (!productType) {
+      throw new NotFoundException(`can't get the product type with code ${pureProductType.value}`);
+    }
+
+    if (pureProductType.value !== productType.code) {
+      throw new PreconditionFailedException('must be a pure product type');
     }
 
     const created = this.modifierRepository.create({

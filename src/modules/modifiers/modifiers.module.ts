@@ -9,13 +9,15 @@ import { ParametersModule } from '../parameters/parameters.module';
 import { ModifiersService } from './modifiers.service';
 import { ModifiersLoaders } from './modifiers.loaders';
 import { ModifiersResolver } from './modifiers.resolver';
+import { ProductTypesModule } from '../product-types/product-types.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Modifier]),
     ProductsModule,
     ModifierTypesModule,
-    ParametersModule
+    ParametersModule,
+    ProductTypesModule
   ],
   providers: [ModifiersService, ModifiersLoaders, ModifiersResolver],
   exports: [ModifiersService]
