@@ -35,12 +35,6 @@ export class Product {
   description: string;
 
   /*
-   * URL de la imagen del producto
-   */
-  @Column({ type: 'varchar', length: 100 })
-  image: string;
-
-  /*
    * Estado del producto
    */
   @Column({ type: 'boolean', default: true })
@@ -51,6 +45,15 @@ export class Product {
    */
   @Column({ name: 'can_be_aditional', type: 'boolean' })
   canBeAditional: boolean;
+
+  @Column({ name: 'cloud_id', type: 'varchar', length: 50, nullable: true })
+  cloudId?: string;
+
+  /*
+   * URL de la imagen del producto
+   */
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  url?: string;
 
   /*
   *fecha cuando se realizo el registro
