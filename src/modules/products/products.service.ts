@@ -1,6 +1,14 @@
-import { forwardRef, Inject, Injectable, NotFoundException, PreconditionFailedException } from '@nestjs/common';
+import * as fs from 'fs';
+import * as path from 'path';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ConfigType } from '@nestjs/config';
+import { v2 as cloudinary } from 'cloudinary';
+
+import appConfig from '../../config/app.config';
+
+import { createFileFromReadStream } from '../../utils';
 
 import { Product } from './entities/product.entity';
 import { ParametersService } from '../parameters/parameters.service';
@@ -20,6 +28,8 @@ import { UpdateCategoryPureProductInput } from './dto/update-category-pure-produ
 @Injectable()
 export class ProductsService {
   constructor (
+    @Inject(appConfig.KEY)
+    private readonly appConfiguration: ConfigType<typeof appConfig>,
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     private readonly productTypesService: ProductTypesService,
@@ -412,4 +422,74 @@ export class ProductsService {
   }
 
   /* OPERATIONS BECAUSE OF ONE TO MANY RELATIONS */
+
+  public async uploadImage (
+    findOneProductInput: FindOneProductInput,
+    fileUpload: any
+  ): Promise<Product> {
+    const existing = await this.findOne(findOneProductInput);
+
+    if (!existing) {
+      throw new NotFoundException(`can't get the product ${findOneProductInput.id} for the company with uuid ${findOneProductInput.companyUuid}.`);
+    }
+
+    let filePath = '';
+
+    try {
+      const { filename, mimetype } = fileUpload;
+
+      if (!mimetype.startsWith('image')) {
+        throw new BadRequestException('mimetype not allowed.');
+      }
+
+      const basePath = path.resolve(__dirname);
+
+      const fileExt = filename.split('.').pop();
+
+      filePath = `${basePath}/${existing.id}.${fileExt}`;
+
+      const { createReadStream } = fileUpload;
+
+      const stream = createReadStream();
+
+      await createFileFromReadStream(stream, filePath);
+
+      let cloudinaryResponse;
+
+      try {
+        const folderName = this.appConfiguration.environment === 'production'
+          ? 'products'
+          : `${this.appConfiguration.environment}_products`;
+
+        cloudinaryResponse = await cloudinary.uploader.upload(filePath, {
+          folder: folderName,
+          public_id: '' + existing.id,
+          use_filename: true,
+          eager: [
+            { width: 300, height: 300 }
+          ]
+        });
+      } catch (error) {
+        throw new InternalServerErrorException(error.message);
+      }
+
+      const { public_id: publicId, eager } = cloudinaryResponse;
+
+      const eagerItem = eager[0];
+
+      const preloaded = await this.productRepository.preload({
+        id: existing.id,
+        cloudId: publicId,
+        url: eagerItem.secure_url
+      });
+
+      const saved = await this.productRepository.save(preloaded);
+
+      return saved;
+    } finally {
+      if (filePath && fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+  }
 }

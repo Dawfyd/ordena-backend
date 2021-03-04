@@ -18,13 +18,6 @@ export class CreateProductPureInput {
   readonly description: string;
 
   /*
-   * URL de la imagen del producto
-   */
-  @IsString()
-  @Field(() => String)
-  readonly image: string;
-
-  /*
    * Estado del producto
    */
   @IsOptional()

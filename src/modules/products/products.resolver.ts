@@ -1,5 +1,6 @@
 import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
+import { GraphQLUpload } from 'apollo-server-express';
 
 import { Product } from './entities/product.entity';
 import { ProductType } from '../product-types/entities/product-type.entity';
@@ -144,5 +145,13 @@ export class ProductsResolver {
   @ResolveField(() => [AdditionalsPerRequest], { name: 'additionalsPerRequests' })
   async additionalsPerRequests (@Parent() product: Product): Promise<AdditionalsPerRequest[]> {
     return this.service.additionalsPerRequest(product);
+  }
+
+  @Mutation(() => Product, { name: 'uploadProductImage' })
+  uploadImage (
+    @Args('findOneProductInput') findOneProductInput: FindOneProductInput,
+    @Args({ name: 'file', type: () => GraphQLUpload }) fileUpload: any
+  ): Promise<Product> {
+    return this.service.uploadImage(findOneProductInput, fileUpload);
   }
 }
