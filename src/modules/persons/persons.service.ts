@@ -1,3 +1,4 @@
+import * as faker from 'faker/locale/es_MX';
 import { Injectable, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -16,6 +17,7 @@ import { SendForgottenPasswordEmailInput } from './dto/send-forgotten-password-e
 import { UpdatePersonInput } from './dto/update-person.input.dto';
 import { GetByIdInput } from './dto/get-by-id-input.dto';
 import { CheckRoleInput } from './dto/chec-role-input.dto';
+import { CreateAnonymousPersonInput } from './dto/create-anonymous-person.input.dto';
 
 @Injectable()
 export class PersonsService {
@@ -106,6 +108,38 @@ export class PersonsService {
       return await this.personRepository.save(newPerson);
     } catch (error) {
       await this.basicAclService.removeUser(user.id);
+    }
+  }
+
+  public async createAnonymous (createAnonymousPersonInput: CreateAnonymousPersonInput): Promise<Person> {
+    const CUSTOMER_ROLE = await this.parametersService.getValue({ name: 'CUSTOMER_ROLE' });
+
+    const fakeValues = {
+      email: faker.internet.email(),
+      phone: faker.phone.phoneNumber('3#########')
+    };
+
+    const ANONYMOUS_CUSTOMER_PW = await this.parametersService.getValue({ name: 'ANONYMOUS_CUSTOMER_PW' });
+
+    const aclUser = await this.basicAclService.createUser(
+      fakeValues.email,
+      ANONYMOUS_CUSTOMER_PW,
+      fakeValues.phone,
+      CUSTOMER_ROLE,
+      true
+    );
+
+    try {
+      const { authUid } = aclUser;
+      const created = this.personRepository.create({
+        ...fakeValues,
+        ...createAnonymousPersonInput,
+        authUid
+      });
+
+      return await this.personRepository.save(created);
+    } catch (error) {
+      await this.basicAclService.removeUser(aclUser.id);
     }
   }
 

@@ -62,7 +62,7 @@ export class BasicAclService {
     }
   }
 
-  async createUser (email: string, password: string, phone: string, roleCode: string) {
+  async createUser (email: string, password: string, phone: string, roleCode: string, anonymous = false) {
     try {
       const token = await this.getToken();
 
@@ -82,7 +82,8 @@ export class BasicAclService {
           email,
           password,
           phone,
-          roleCode
+          roleCode,
+          anonymous
         }
       });
       const { data } = response;

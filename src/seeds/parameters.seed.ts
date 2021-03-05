@@ -40,6 +40,11 @@ export const ParameterFactory = {
         name: 'CUSTOMER_ROLE',
         value: '02C',
         description: 'pending...'
+      },
+      {
+        name: 'ANONYMOUS_CUSTOMER_PW',
+        value: 'anonimous_us3r',
+        description: 'pending...'
       }
     ];
 
