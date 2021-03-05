@@ -1,13 +1,15 @@
 import { Resolver, Query, Mutation, Args, Parent, ResolveField } from '@nestjs/graphql';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 
-import { PersonsService } from './persons.service';
 import { Person } from './entities/person.entity';
 import { Favorite } from '../favorites/entities/favorite.entity';
+import { Order } from '../orders/entities/order.entity';
+import { WaiterAssignedSpot } from '../waiter-assigned-spots/entities/waiter-assigned-spot.entity';
 import { CustomerAssignedSpot } from '../customer-assigned-spots/entities/customer-assigned-spot.entity';
 import { AssignedVenue } from '../assigned-venues/entities/assigned-venue.entity';
-import { WaiterAssignedSpot } from '../waiter-assigned-spots/entities/waiter-assigned-spot.entity';
-import { Order } from '../orders/entities/order.entity';
+
+import { PersonsService } from './persons.service';
+
 import { CreatePersonInput } from './dto/create-person.input.dto';
 import { UpdatePersonInput } from './dto/update-person.input.dto';
 import { SendForgottenPasswordEmailInput } from './dto/send-forgotten-password-email-input.dto';
@@ -15,6 +17,7 @@ import { ChangePasswordInput } from './dto/change-password-input.dto';
 import { FindAllPersonsInput } from './dto/find-all-persons-input.dto';
 import { FindOnePersonInput } from './dto/find-person-one-input.dto';
 import { FindAllWorkersInput } from './dto/find-all-workers-input.dto';
+import { CreateAnonymousPersonInput } from './dto/create-anonymous-person.input.dto';
 
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 @Resolver(() => Person)
@@ -41,6 +44,13 @@ export class PersonsResolver {
     @Args('createPersonInput') createPersonInput: CreatePersonInput
   ): Promise<Person> {
     return this.service.createCustomer(createPersonInput);
+  }
+
+  @Mutation(() => Person, { name: 'createAnonymousPerson' })
+  createAnonymous (
+    @Args('createAnonymousPersonInput') createAnonymousPersonInput: CreateAnonymousPersonInput
+  ): Promise<Person> {
+    return this.service.createAnonymous(createAnonymousPersonInput);
   }
 
   @Query(() => [Person], { name: 'persons' })
